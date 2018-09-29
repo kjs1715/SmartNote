@@ -1,4 +1,3 @@
 <resources>
-    <string name="app_name">会议速记助手</string>
-    <string name="search">搜索笔记</string>
+    <string name="app_name">SmartNote</string>
 </resources>
