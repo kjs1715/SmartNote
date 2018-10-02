@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.ashokvarma.bottomnavigation.BottomNavigationBar
+        android:id="@+id/navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/menu_item_background"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="UnknownId">
+
+
+        <include layout="@layout/toolbar" />
+
+        <com.sendtion.xrichtext.RichTextEditor
+            android:id="@+id/content_title"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:configChanges="orientation|keyboardHidden"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            app:layout_constraintBottom_toTopOf="@id/content_note"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/toolbar"
+            app:rt_editor_image_bottom="10"
+            app:rt_editor_image_height="500"
+            app:rt_editor_text_color="@color/colorAccent"
+            app:rt_editor_text_init_hint="在这里输入标题"
+            app:rt_editor_text_size="20">
+
+        </com.sendtion.xrichtext.RichTextEditor>
+
+        <com.sendtion.xrichtext.RichTextEditor
+            android:id="@+id/content_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/content_title"
+            app:rt_editor_image_bottom="10"
+            app:rt_editor_image_height="500"
+            app:rt_editor_text_color="@color/colorAccent"
+            app:rt_editor_text_init_hint="在这里输入内容"
+            app:rt_editor_text_size="16" />
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
