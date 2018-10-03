@@ -9,35 +9,36 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import java.util.LinkedList;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private ListView notesList;
-    private Button addButton, deleteButton;
-    private EditText oldTitleField, contentField, titleField;
-    private Activity mainActivity;
-    private NoteDatabase noteDatabase;
-
-    private void flushNotesList() {
-        LinkedList<String> titleList = noteDatabase.getNotesTitleList();
-        String[] titleListString = new String[titleList.size()];
-        int i = 0;
-        for (String _ : titleList)
-            titleListString[i++] = _;
-        notesList.setAdapter(
-                new ArrayAdapter<String>(
-                        this,
-                        android.R.layout.simple_expandable_list_item_1,
-                        titleListString
-                )
-        );
-        oldTitleField.setText("");
-        titleField.setText("");
-        contentField.setText("");
-    }
+    LinkedList<String> notesList;
+    private List<Map<String, String>> listitem;
+    private ListView listView;
+    Handler handler;
+    Thread listGenerate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run()
             {
-                notesList=DataAccess.getNotesTitleList();
+                notesList=NoteDatabase.getNotesTitleList();
                 if(notesList!=null&&notesList.size()>0)
                     listGenerate.start();
             }
