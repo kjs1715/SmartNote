@@ -1,12 +1,15 @@
 package com.littleboss.smartnote;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +35,6 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
+
+    private String id;
+    private int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +54,31 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initToolbar();
         initMenuFragment();
         initBottombar();
-//        addFragment(new MainFragment(), true, R.id.container);
+        initScrollButton();
+
+        id = getIntent().getStringExtra("id");
+        flag = getIntent().getIntExtra("mode", 0);
+        // TODO: 0：编辑模式 1：新建模式
+        if(flag == 0) {     // 编辑
+
+        } else if(flag == 1) {  // 新建
+
+        }
+
+        // TODO: 软键盘高度获取，调整bottombar的位置, 使bottombar被推上来
     }
+
+    private void initScrollButton() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.goToTop);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ScrollView sc = (ScrollView) findViewById(R.id.sc);
+                sc.fullScroll(ScrollView.FOCUS_UP);
+            }
+        });
+    }
+
 
     private void initMenuFragment() {
         MenuParams menuParams = new MenuParams();
@@ -83,7 +112,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         MenuObject close = new MenuObject();
         close.setResource(R.drawable.icn_close);
 
-        MenuObject send = new MenuObject("Send message");
+        MenuObject send = new MenuObject("Share to");
         send.setResource(R.drawable.icn_1);
 
         MenuObject like = new MenuObject("Like profile");
@@ -98,15 +127,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         MenuObject addFav = new MenuObject("Add to favorites");
         addFav.setResource(R.drawable.icn_4);
 
-        MenuObject block = new MenuObject("Block user");
-        block.setResource(R.drawable.icn_5);
 
         menuObjects.add(close);
         menuObjects.add(send);
         menuObjects.add(like);
         menuObjects.add(addFr);
         menuObjects.add(addFav);
-        menuObjects.add(block);
         return menuObjects;
     }
 
@@ -126,7 +152,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 onBackPressed();
             }
         });
-        mToolBarTextView.setText("Samantha");
+        mToolBarTextView.setText("NoteEditActivity");
     }
 
 
@@ -195,12 +221,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
                            .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
                            .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
-                           .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video")).initialise();
-        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED)
-                           .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_RIPPLE)
-                           .setActiveColor("#00C1E1")
-                           .setInActiveColor("#00C1E1")
-                           .setBarBackgroundColor("#00C1E1");
+                           .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
+                           .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED_NO_TITLE)
+                           .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_DEFAULT);
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
@@ -216,6 +240,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         break;
                     case 3:
                         Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 4:
+                        Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
+                        finish();
                         break;
                     default:
                         break;

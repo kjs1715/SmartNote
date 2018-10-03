@@ -12,6 +12,8 @@
     <color name="pink_pressed">#ec407a</color>
     <color name="blue_semi_transparent">#805677fc</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
-    <color name="text_color">#222222</color>
+    <color name="text_color">#222222</color>\
+    <color name="grey">#F5F5F5</color>
+    <color name="blue">#00C1E1</color>
 
 </resources>
