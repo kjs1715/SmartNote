@@ -132,7 +132,7 @@ public class NoteDatabase {
         Cursor cursor = db.rawQuery("select * from notes;", null);
         if (cursor == null || cursor.getCount() == 0) {
             cursor.close();
-            return null;
+            return new LinkedList<>();
         }
         cursor.moveToFirst();
         LinkedList<String> titleList = new LinkedList<String>();
