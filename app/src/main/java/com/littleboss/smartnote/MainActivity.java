@@ -1,10 +1,43 @@
 package com.littleboss.smartnote;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.LinkedList;
+
 
 public class MainActivity extends AppCompatActivity {
 
+    private ListView notesList;
+    private Button addButton, deleteButton;
+    private EditText oldTitleField, contentField, titleField;
+    private Activity mainActivity;
+    private NoteDatabase noteDatabase;
+
+    private void flushNotesList() {
+        LinkedList<String> titleList = noteDatabase.getNotesTitleList();
+        String[] titleListString = new String[titleList.size()];
+        int i = 0;
+        for (String _ : titleList)
+            titleListString[i++] = _;
+        notesList.setAdapter(
+                new ArrayAdapter<String>(
+                        this,
+                        android.R.layout.simple_expandable_list_item_1,
+                        titleListString
+                )
+        );
+        oldTitleField.setText("");
+        titleField.setText("");
+        contentField.setText("");
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,5 +139,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+
     }
 }
