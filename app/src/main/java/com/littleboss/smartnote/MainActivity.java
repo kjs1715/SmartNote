@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
                 intent.putExtra("id", "");
+                intent.putExtra("newCreatedNote", true);
                 startActivity(intent);
             }
         });
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
                         HashMap hashMap=(HashMap) listView.getAdapter().getItem(i);
                         intent.putExtra("id", (String)(hashMap.get("title")));
+                        intent.putExtra("newCreatedNote", false);
                         startActivity(intent);
                     }
                 });
