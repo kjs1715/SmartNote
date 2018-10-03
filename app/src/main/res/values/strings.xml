@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SmartNote</string>
+    <string name="title">My Description</string>
+    <string name="context_menu">Context menu</string>
 </resources>
