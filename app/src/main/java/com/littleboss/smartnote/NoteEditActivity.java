@@ -3,6 +3,10 @@ package com.littleboss.smartnote;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -59,7 +63,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         _title = getIntent().getStringExtra("id");
         flag = getIntent().getBooleanExtra("newCreatedNote", true);
 
-//         testing Database
+        // testing Database
 //        _title = "abcde";
 //        flag = true;
 
@@ -296,6 +300,13 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     private void saveNote() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 03/10/2018 8:57 PM
+         * @param
+         * @Description: Save note into database
+         *
+         */
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         EditText et_content = (EditText) findViewById(R.id.et_new_content);
         String title = et_title.getText().toString();
@@ -317,6 +328,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     private void getImage() {
+        // TODO: 03/10/2018 Image getter
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
