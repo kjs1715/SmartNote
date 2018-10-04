@@ -2,6 +2,7 @@ package com.littleboss.smartnote;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -38,34 +39,41 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.littleboss.smartnote.NoteDatabase;
+
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
 
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
 
-    private String id;
-    private int flag;
+    private String _title;
+    private String _content;
+    private boolean flag;
+
+    private NoteDatabase noteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_edit);
+
+        getDir("databases", MODE_PRIVATE);
+        noteDatabase = NoteDatabase.getInstance();
+
+        _title = getIntent().getStringExtra("id");
+        flag = getIntent().getBooleanExtra("newCreatedNote", true);
+
+        // testing Database
+//        _title = "abcde";
+//        flag = true;
+
         fragmentManager = getSupportFragmentManager();
         initToolbar();
         initMenuFragment();
         initBottombar();
         initScrollButton();
+        initEditText();
 
-        id = getIntent().getStringExtra("id");
-        flag = getIntent().getIntExtra("mode", 0);
-        // TODO: 0：编辑模式 1：新建模式
-        if(flag == 0) {     // 编辑
-
-        } else if(flag == 1) {  // 新建
-
-        }
-
-        // TODO: 软键盘高度获取，调整bottombar的位置, 使bottombar被推上来
     }
 
     private void initScrollButton() {
@@ -79,7 +87,22 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         });
     }
 
+    private void initEditText() {
+        EditText et_title = (EditText) findViewById(R.id.et_new_title);
+        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+        if(flag) {
+            return ;
+        } else {
+            _content = noteDatabase.getNotesByTitle(_title);
+            et_title.setText(_title);
+            et_content.setText(_content);
+        }
+    }
 
+    /**
+     * Refered from library of Toolbar
+     *
+     * **/
     private void initMenuFragment() {
         MenuParams menuParams = new MenuParams();
         menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
@@ -135,26 +158,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         menuObjects.add(addFav);
         return menuObjects;
     }
-
-    private void initToolbar() {
-        Toolbar mToolbar = findViewById(R.id.toolbar);
-        TextView mToolBarTextView = findViewById(R.id.text_view_toolbar_title);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-        mToolbar.setNavigationIcon(R.drawable.btn_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        mToolBarTextView.setText("NoteEditActivity");
-    }
-
 
     protected void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {
         invalidateOptionsMenu();
@@ -215,16 +218,48 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         Toast.makeText(this, "Long clicked on position: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    // bottombar
+    private void initToolbar() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 03/10/2018 5:51 PM
+         * @param
+         * @Description: Initialize toolbar
+         *
+         */
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        TextView mToolBarTextView = findViewById(R.id.text_view_toolbar_title);
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        mToolbar.setNavigationIcon(R.drawable.btn_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        mToolBarTextView.setText("NoteEditActivity");
+    }
+
     private void initBottombar() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 03/10/2018 5:52 PM
+         * @param
+         * @Description: Initialize bottom bar, for choices of multimedia
+         *
+         */
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.navigation_view);
         bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
-                           .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
-                           .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
-                           .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
-                           .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
+                .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
+                .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
+                .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
+                .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED_NO_TITLE)
-                           .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_DEFAULT);
+                .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_DEFAULT);
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
@@ -234,6 +269,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         break;
                     case 1:
                         Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
+                        getImage();
                         break;
                     case 2:
                         Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
@@ -243,6 +279,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         break;
                     case 4:
                         Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
+                        saveNote();
                         finish();
                         break;
                     default:
@@ -260,5 +297,41 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
             }
         });
+    }
+
+    private void saveNote() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 03/10/2018 8:57 PM
+         * @param
+         * @Description: Save note into database
+         *
+         */
+        EditText et_title = (EditText) findViewById(R.id.et_new_title);
+        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+        String title = et_title.getText().toString();
+        String content = et_content.getText().toString();
+
+        if(flag) {
+            try {
+                noteDatabase.saveNoteByTitle("", title, content);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                noteDatabase.saveNoteByTitle(_title, title, content);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void getImage() {
+        // TODO: 03/10/2018 Image getter
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, 0);
     }
 }

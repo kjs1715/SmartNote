@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Map<String, String>> listitem;
     private ListView listView;
     Handler handler;
-    Thread listGenerate;
+    Runnable listGenerate;
+    NoteDatabase noteDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         setTitle("会议速记助手");
+
+        noteDatabase=NoteDatabase.getInstance();
 
         handler=new Handler();
 
@@ -93,36 +96,53 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        listGenerate=new Thread(new Runnable() {
+        listGenerate=new Runnable(){
             @Override
-            public void run() {
+            public void run () {
                 listitem = new ArrayList<>();
-                int len=notesList.size();
+                int len = notesList.size();
                 for (int i = 0; i < len; i++) {
                     HashMap<String, String> showitem = new HashMap<>();
                     showitem.put("title", notesList.get(i));
                     listitem.add(showitem);
                 }
-
+                System.out.println("listitemSize:"+listitem.size());
                 handler.post(runnableUi);
             }
-        });
+        };
 
         new Thread(new Runnable(){
             @Override
             public void run()
             {
-                notesList=NoteDatabase.getNotesTitleList();
+                notesList=noteDatabase.getNotesTitleList();
                 if(notesList!=null&&notesList.size()>0)
-                    listGenerate.start();
+                    new Thread(listGenerate).start();
             }
         }).start();
+        System.out.println("yes, OnCreated");
+    }
+
+    @Override
+    protected void onResume()
+    {
+        System.out.println("OnResume");
+        new Thread(new Runnable(){
+            @Override
+            public void run()
+            {
+                notesList=noteDatabase.getNotesTitleList();
+                if(notesList!=null&&notesList.size()>0)
+                    new Thread(listGenerate).start();
+            }
+        }).start();
+        super.onResume();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_mainactivity, menu);
         return true;
     }
 
