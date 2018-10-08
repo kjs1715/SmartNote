@@ -1,22 +1,35 @@
 package com.littleboss.smartnote;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,12 +49,24 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+
+import com.littleboss.smartnote.Utils.*;
 
 import com.littleboss.smartnote.NoteDatabase;
 
+import static android.os.Environment.DIRECTORY_DCIM;
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
+
+    private Bitmap bitmap;
 
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
@@ -269,7 +294,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         break;
                     case 1:
                         Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
-                        getImage();
+                        requestPermissions();
                         break;
                     case 2:
                         Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
@@ -329,9 +354,139 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private void getImage() {
         // TODO: 03/10/2018 Image getter
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, 0);
+    }
+
+    private void onPhotoButtonClicked() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 08/10/2018 1:49 PM
+         * @param
+         * @Description: Open the album or camera of user`s phone
+         *
+         */
+        AlertDialog.Builder alb = new AlertDialog.Builder(NoteEditActivity.this);
+        alb.setTitle("获取照片方式");
+        final String[] methods = { "从图库导入", "打开照相机" };
+        alb.setItems(methods, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch(i) {
+                    case 0:
+                        // Open an image from system album
+
+                        Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                        albumIntent.setType("image/*");
+                        startActivityForResult(albumIntent, 0x111);
+                        break;
+                    case 1:
+                        // Open the system camera
+                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No camera", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        alb.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ContentResolver resolver = getContentResolver();
+        EditText et = (EditText) findViewById(R.id.et_new_content);
+        if(requestCode == 0x111 && resultCode == RESULT_OK) {
+            Uri originalUri = data.getData();
+            Bitmap ori_bitmap = null;
+            Bitmap ori_rbitmap = null;
+            try {
+                ori_bitmap = BitmapFactory.decodeStream(resolver.openInputStream(originalUri));
+                ori_rbitmap = ImageUtils.resizeImage(ori_bitmap, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            String sdStatus = Environment.getExternalStorageState();
+            if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
+                Log.i("Testfile", "Can`t use sdcard");
+            }
+
+            String name = Calendar.getInstance(Locale.CHINA).getTimeInMillis() + ".jpg";
+            FileOutputStream fout = null;
+            File rootfile = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);
+            String tempFilePath = rootfile.getPath() + File.separator + "test" + File.separator;
+            File tempFile = new File(tempFilePath);
+            if(!tempFile.exists()) {
+                tempFile.mkdirs();
+            } else {
+                Log.i("FilePath", "tmpfile exists");
+            }
+
+            String filename = rootfile.getPath() + File.separator + "test" + File.separator + name;
+            try {
+                fout = new FileOutputStream(filename);
+                ori_rbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fout.flush();
+                    fout.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            String myPath = filename;
+            Log.w(myPath, filename);
+            Toast.makeText(this, myPath, Toast.LENGTH_SHORT);
+            SpannableString span_str = new SpannableString(myPath);
+            Bitmap my_bitmap = BitmapFactory.decodeFile(myPath);
+            Bitmap my_rbitmap = ImageUtils.resizeImage(my_bitmap, 0);
+            ImageSpan span = new ImageSpan(my_rbitmap);
+            span_str.setSpan(span, 0, myPath.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            Editable ed = et.getText();
+            int start = et.getSelectionStart();
+            ed.insert(start, span_str);
+            et.setText((CharSequence) ed);
+            et.setSelection(start + span_str.length());
+        }
+        // TODO: 08/10/2018 Need to complete camera part 
+    }
+
+    private void insertPic(Bitmap bitmap, final int index) {
+    }
+
+    private void requestPermissions() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 08/10/2018 8:01 PM
+         * @param
+         * @Description: Request for SDcard permissions
+         */
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        } else {
+            onPhotoButtonClicked();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode) {
+            case 1:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onPhotoButtonClicked();
+                } else {
+                    Toast.makeText(this, "权限被拒绝了。。。", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
