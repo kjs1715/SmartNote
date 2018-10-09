@@ -2,6 +2,8 @@ package com.littleboss.smartnote.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
+import android.text.Html;
 
 
 /**

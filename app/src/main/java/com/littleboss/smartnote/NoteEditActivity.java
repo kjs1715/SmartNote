@@ -56,6 +56,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.littleboss.smartnote.Utils.*;
 
@@ -120,7 +122,22 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         } else {
             _content = noteDatabase.getNotesByTitle(_title);
             et_title.setText(_title);
-            et_content.setText(_content);
+//            et_content.setText(_content);
+            Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
+            Matcher m = p.matcher(_content);
+            SpannableString ss = new SpannableString(_content);
+            while(m.find()) {
+                Log.d("RGX", m.group());
+                String tagPath = m.group();
+                String s = m.group();
+                int start = m.start();
+                int end = m.end();
+                String path = s.replaceAll("\\<img src=\"|\" \\/\\>","").trim();
+                Bitmap ori_b = BitmapFactory.decodeFile(path);
+                ImageSpan span = new ImageSpan(ori_b);
+                ss.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            et_content.setText(ss);
         }
     }
 
@@ -426,6 +443,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 Log.i("FilePath", "tmpfile exists");
             }
 
+            // TODO: 08/10/2018 Change a filepath to save the image
             String filename = rootfile.getPath() + File.separator + "test" + File.separator + name;
             try {
                 fout = new FileOutputStream(filename);
@@ -441,13 +459,14 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 }
             }
             String myPath = filename;
+            String tagPath = "<img src=\"" + filename + "\" " + "/>";
             Log.w(myPath, filename);
             Toast.makeText(this, myPath, Toast.LENGTH_SHORT);
-            SpannableString span_str = new SpannableString(myPath);
+            SpannableString span_str = new SpannableString(tagPath);
             Bitmap my_bitmap = BitmapFactory.decodeFile(myPath);
             Bitmap my_rbitmap = ImageUtils.resizeImage(my_bitmap, 0);
             ImageSpan span = new ImageSpan(my_rbitmap);
-            span_str.setSpan(span, 0, myPath.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            span_str.setSpan(span, 0, tagPath.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             Editable ed = et.getText();
             int start = et.getSelectionStart();
             ed.insert(start, span_str);
@@ -458,6 +477,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     private void insertPic(Bitmap bitmap, final int index) {
+
     }
 
     private void requestPermissions() {
