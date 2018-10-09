@@ -104,10 +104,7 @@ public class SearchActivity extends AppCompatActivity {
                             if(contains(p,title))
                                 notesTitleList.add(title);
                         }
-                        if (notesTitleList.size() > 0)
-                        {
-                            new Thread(listGenerateRunnable).start();
-                        }
+                        new Thread(listGenerateRunnable).start();
                     }
                 }).start();
             }
@@ -124,7 +121,7 @@ public class SearchActivity extends AppCompatActivity {
             public void run()
             {
                 notesTitleList=noteDatabase.getNotesTitleList();
-                if(notesTitleList!=null&&notesTitleList.size()>0)
+                if(notesTitleList!=null)
                     new Thread(listGenerateRunnable).start();
             }
         }).start();

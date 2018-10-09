@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity{
         final Runnable runnableUi=new  Runnable(){
             @Override
             public void run() {
-//                final SimpleAdapter myAdapter = new SimpleAdapter(MainActivity.super.getApplicationContext(), listitem,
-//                        R.layout.item_main, new String[]{"title"},new int[]{R.id.notetitle}){
-//                };
 
                 listView = findViewById(R.id.mainlist);
                 listView.setClickable(true);
@@ -113,7 +110,6 @@ public class MainActivity extends AppCompatActivity{
                     showitem.put("title", notesList.get(i));
                     listitem.add(showitem);
                 }
-//                list=new ArrayList<>(notesList);
                 handler.post(runnableUi);
             }
         };
@@ -123,7 +119,7 @@ public class MainActivity extends AppCompatActivity{
             public void run()
             {
                 notesList=noteDatabase.getNotesTitleList();
-                if(notesList!=null&&notesList.size()>0)
+                if(notesList!=null)
                     new Thread(listGenerate).start();
             }
         }).start();
@@ -182,7 +178,7 @@ public class MainActivity extends AppCompatActivity{
             public void run()
             {
                 notesList=noteDatabase.getNotesTitleList();
-                if(notesList!=null&&notesList.size()>0)
+                if(notesList!=null)
                     new Thread(listGenerate).start();
             }
         }).start();
