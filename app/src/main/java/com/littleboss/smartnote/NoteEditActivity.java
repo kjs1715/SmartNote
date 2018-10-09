@@ -294,39 +294,13 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          * @Description: Initialize bottom bar, for choices of multimedia
          *
          */
-        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.navigation_view);
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
-                .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
-                .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
-                .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
-                .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
+        final BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.navigation_view);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED_NO_TITLE)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_DEFAULT);
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
-                switch(position) {
-                    case 0:
-                        Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
-                        requestPermissions();
-                        break;
-                    case 2:
-                        Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 3:
-                        Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 4:
-                        Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
-                        saveNote();
-                        finish();
-                        break;
-                    default:
-                        break;
-                }
+                chooseTab(position);
             }
 
             @Override
@@ -336,9 +310,46 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
             @Override
             public void onTabReselected(int position) {
-
+                chooseTab(position);
             }
         });
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
+                .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
+                .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
+                .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
+                .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
+    }
+
+    private void chooseTab(int pos) {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 09/10/2018 1:53 PM
+         * @param pos
+         * @Description: function for tabSelected and tabUnselected
+         *
+         */
+        switch(pos) {
+            case 0:
+                Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
+                requestPermissions();
+                break;
+            case 2:
+                Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
+                break;
+            case 3:
+                Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
+                break;
+            case 4:
+                Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
+                saveNote();
+                finish();
+                break;
+            default:
+                break;
+        }
     }
 
     private void saveNote() {
@@ -367,10 +378,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 e.printStackTrace();
             }
         }
-    }
-
-    private void getImage() {
-        // TODO: 03/10/2018 Image getter
     }
 
     private void onPhotoButtonClicked() {

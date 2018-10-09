@@ -18,8 +18,8 @@ public class ImageUtils {
         // TODO: 08/10/2018 Modify the best size for the application 
         int height = originalBitmap.getHeight();
         int width = originalBitmap.getWidth();
-        int newHeight = 300;
-        int newWidth = 300;
+        int newHeight = 800;
+        int newWidth = 800;
 
         float scaleHeight = (float)newHeight / height;
         float scaleWidth = (float)newWidth / width;
