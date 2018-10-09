@@ -15,5 +15,7 @@
     <color name="text_color">#222222</color>\
     <color name="grey">#F5F5F5</color>
     <color name="blue">#00C1E1</color>
+    <color name="button_background">#303f9f</color>
+    <color name="button_text">#FFFFFF</color>
 
 </resources>

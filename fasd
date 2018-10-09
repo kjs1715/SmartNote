@@ -1,0 +1,561 @@
+[1mdiff --git a/app/src/main/java/com/littleboss/smartnote/MainActivity.java b/app/src/main/java/com/littleboss/smartnote/MainActivity.java[m
+[1mindex 6141662..19d82d2 100644[m
+[1m--- a/app/src/main/java/com/littleboss/smartnote/MainActivity.java[m
+[1m+++ b/app/src/main/java/com/littleboss/smartnote/MainActivity.java[m
+[36m@@ -1,12 +1,19 @@[m
+ package com.littleboss.smartnote;[m
+ [m
+[32m+[m[32mimport android.annotation.SuppressLint;[m
+ import android.app.Activity;[m
+[32m+[m[32mimport android.content.Context;[m
+ import android.support.v7.app.AppCompatActivity;[m
+ import android.os.Bundle;[m
+[32m+[m[32mimport android.view.LayoutInflater;[m
+ import android.view.View;[m
+[32m+[m[32mimport android.view.ViewGroup;[m
+ import android.widget.ArrayAdapter;[m
+[32m+[m[32mimport android.widget.BaseAdapter;[m
+ import android.widget.Button;[m
+[32m+[m[32mimport android.widget.CheckBox;[m
+ import android.widget.EditText;[m
+[32m+[m[32mimport android.widget.LinearLayout;[m
+ import android.widget.ListView;[m
+ import android.widget.TextView;[m
+ import android.content.Intent;[m
+[36m@@ -22,24 +29,40 @@[m [mimport android.view.MenuItem;[m
+ import android.widget.AdapterView;[m
+ import android.widget.ListView;[m
+ import android.widget.SimpleAdapter;[m
+[32m+[m[32mimport android.widget.Toast;[m
+ [m
+ import java.util.ArrayList;[m
+ import java.util.HashMap;[m
+ import java.util.LinkedList;[m
+ import java.util.List;[m
+ import java.util.Map;[m
+[32m+[m[32mimport android.view.View;[m
+[32m+[m[32mimport android.view.View.OnClickListener;[m
+[32m+[m[32mimport android.view.View.OnLongClickListener;[m
+ [m
+ import java.util.LinkedList;[m
+ [m
+ [m
+[31m-public class MainActivity extends AppCompatActivity {[m
+[32m+[m[32mpublic class MainActivity extends AppCompatActivity{[m
+ [m
+[32m+[m[32m    private static final int NOSELECT_STATE = -1;// 表示未选中任何CheckBox[m
+     LinkedList<String> notesList;[m
+     private List<Map<String, String>> listitem;[m
+     private ListView listView;[m
+     Handler handler;[m
+     Runnable listGenerate;[m
+     NoteDatabase noteDatabase;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    private Button bt_cancel, bt_delete;[m
+[32m+[m[32m    private TextView tv_sum;[m
+[32m+[m[32m    private LinearLayout linearLayout;[m
+[32m+[m[32m    private LinkedList<String> list_delete = new LinkedList<String>();// 需要删除的数据[m
+[32m+[m[32m    private boolean isMultiSelect = false;// 是否处于多选状态[m
+[32m+[m[32m    FloatingActionButton fab;[m
+[32m+[m[32m    MyAdapter adapter;[m
+[32m+[m
+[32m+[m
+     @Override[m
+     protected void onCreate(Bundle savedInstanceState) {[m
+         super.onCreate(savedInstanceState);[m
+[36m@@ -47,7 +70,7 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+         Toolbar toolbar = findViewById(R.id.toolbar);[m
+         setSupportActionBar(toolbar);[m
+ [m
+[31m-        FloatingActionButton fab = findViewById(R.id.fab);[m
+[32m+[m[32m        fab = findViewById(R.id.fab);[m
+         fab.setOnClickListener(new View.OnClickListener() {[m
+             @Override[m
+             public void onClick(View view) {[m
+[36m@@ -58,6 +81,7 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+             }[m
+         });[m
+ [m
+[32m+[m[32m        isMultiSelect=false;[m
+ [m
+         setTitle("会议速记助手");[m
+ [m
+[36m@@ -68,31 +92,14 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+         final Runnable runnableUi=new  Runnable(){[m
+             @Override[m
+             public void run() {[m
+[31m-                final SimpleAdapter myAdapter = new SimpleAdapter(MainActivity.super.getApplicationContext(), listitem,[m
+[31m-                        R.layout.item_main, new String[]{"title"},new int[]{R.id.notetitle}){[m
+[31m-                };[m
+[32m+[m[32m//                final SimpleAdapter myAdapter = new SimpleAdapter(MainActivity.super.getApplicationContext(), listitem,[m
+[32m+[m[32m//                        R.layout.item_main, new String[]{"title"},new int[]{R.id.notetitle}){[m
+[32m+[m[32m//                };[m
+ [m
+                 listView = findViewById(R.id.mainlist);[m
+                 listView.setClickable(true);[m
+[31m-                listView.setAdapter(myAdapter);[m
+[31m-[m
+[31m-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {[m
+[31m-                    @Override[m
+[31m-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {[m
+[31m-                        Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);[m
+[31m-                        HashMap hashMap=(HashMap) listView.getAdapter().getItem(i);[m
+[31m-                        intent.putExtra("id", (String)(hashMap.get("title")));[m
+[31m-                        intent.putExtra("newCreatedNote", false);[m
+[31m-                        startActivity(intent);[m
+[31m-                    }[m
+[31m-                });[m
+[31m-[m
+[31m-                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {[m
+[31m-                    @Override[m
+[31m-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {[m
+[31m-                        return false;[m
+[31m-                    }[m
+[31m-                });[m
+[32m+[m[32m                adapter = new MyAdapter(MainActivity.this, notesList, NOSELECT_STATE);[m
+[32m+[m[32m                listView.setAdapter(adapter);[m
+             }[m
+         };[m
+ [m
+[36m@@ -106,7 +113,7 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+                     showitem.put("title", notesList.get(i));[m
+                     listitem.add(showitem);[m
+                 }[m
+[31m-                System.out.println("listitemSize:"+listitem.size());[m
+[32m+[m[32m//                list=new ArrayList<>(notesList);[m
+                 handler.post(runnableUi);[m
+             }[m
+         };[m
+[36m@@ -120,13 +127,56 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+                     new Thread(listGenerate).start();[m
+             }[m
+         }).start();[m
+[31m-        System.out.println("yes, OnCreated");[m
+[32m+[m
+[32m+[m[32m        bt_cancel = (Button) findViewById(R.id.bt_cancel);[m
+[32m+[m[32m        bt_delete = (Button) findViewById(R.id.bt_delete);[m
+[32m+[m[32m        tv_sum = (TextView) findViewById(R.id.tv_sum);[m
+[32m+[m[32m        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);[m
+[32m+[m
+[32m+[m[32m        bt_cancel.setOnClickListener(new OnClickListener() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onClick(View view) {[m
+[32m+[m[32m                System.out.println("bt_cancel clicked");[m
+[32m+[m[32m                hideLinearLayout();[m
+[32m+[m[32m                isMultiSelect = false;[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+[32m+[m[32m        bt_delete.setOnClickListener(new OnClickListener() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onClick(View view) {[m
+[32m+[m[32m                System.out.println("bt_delete clicked");[m
+[32m+[m[32m                try {[m
+[32m+[m[32m                    noteDatabase.deleteNotesTitleList(list_delete);[m
+[32m+[m[32m                } catch (NoteNotExistException e) {[m
+[32m+[m[32m                    e.printStackTrace();[m
+[32m+[m[32m                }[m
+[32m+[m[32m                hideLinearLayout();[m
+[32m+[m[32m                flushList();[m
+[32m+[m[32m                isMultiSelect = false;[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+     }[m
+ [m
+[31m-    @Override[m
+[31m-    protected void onResume()[m
+[32m+[m[32m    protected void showLinearLayout()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        linearLayout.setVisibility(View.VISIBLE);[m
+[32m+[m[32m        tv_sum.setText("共选择了" + list_delete.size() + "项");[m
+[32m+[m[32m        adapter.showAllItems();[m
+[32m+[m[32m        adapter.notifyDataSetChanged();[m
+[32m+[m[32m        fab.setVisibility(View.GONE);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    protected void hideLinearLayout()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        adapter.hideAllItems();[m
+[32m+[m[32m        adapter.notifyDataSetChanged();[m
+[32m+[m[32m        linearLayout.setVisibility(View.GONE);[m
+[32m+[m[32m        fab.setVisibility(View.VISIBLE);[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    protected void flushList()[m
+     {[m
+[31m-        System.out.println("OnResume");[m
+         new Thread(new Runnable(){[m
+             @Override[m
+             public void run()[m
+[36m@@ -136,6 +186,12 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+                     new Thread(listGenerate).start();[m
+             }[m
+         }).start();[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    protected void onResume()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        flushList();[m
+         super.onResume();[m
+     }[m
+ [m
+[36m@@ -155,11 +211,206 @@[m [mpublic class MainActivity extends AppCompatActivity {[m
+ [m
+         //noinspection SimplifiableIfStatement[m
+         if (id == R.id.searchitem) {[m
+[31m-            Intent intent = new Intent(MainActivity.this, SearchActivity.class);[m
+[31m-            startActivity(intent);[m
+[32m+[m[32m            if(isMultiSelect)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                Toast.makeText(MainActivity.this.getApplicationContext(),"请先确定是否删除笔记",Toast.LENGTH_SHORT).show();[m
+[32m+[m[32m            }[m
+[32m+[m[32m            else[m
+[32m+[m[32m            {[m
+[32m+[m[32m                Intent intent = new Intent(MainActivity.this, SearchActivity.class);[m
+[32m+[m[32m                startActivity(intent);[m
+[32m+[m[32m            }[m
+         }[m
+ [m
+         return super.onOptionsItemSelected(item);[m
+ [m
+     }[m
+[32m+[m
+[32m+[m[32m    class MyAdapter extends BaseAdapter{[m
+[32m+[m[32m        public HashMap<Integer, Integer> isCheckBoxVisible;// 用来记录是否显示checkBox[m
+[32m+[m[32m        public HashMap<Integer, Boolean> isChecked;// 用来记录是否被选中[m
+[32m+[m[32m        private LayoutInflater inflater;[m
+[32m+[m[32m        private List<String> list;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        public MyAdapter(Context context, List<String> list, int position) {[m
+[32m+[m[32m            inflater = LayoutInflater.from(context);[m
+[32m+[m[32m            this.list = notesList;[m
+[32m+[m[32m            isCheckBoxVisible = new HashMap<Integer, Integer>();[m
+[32m+[m[32m            isChecked = new HashMap<Integer, Boolean>();[m
+[32m+[m[32m            // 如果处于多选状态，则显示CheckBox，否则不显示[m
+[32m+[m[32m            if (isMultiSelect) {[m
+[32m+[m[32m                for (int i = 0; i < list.size(); i++) {[m
+[32m+[m[32m                    isCheckBoxVisible.put(i, CheckBox.VISIBLE);[m
+[32m+[m[32m                    isChecked.put(i, false);[m
+[32m+[m[32m                }[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                for (int i = 0; i < list.size(); i++) {[m
+[32m+[m[32m                    isCheckBoxVisible.put(i, CheckBox.GONE);[m
+[32m+[m[32m                    isChecked.put(i, false);[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // 如果长按Item，则设置长按的Item中的CheckBox为选中状态[m
+[32m+[m[32m            if (isMultiSelect && position >= 0) {[m
+[32m+[m[32m                isChecked.put(position, true);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        @Override[m
+[32m+[m[32m        public int getCount() {[m
+[32m+[m[32m            return list.size();[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        @Override[m
+[32m+[m[32m        public Object getItem(int position) {[m
+[32m+[m[32m            return list.get(position);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        @Override[m
+[32m+[m[32m        public long getItemId(int position) {[m
+[32m+[m[32m            return position;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        class onMyLongClick implements OnLongClickListener {[m
+[32m+[m
+[32m+[m[32m            private int position;[m
+[32m+[m[32m            private List<String> list;[m
+[32m+[m
+[32m+[m[32m            // 获取数据，与长按Item的position[m
+[32m+[m[32m            public onMyLongClick(int position, List<String> list) {[m
+[32m+[m[32m                this.position = position;[m
+[32m+[m[32m                this.list = list;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // 在长按监听时候，切记将监听事件返回ture[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public boolean onLongClick(View v) {[m
+[32m+[m[32m                if(isMultiSelect)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    return false;[m
+[32m+[m[32m                }[m
+[32m+[m[32m                else {[m
+[32m+[m[32m                    isMultiSelect = true;[m
+[32m+[m[32m                    list_delete.clear();[m
+[32m+[m[32m                    list_delete.add(notesList.get(position));[m
+[32m+[m[32m                    adapter.setOneHot(position);[m
+[32m+[m[32m                    adapter.showAllItems();[m
+[32m+[m[32m                    adapter.notifyDataSetChanged();[m
+[32m+[m[32m                    showLinearLayout();[m
+[32m+[m[32m                    return true;[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        class onMyClick implements OnClickListener {[m
+[32m+[m
+[32m+[m[32m            private int position;[m
+[32m+[m[32m            private List<String> list;[m
+[32m+[m
+[32m+[m[32m            // 获取数据，与长按Item的position[m
+[32m+[m[32m            public onMyClick(int position, List<String> list) {[m
+[32m+[m[32m                this.position = position;[m
+[32m+[m[32m                this.list = list;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onClick(View view) {[m
+[32m+[m[32m                if(isMultiSelect)[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    if(adapter.isChecked(position))[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                        list_delete.remove(adapter.getNotesTitle(position));[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                    else[m
+[32m+[m[32m                    {[m
+[32m+[m[32m                        list_delete.add(adapter.getNotesTitle(position));[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                    adapter.switchIsChecked(position);[m
+[32m+[m[32m                    adapter.notifyDataSetChanged();[m
+[32m+[m[32m                    tv_sum.setText("共选择了" + list_delete.size() + "项");[m
+[32m+[m[32m                }[m
+[32m+[m[32m                else[m
+[32m+[m[32m                {[m
+[32m+[m[32m                    Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);[m
+[32m+[m[32m                    intent.putExtra("id", (String)(notesList.get(position)));[m
+[32m+[m[32m                    intent.putExtra("newCreatedNote", false);[m
+[32m+[m[32m                    startActivity(intent);[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        @Override[m
+[32m+[m[32m        public View getView(int position, View convertView, ViewGroup parent) {[m
+[32m+[m[32m            final ViewHolder viewHolder;[m
+[32m+[m[32m            if (convertView == null) {[m
+[32m+[m[32m                viewHolder = new ViewHolder();[m
+[32m+[m[32m                convertView = inflater.inflate(R.layout.item_main, null);[m
+[32m+[m[32m                viewHolder.tv_Name = (TextView) convertView.findViewById(R.id.notetitle);[m
+[32m+[m[32m                viewHolder.cb = (CheckBox) convertView.findViewById(R.id.item_check);[m
+[32m+[m[32m                convertView.setTag(viewHolder);[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                viewHolder = (ViewHolder) convertView.getTag();[m
+[32m+[m[32m            }[m
+[32m+[m[32m            final String str = list.get(position);[m
+[32m+[m[32m            viewHolder.tv_Name.setText(str);[m
+[32m+[m[32m            // 根据position设置CheckBox是否可见，是否选中[m
+[32m+[m[32m            viewHolder.cb.setChecked(isChecked.get(position));[m
+[32m+[m[32m            viewHolder.cb.setVisibility(isCheckBoxVisible.get(position));[m
+[32m+[m[32m            convertView.setOnLongClickListener(new onMyLongClick(position,list));[m
+[32m+[m[32m            convertView.setOnClickListener(new onMyClick(position,list));[m
+[32m+[m[32m            return convertView;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public void hideAllItems()[m
+[32m+[m[32m        {[m
+[32m+[m[32m            int len=list.size();[m
+[32m+[m[32m            for(int i=0;i<len;i++)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                isCheckBoxVisible.put(i,View.GONE);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public void showAllItems()[m
+[32m+[m[32m        {[m
+[32m+[m[32m            int len=list.size();[m
+[32m+[m[32m            for(int i=0;i<len;i++)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                isCheckBoxVisible.put(i,View.VISIBLE);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public void setOneHot(int position)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            int len=list.size();[m
+[32m+[m[32m            for(int i=0;i<len;i++)[m
+[32m+[m[32m            {[m
+[32m+[m[32m                if(i==position)[m
+[32m+[m[32m                    isChecked.put(i,true);[m
+[32m+[m[32m                else[m
+[32m+[m[32m                    isChecked.put(i,false);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public void switchIsChecked(int position)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            isChecked.put(position,!isChecked.get(position));[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public boolean isChecked(int position)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            return isChecked.get(position);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public String getNotesTitle(int index)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            return list.get(index);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        class ViewHolder {[m
+[32m+[m[32m            public TextView tv_Name;[m
+[32m+[m[32m            public CheckBox cb;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+ }[m
+[1mdiff --git a/app/src/main/java/com/littleboss/smartnote/NoteEditActivity.java b/app/src/main/java/com/littleboss/smartnote/NoteEditActivity.java[m
+[1mindex 1284351..7a46091 100644[m
+[1m--- a/app/src/main/java/com/littleboss/smartnote/NoteEditActivity.java[m
+[1m+++ b/app/src/main/java/com/littleboss/smartnote/NoteEditActivity.java[m
+[36m@@ -41,6 +41,9 @@[m [mimport java.util.List;[m
+ [m
+ import com.littleboss.smartnote.NoteDatabase;[m
+ [m
+[32m+[m[32m/**[m
+[32m+[m[32m * The type Note edit activity.[m
+[32m+[m[32m */[m
+ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {[m
+ [m
+     private FragmentManager fragmentManager;[m
+[36m@@ -99,10 +102,6 @@[m [mpublic class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli[m
+         }[m
+     }[m
+ [m
+[31m-    /**[m
+[31m-     * Refered from library of Toolbar[m
+[31m-     *[m
+[31m-     * **/[m
+     private void initMenuFragment() {[m
+         MenuParams menuParams = new MenuParams();[m
+         menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));[m
+[1mdiff --git a/app/src/main/res/layout/content_main.xml b/app/src/main/res/layout/content_main.xml[m
+[1mindex cd942ed..0087183 100644[m
+[1m--- a/app/src/main/res/layout/content_main.xml[m
+[1m+++ b/app/src/main/res/layout/content_main.xml[m
+[36m@@ -7,19 +7,65 @@[m
+     tools:context=".MainActivity"[m
+     tools:showIn="@layout/activity_main">[m
+ [m
+[31m-    <ListView[m
+[31m-        android:id="@+id/mainlist"[m
+[32m+[m[32m    <LinearLayout[m
+         android:layout_width="match_parent"[m
+         android:layout_height="match_parent"[m
+[31m-        android:layout_marginBottom="8dp"[m
+[31m-        android:layout_marginEnd="8dp"[m
+[31m-        android:layout_marginStart="8dp"[m
+[31m-        android:layout_marginTop="8dp"[m
+[31m-        app:layout_constraintBottom_toBottomOf="parent"[m
+[31m-        app:layout_constraintEnd_toEndOf="parent"[m
+[31m-        app:layout_constraintHorizontal_bias="1.0"[m
+[31m-        app:layout_constraintStart_toStartOf="parent"[m
+[31m-        app:layout_constraintTop_toTopOf="parent"[m
+[31m-        app:layout_constraintVertical_bias="0.0" />[m
+[32m+[m[32m        android:orientation="vertical">[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        <ListView[m
+[32m+[m[32m            android:id="@+id/mainlist"[m
+[32m+[m[32m            android:layout_width="match_parent"[m
+[32m+[m[32m            android:layout_height="match_parent"[m
+[32m+[m[32m            android:layout_margin="5dp"[m
+[32m+[m[32m            android:layout_marginBottom="8dp"[m
+[32m+[m[32m            android:layout_marginEnd="8dp"[m
+[32m+[m[32m            android:layout_marginStart="8dp"[m
+[32m+[m[32m            android:layout_marginTop="8dp"[m
+[32m+[m[32m            android:layout_weight="1"[m
+[32m+[m[32m            app:layout_constraintBottom_toBottomOf="parent"[m
+[32m+[m[32m            app:layout_constraintEnd_toEndOf="parent"[m
+[32m+[m[32m            app:layout_constraintHorizontal_bias="1.0"[m
+[32m+[m[32m            app:layout_constraintStart_toStartOf="parent"[m
+[32m+[m[32m            app:layout_constraintTop_toTopOf="parent"[m
+[32m+[m[32m            app:layout_constraintVertical_bias="0.0">[m
+[32m+[m
+[32m+[m[32m        </ListView>[m
+[32m+[m
+[32m+[m[32m        <LinearLayout[m
+[32m+[m[32m            android:id="@+id/linearLayout"[m
+[32m+[m[32m            android:layout_width="match_parent"[m
+[32m+[m[32m            android:layout_height="wrap_content"[m
+[32m+[m[32m            android:gravity="bottom|center_horizontal"[m
+[32m+[m[32m            android:orientation="horizontal"[m
+[32m+[m[32m            android:visibility="gone">[m
+[32m+[m
+[32m+[m[32m            <Button[m
+[32m+[m[32m                android:id="@+id/bt_cancel"[m
+[32m+[m[32m                android:layout_width="wrap_content"[m
+[32m+[m[32m                android:layout_height="wrap_content"[m
+[32m+[m[32m                android:background="@color/button_background"[m
+[32m+[m[32m                android:text="取消"[m
+[32m+[m[32m                android:textColor="@color/button_text"[m
+[32m+[m[32m                android:textSize="18sp" />[m
+[32m+[m
+[32m+[m[32m            <TextView[m
+[32m+[m[32m                android:id="@+id/tv_sum"[m
+[32m+[m[32m                android:layout_width="0dp"[m
+[32m+[m[32m                android:layout_height="wrap_content"[m
+[32m+[m[32m                android:layout_weight="1"[m
+[32m+[m[32m                android:gravity="center"[m
+[32m+[m[32m                android:text="共计"[m
+[32m+[m[32m                android:textColor="@android:color/background_dark" />[m
+[32m+[m
+[32m+[m[32m            <Button[m
+[32m+[m[32m                android:id="@+id/bt_delete"[m
+[32m+[m[32m                android:layout_width="wrap_content"[m
+[32m+[m[32m                android:layout_height="wrap_content"[m
+[32m+[m[32m                android:background="@color/button_background"[m
+[32m+[m[32m                android:text="删除"[m
+[32m+[m[32m                android:textColor="@color/button_text" />[m
+[32m+[m[32m        </LinearLayout>[m
+[32m+[m[32m    </LinearLayout>[m
+ [m
+ </android.support.constraint.ConstraintLayout>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/res/layout/item_main.xml b/app/src/main/res/layout/item_main.xml[m
+[1mindex 2830457..ecd653c 100644[m
+[1m--- a/app/src/main/res/layout/item_main.xml[m
+[1m+++ b/app/src/main/res/layout/item_main.xml[m
+[36m@@ -2,6 +2,7 @@[m
+ <android.support.constraint.ConstraintLayout[m
+     xmlns:android="http://schemas.android.com/apk/res/android"[m
+     xmlns:app="http://schemas.android.com/apk/res-auto"[m
+[32m+[m[32m    xmlns:tools="http://schemas.android.com/tools"[m
+     android:layout_width="match_parent"[m
+     android:layout_height="match_parent">[m
+ [m
+[36m@@ -23,4 +24,15 @@[m
+         app:layout_constraintStart_toStartOf="parent"[m
+         app:layout_constraintTop_toTopOf="parent" />[m
+ [m
+[32m+[m[32m    <CheckBox[m
+[32m+[m[32m        android:id="@+id/item_check"[m
+[32m+[m[32m        android:layout_width="wrap_content"[m
+[32m+[m[32m        android:layout_height="wrap_content"[m
+[32m+[m[32m        android:layout_marginEnd="8dp"[m
+[32m+[m[32m        android:layout_marginTop="8dp"[m
+[32m+[m[32m        android:visibility="invisible"[m
+[32m+[m[32m        android:clickable="false"[m
+[32m+[m[32m        app:layout_constraintEnd_toEndOf="parent"[m
+[32m+[m[32m        app:layout_constraintTop_toTopOf="parent" />[m
+[32m+[m
+ </android.support.constraint.ConstraintLayout>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml[m
+[1mindex 6f782fe..fd429a3 100644[m
+[1m--- a/app/src/main/res/values/colors.xml[m
+[1m+++ b/app/src/main/res/values/colors.xml[m
+[36m@@ -15,5 +15,7 @@[m
+     <color name="text_color">#222222</color>\[m
+     <color name="grey">#F5F5F5</color>[m
+     <color name="blue">#00C1E1</color>[m
+[32m+[m[32m    <color name="button_background">#303f9f</color>[m
+[32m+[m[32m    <color name="button_text">#FFFFFF</color>[m
+ [m
+ </resources>[m

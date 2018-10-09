@@ -41,6 +41,9 @@ import java.util.List;
 
 import com.littleboss.smartnote.NoteDatabase;
 
+/**
+ * The type Note edit activity.
+ */
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
 
     private FragmentManager fragmentManager;
@@ -99,10 +102,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    /**
-     * Refered from library of Toolbar
-     *
-     * **/
     private void initMenuFragment() {
         MenuParams menuParams = new MenuParams();
         menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
