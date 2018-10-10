@@ -3,6 +3,7 @@ package com.littleboss.smartnote;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -46,6 +47,7 @@ public class NoteDatabase {
     static SQLiteDatabase db;
     static String noteDatabasePath = "data/data/com.littleboss.smartnote/app_databases/data.db";
     private NoteDatabase() {
+        new File(noteDatabasePath).getParentFile().mkdirs();
         db = SQLiteDatabase.openOrCreateDatabase(noteDatabasePath, null);
         try {
             db.execSQL("create table audiopos (pos text);");
