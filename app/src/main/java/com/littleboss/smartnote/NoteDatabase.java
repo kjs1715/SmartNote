@@ -17,6 +17,10 @@ class SameTitleNoteExistedException extends Exception {
         super(msg);
     }
 }
+class NoAudiosYetException extends Exception {
+    public NoAudiosYetException(String msg) { super(msg); }
+}
+
 /**
  * 包含有笔记创建日期、修改日期、内容的类，描述笔记信息。
  */
@@ -44,6 +48,7 @@ public class NoteDatabase {
     private NoteDatabase() {
         db = SQLiteDatabase.openOrCreateDatabase(noteDatabasePath, null);
         try {
+            db.execSQL("create table audiopos (pos text);");
             db.execSQL("create table catagories (_id integer primary key autoincrement, catagory text);");
             db.execSQL("create table notes (_id integer primary key autoincrement, title text, create_time text, modify_time text, content text, catagory_list text);");
         }
@@ -162,5 +167,37 @@ public class NoteDatabase {
             cursor.close();
             db.execSQL("delete from notes where title = ?;", new String[] {deleteTitle});
         }
+    }
+
+    /**
+     * Sets latest audio location.
+     *
+     * @param loc 最近一次录音的存放位置的完整地址。
+     */
+    public static void setLatestAudioLocation(String loc) {
+        Cursor cursor = db.rawQuery("select * from audiopos", null);
+        if (cursor != null && cursor.getCount() > 0) {
+            try {
+                db.execSQL("drop table audiopos");
+                db.execSQL("create table audiopos (pos text);");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        db.execSQL("insert into audiopos (pos) values (?);", new String[] {loc});
+    }
+
+    /**
+     * 获取最近一次录音存放的完整地址.
+     *
+     * @throws NoAudiosYetException 调用此函数时还未进行任何录音时会抛出此异常。
+     */
+    public static String getLatestAudioLocation() throws NoAudiosYetException{
+        Cursor cursor = db.rawQuery("select * from audiopos", null);
+        if (cursor == null || cursor.getCount() == 0)
+            throw new NoAudiosYetException("No audios yet!");
+        cursor.moveToFirst();
+        return cursor.getString(cursor.getColumnIndexOrThrow("pos"));
     }
 }
