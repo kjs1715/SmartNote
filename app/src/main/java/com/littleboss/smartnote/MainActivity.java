@@ -1,6 +1,10 @@
 package com.littleboss.smartnote;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -40,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     Handler handler;
     Runnable listGenerate;
     NoteDatabase noteDatabase;
+
+    private final int WRITE_EXTERNAL_STORAGE_ID = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +69,14 @@ public class MainActivity extends AppCompatActivity {
         setTitle("会议速记助手");
 
         noteDatabase=NoteDatabase.getInstance();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    WRITE_EXTERNAL_STORAGE_ID
+            );
+        }
 
         handler=new Handler();
 
@@ -161,5 +176,15 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
 
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case WRITE_EXTERNAL_STORAGE_ID: {
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    System.exit(0);
+                }
+            }
+        }
     }
 }

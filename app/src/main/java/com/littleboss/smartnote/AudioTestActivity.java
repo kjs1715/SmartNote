@@ -25,11 +25,8 @@ public class AudioTestActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE_ID: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    permissionInfoView.setText("WRITE_EXTERNAL_STORAGE granted!");
-                }
-                else {
-                    permissionInfoView.setText("WRITE_EXTERNAL_STORAGE not granted!");
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    System.exit(0);
                 }
             }
         }
