@@ -83,7 +83,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private NoteDatabase noteDatabase;
 
     public void dealString(String result) {
-        ////
         EditText et_content = (EditText) findViewById(R.id.et_new_content);
         et_content.setText(et_content.getText() + result);
     }
