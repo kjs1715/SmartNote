@@ -1,24 +1,16 @@
-image: openjdk:8-jdk
+image: runmymind/docker-android-sdk:ubuntu-standalone
 
 variables:
   ANDROID_COMPILE_SDK: "26"
-  ANDROID_BUILD_TOOLS: "26.0.0"
-  ANDROID_SDK_TOOLS: "26.0.0"
 
 before_script:
-  - apt-get --quiet update --yes
-  - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
-  - wget --quiet --output-document=android-sdk.tgz https://dl.google.com/android/android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
-  - tar --extract --gzip --file=android-sdk.tgz
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter android-${ANDROID_COMPILE_SDK}
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter platform-tools
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter build-tools-${ANDROID_BUILD_TOOLS}
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-android-m2repository
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-google-google_play_services
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-google-m2repository
-  - export ANDROID_HOME=$PWD/android-sdk-linux
-  - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/
+  - source /opt/android-sdk-linux/bin/android-env.sh
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
   - chmod +x ./gradlew
+
+cache:
+  paths:
+    - .gradle/
 
 stages:
   - build
@@ -36,15 +28,22 @@ unitTests:
   stage: test
   script:
     - ./gradlew test
+    - ./gradlew jacocoTestReport
+  after_script:
+    - SUFFIX=$RANDOM
+    - curl -s "http://10.0.0.11/sonar-scanner.tar.gz" -o "/tmp/sonar-$SUFFIX.tar.gz"
+    - tar -xf "/tmp/sonar-$SUFFIX.tar.gz" -C /opt
+    - /opt/sonar-scanner/bin/sonar-scanner
 
-functionalTests:
-  stage: test
-  script:
-    - wget --quiet --output-document=android-wait-for-emulator https://raw.githubusercontent.com/travis-ci/travis-cookbooks/0f497eb71291b52a703143c5cd63a217c8766dc9/community-cookbooks/android-sdk/files/default/android-wait-for-emulator
-    - chmod +x android-wait-for-emulator
-    - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter sys-img-x86-google_apis-${ANDROID_COMPILE_SDK}
-    - echo no | android-sdk-linux/tools/android create avd -n test -t android-${ANDROID_COMPILE_SDK} --abi google_apis/x86
-    - android-sdk-linux/tools/emulator64-x86 -avd test -no-window -no-audio &
-    - ./android-wait-for-emulator
-    - adb shell input keyevent 82
-    - ./gradlew cAT
+# Skip Android Virtual Device (AVD)
+# functionalTests:
+#   stage: test
+#   script:
+#     - echo no | avdmanager create avd -n test -k "system-images;android-${ANDROID_COMPILE_SDK};google_apis;x86" --abi google_apis/x86
+#     - emulator64-x86 -avd test -no-window -no-audio &
+#     - /opt/tools/android-wait-for-emulator
+#     - adb shell input keyevent 82
+#     - ./gradlew cAT
+#   artifacts:
+#     paths:
+#     - app/build/reports/androidTests/
