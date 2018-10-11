@@ -62,6 +62,8 @@ import com.littleboss.smartnote.Utils.*;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
+import com.littleboss.smartnote.NoteDatabase;
+
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
 
     private Bitmap bitmap;
@@ -151,6 +153,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         old_content = _content;
     }
 
+    /**
+     * Refered from library of Toolbar
+     *
+     * **/
     private void initMenuFragment() {
         MenuParams menuParams = new MenuParams();
         menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
@@ -374,34 +380,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    private void saveNote() {
-        /**
-         * @Author: Buzz Kim
-         * @Date: 03/10/2018 8:57 PM
-         * @param
-         * @Description: Save note into database
-         *
-         */
-        EditText et_title = (EditText) findViewById(R.id.et_new_title);
-        EditText et_content = (EditText) findViewById(R.id.et_new_content);
-        String title = et_title.getText().toString();
-        String content = et_content.getText().toString();
-
-        if(flag) {
-            try {
-                noteDatabase.saveNoteByTitle("", title, content);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                noteDatabase.saveNoteByTitle(_title, title, content);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void onPhotoButtonClicked() {
         /**
          * @Author: Buzz Kim
@@ -537,5 +515,41 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             default:
                 break;
         }
+    }
+
+    private void saveNote() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 03/10/2018 8:57 PM
+         * @param
+         * @Description: Save note into database
+         *
+         */
+        EditText et_title = (EditText) findViewById(R.id.et_new_title);
+        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+        String title = et_title.getText().toString();
+        String content = et_content.getText().toString();
+
+        if(flag) {
+            try {
+                noteDatabase.saveNoteByTitle("", title, content);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                noteDatabase.saveNoteByTitle(_title, title, content);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void getImage() {
+        // TODO: 03/10/2018 Image getter
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, 0);
     }
 }
