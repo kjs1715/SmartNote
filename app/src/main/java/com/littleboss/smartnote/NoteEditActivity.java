@@ -346,6 +346,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 break;
             case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
+                AudioFetcher.startRecording();
                 AudioInterface.listen();
                 break;
             case 3:

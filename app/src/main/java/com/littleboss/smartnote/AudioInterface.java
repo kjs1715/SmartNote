@@ -58,6 +58,7 @@ public class AudioInterface {
 
                 if(b) {
                     AudioInterface.dealString(mStringBuilder.toString());
+                    AudioFetcher.stopRecording();
                 }
             }
 
