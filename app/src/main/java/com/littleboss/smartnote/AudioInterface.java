@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-package com.littleboss.smartnote;;
-=======
-package com.example.liaoyuanda.ifly_5_0;
->>>>>>> ba150b268af701147872935aa8a938deaaf7c1c2
+package com.littleboss.smartnote;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -13,11 +9,6 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
-<<<<<<< HEAD
-import com.littleboss.smartnote.NoteEditActivity;
-import com.littleboss.smartnote.XFBean;
-=======
->>>>>>> ba150b268af701147872935aa8a938deaaf7c1c2
 
 import java.util.ArrayList;
 
@@ -78,13 +69,8 @@ public class AudioInterface {
     }
 
     // service-environment (caller & result-dealer)
-<<<<<<< HEAD
     private static NoteEditActivity envActivity;
     public static void setEnvActivity(final NoteEditActivity mainActivity) {
-=======
-    private static MainActivity envActivity;
-    public static void setEnvActivity(final MainActivity mainActivity) {
->>>>>>> ba150b268af701147872935aa8a938deaaf7c1c2
         AudioInterface.envActivity = mainActivity;
     }
 
