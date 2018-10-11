@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,6 +41,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
@@ -79,6 +82,17 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private NoteDatabase noteDatabase;
 
+    public void dealString(String result) {
+        ////
+        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+        et_content.setText(et_content.getText() + result);
+    }
+
+    public void show(Dialog dialog) {
+        dialog.show();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +111,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initScrollButton();
         initEditText();
 
+        // must set client-activity first
+        SpeechUtility.createUtility(this, SpeechConstant.APPID +getString(R.string.APPID));
+        AudioInterface.setEnvActivity(this);
     }
 
     private void initScrollButton() {
@@ -330,6 +347,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 break;
             case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
+                AudioInterface.listen();
                 break;
             case 3:
                 Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
