@@ -3,20 +3,17 @@ package com.littleboss.smartnote;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -36,7 +33,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,9 +60,6 @@ import java.util.regex.Pattern;
 
 import com.littleboss.smartnote.Utils.*;
 
-import com.littleboss.smartnote.NoteDatabase;
-
-import static android.os.Environment.DIRECTORY_DCIM;
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
@@ -78,6 +71,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private String _title;
     private String _content;
+    private String old_title;
+    private String old_content;
+
     private boolean flag;
 
     private NoteDatabase noteDatabase;
@@ -130,12 +126,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private void initEditText() {
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         EditText et_content = (EditText) findViewById(R.id.et_new_content);
-        if(flag) {
-            return ;
-        } else {
+        if(!flag) {
             _content = noteDatabase.getNotesByTitle(_title);
             et_title.setText(_title);
-//            et_content.setText(_content);
             Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
             Matcher m = p.matcher(_content);
             SpannableString ss = new SpannableString(_content);
@@ -151,7 +144,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 ss.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             et_content.setText(ss);
+        } else {
+            _content = et_content.getText().toString();   // for judgement in noteModified(), _content will be null without this sentence
         }
+        old_title = _title;
+        old_content = _content;
     }
 
     private void initMenuFragment() {
@@ -245,6 +242,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     @Override
     public void onBackPressed() {
+        if(!noteModified()) {
+            finish();
+            return ;
+        }
         final AlertDialog alertdialog = new AlertDialog.Builder(this).setTitle("Go back???").setMessage("Are you sure???").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -257,6 +258,17 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             }
         }).create();
         alertdialog.show();
+    }
+
+    public boolean noteModified() {
+        EditText et_title = (EditText) findViewById(R.id.et_new_title);
+        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+        String t = et_title.getText().toString();
+        String c = et_content.getText().toString();
+        if(old_title.equals(et_title.getText().toString()) && old_content.equals(et_content.getText().toString())) {
+            return false;
+        }
+        return true;
     }
 
     @Override
