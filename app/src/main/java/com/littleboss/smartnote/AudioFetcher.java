@@ -23,6 +23,7 @@ public class AudioFetcher {
     static void startRecording() {
         if (isRecording)
             return;
+
         isRecording = true;
         mediaRecorder = new MediaRecorder();
         String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
