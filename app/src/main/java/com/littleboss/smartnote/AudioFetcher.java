@@ -47,6 +47,7 @@ public class AudioFetcher {
             return;
 
         isRecording = true;
+
         /*
         mediaRecorder = new MediaRecorder();
         String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -68,6 +69,7 @@ public class AudioFetcher {
         }
         */
 
+
         String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         audioFile = new File(audioPath + "/" + curTime + ".wav");
         audioFile.getParentFile().mkdirs();
@@ -84,6 +86,7 @@ public class AudioFetcher {
                 audioFile
         );
         recorder.startRecording();
+
     }
 
     /**
@@ -93,16 +96,20 @@ public class AudioFetcher {
     static void stopRecording() {
         if (!isRecording)
             return;
+
         /*
         mediaRecorder.stop();
         mediaRecorder.release();
         */
+
+
         try {
             recorder.stopRecording();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+
 
         NoteDatabase noteDatabase = NoteDatabase.getInstance();
         noteDatabase.setLatestAudioLocation(audioFile.getAbsolutePath());

@@ -41,10 +41,10 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
     }
     private void startSpeechRecognizing() {
         SpeechConfig config = SpeechConfig.fromSubscription(
-                "f1fd7166a9864c7791ff1350f8de01fb",
+                "65b7cc0c702146d4a6e15b48e79cc0fa",
                 "westus"
         );
-        config.setSpeechRecognitionLanguage("zh-Hans");
+        //config.setSpeechRecognitionLanguage("zh-Hans");
         AudioConfig audioInput = AudioConfig.fromWavFileInput(audioFilePath);
         speechRecognizer = new SpeechRecognizer(config, audioInput);
 
@@ -67,7 +67,12 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
             }
         });
 
-        speechRecognizer.startContinuousRecognitionAsync();
+        try {
+            speechRecognizer.startContinuousRecognitionAsync().get();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     private void addPlayIconClickListener() {
         playIcon.setOnClickListener(new OnClickListener() {
@@ -106,6 +111,7 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
         audioFilePath = _audioFilePath;
         addPlayIconClickListener();
         //startSpeechRecognizing();
+        content.setText(_audioFilePath);
     }
 
     /**
