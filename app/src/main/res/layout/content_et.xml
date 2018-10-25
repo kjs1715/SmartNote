@@ -21,22 +21,22 @@
         android:textColor="@color/black_semi_transparent"
         android:textSize="18sp" />
 
-    <!--<com.littleboss.smartnote.LBAbstractViewGroup-->
-        <!--android:id="@+id/viewgroup"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
-
-    <ScrollView
-        android:id="@+id/sc"
+    <com.littleboss.smartnote.LBAbstractViewGroup
+        android:id="@+id/viewgroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/sc_linear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
-    </ScrollView>
+    <!--<ScrollView-->
+        <!--android:id="@+id/sc"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" >-->
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/sc_linear"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"></LinearLayout>-->
+    <!--</ScrollView>-->
 
 
 </LinearLayout>

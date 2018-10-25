@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -15,8 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LBAbstractViewGroup extends ScrollView {
     public static final String KEY_TITLE = "title";
@@ -30,9 +34,13 @@ public class LBAbstractViewGroup extends ScrollView {
     private Context mContext;
 
     private boolean hasTitle = false;
-    LinkedList<LBAbstractView> viewList;
     public LBAbstractViewGroup(Context context) {
         this(context, null);
+    }
+
+    public LBAbstractViewGroup(String dataString,Context context) {
+        this(context, null,0);
+        this.setContent(dataString);
     }
 
     public LBAbstractViewGroup(Context context, AttributeSet attrs) {
@@ -46,7 +54,7 @@ public class LBAbstractViewGroup extends ScrollView {
         // 初始化allLayout，用来存放所有富文本组件
         allLayout = new LinearLayout(context);
         allLayout.setOrientation(LinearLayout.VERTICAL);
-        allLayout.setBackgroundColor(Color.WHITE);
+//        allLayout.setBackgroundColor(Color.WHITE);
         setupLayoutTransitions();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
@@ -79,17 +87,59 @@ public class LBAbstractViewGroup extends ScrollView {
         };
 
         //初始化生成一个编辑文本框
-        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        LBTextView view = createEditText();
-        allLayout.addView(view, firstEditParam);
-        lastFocusView = view;
+//        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
+//                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//        LBTextView view = createEditText();
+//        System.out.println("addView:"+view.toString());
+//        allLayout.addView(view, firstEditParam);
+//        lastFocusView = view;
     }
 
-    public void removeAllIEditView() {
+    public void removeAll() {
         if (allLayout != null) {
             allLayout.removeAllViews();
         }
+    }
+
+    List<String> parse(String dataString)
+    {
+        LinkedList<String> linkedList=new LinkedList<>();
+        Pattern pattern=Pattern.compile("<([^<>]+)>([\\s\\S]*?)</([^<>]+)>");
+        Matcher matcher=pattern.matcher(dataString);
+        while(matcher.find())
+        {
+            linkedList.add(matcher.group(0));
+        }
+        return linkedList;
+    }
+
+    public void setContent(String dataString)
+    {
+        List<String> labels=parse(dataString);
+        this.removeAll();
+        for(String label:labels)
+        {
+            this.addViewToLinear((View)parseLabel(label));
+        }
+    }
+
+    LBAbstractView parseLabel(String label)
+    {
+        Pattern pattern=Pattern.compile("<([^<>]+)>([\\s\\S]*?)</([^<>]+)>");
+        Matcher matcher=pattern.matcher(label);
+        String type="",content="";
+        if(matcher.find())
+        {
+            type=matcher.group(1);
+            content=matcher.group(2);
+        }
+        if(type.equals("text"))
+        {
+            LBTextView lbTextView=new LBTextView(content,this.mContext);
+            return lbTextView;
+        }
+        //TODO: add other kinds of views
+        return new LBTextView(label,this.mContext);
     }
 
     public void setAllLayout(LinearLayout linearLayout)
@@ -392,17 +442,85 @@ public class LBAbstractViewGroup extends ScrollView {
     {
         this.allLayout.addView(view,height,weight);
     }
-//    LBAbstractViewGroup();
-//    LBAbstractViewGroup(String viewGroupDataString);
-//    void addView(LBAbstractView view, int position);
-//    void appendView(LBAbstractView view);
-//    int getSize();
-//    LBAbstractView getView(int position);
-//    void addViewToCursor(LBAbstractView view);
-//    void deleteView(int position);
-//    String toString();
-//    void moveViewUp(int position);
-//    void moveViewDown(int position);
-//    void swapViewPosition(int position1,int position2);
-//    void notifyDataChanged();
+
+    public String toDataString()
+    {
+        StringBuffer stringBuffer=new StringBuffer("");
+        for(int i=0;i<this.allLayout.getChildCount();i++)
+        {
+            stringBuffer.append(((LBAbstractView)allLayout.getChildAt(i)).toDataString());
+        }
+        return stringBuffer.toString();
+    }
+    void addView(LBAbstractView view, int position)
+    {
+        this.allLayout.addView((View)view,position);
+    }
+
+    void appendView(LBAbstractView view)
+    {
+        this.allLayout.addView((View)view);
+    }
+
+    int getSize()
+    {
+        return this.allLayout.getChildCount();
+    }
+
+    LBAbstractView getView(int position)
+    {
+        return (LBAbstractView)(this.allLayout.getChildAt(position));
+    }
+
+    int getIndex(LinearLayout layout, View view)
+    {
+        for(int i=0;i<layout.getChildCount();i++)
+        {
+            if(layout.getChildAt(i).equals(view))
+                return i;
+        }
+        return -1;
+    }
+
+    void addViewToCursor(LBAbstractView view)
+    {
+        this.allLayout.addView((View)view, getIndex(allLayout,(View)view));
+    }
+
+    void deleteView(int position)
+    {
+        allLayout.removeViewAt(position);
+    }
+
+    void moveViewUp(int position)
+    {
+        swapViewPosition(position,position-1);
+    }
+    void moveViewDown(int position)
+    {
+        swapViewPosition(position,position+1);
+    }
+    void swapViewPosition(int position1,int position2)
+    {
+        if(position1==position2)
+            return;
+        if(position1>=allLayout.getChildCount()||position2>=allLayout.getChildCount())
+            return;
+        if(position1>position2) {
+            int mid;
+            mid = position1;
+            position1=position2;
+            position2 = mid;
+        }
+        View midview1=allLayout.getChildAt(position1);
+        View midview2=allLayout.getChildAt(position2);
+        allLayout.removeViewAt(position2);
+        allLayout.addView(midview1,position2);
+        allLayout.removeViewAt(position1);
+        allLayout.addView(midview2,position1);
+    }
+    void notifyDataChanged()
+    {
+
+    }
 }

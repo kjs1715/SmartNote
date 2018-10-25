@@ -25,36 +25,37 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
         super(context, attrs);
         this.context = context;
         this.inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.item_edittext,this);
+
         init();
     }
 
+    public LBTextView(String content,Context context) {
+        this(context, null);
+        this.setContent(content);
+    }
+
     public void init() {
-        this.editText=new EditText(LBTextView.this.getContext());
-        this.editText = (EditText) editText.findViewById(R.id.edittext);
-//        editText.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(clickListener != null)
-//                    clickListener.onBlankViewClick(view, LBTextView.this);
-//            }
-//        });
-//        findViewById(R.id.blank_view).setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(clickListener != null)
-//                    clickListener.onContentClick(view, LBTextView.this);
-//            }
-//        });
-//          todo: uncomment
+        this.editText = this.findViewById(R.id.edittext);
+        editText.setSingleLine(false);
+        editText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(clickListener != null)
+                    clickListener.onBlankViewClick(view, LBTextView.this);
+            }
+        });
+        findViewById(R.id.blank_view).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(clickListener != null)
+                    clickListener.onContentClick(view, LBTextView.this);
+            }
+        });
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
-    }
-
-    public void setContent(String content) {
-        this.editText.setText(content);
+    public String toDataString() {
+        return "<text>"+this.getContent()+"</text>";
     }
 
     public EditText getEditText() {
@@ -101,5 +102,15 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
     public String getContent() {
         String s = editText.getText().toString();
         return s;
+    }
+
+    public String getText() {
+        String s = editText.getText().toString();
+        return s;
+    }
+
+    @Override
+    public void setContent(String cs) {
+        editText.setText(cs);
     }
 }

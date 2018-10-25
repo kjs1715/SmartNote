@@ -5,7 +5,7 @@ import android.view.View;
 import java.io.Serializable;
 
 public interface LBAbstractView {
-    String toString();
+    String toDataString();
     /**
      * 获取view类型
      */
@@ -34,6 +34,11 @@ public interface LBAbstractView {
      * @return
      */
     String getContent();
+
+    /**
+     * 通过文本设置内容
+     */
+    void setContent(String s);
 
     //这里定个了多个组件类型
     enum Type{

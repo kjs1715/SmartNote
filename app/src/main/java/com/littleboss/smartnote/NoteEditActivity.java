@@ -127,7 +127,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ScrollView sc = (ScrollView) findViewById(R.id.sc);
+                final LBAbstractViewGroup sc = findViewById(R.id.viewgroup);
+//                final ScrollView sc = findViewById(R.id.sc);
                 sc.fullScroll(ScrollView.FOCUS_UP);
             }
         });
@@ -135,13 +136,13 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private void initEditText() {
 //        myViewGroup=new LBAbstractViewGroup(NoteEditActivity.this.getApplicationContext(),(LinearLayout) findViewById(R.id.linear_in_edit));
-//        myViewGroup=(ScrollView)findViewById(R.id.viewgroup);
-        myLinearGroup=(LinearLayout) findViewById(R.id.sc_linear);
-        mySimpleGroup=new LBSimpleViewGroup(myLinearGroup);
+        myViewGroup=findViewById(R.id.viewgroup);
+//        myLinearGroup=(LinearLayout) findViewById(R.id.sc_linear);
+//        mySimpleGroup=new LBSimpleViewGroup(myLinearGroup);
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
-        EditText et_content = new EditText(NoteEditActivity.this.getApplicationContext());
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
+            System.out.println("get from data base:"+_content);
             et_title.setText(_title);
 //            Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
 //            Matcher m = p.matcher(_content);
@@ -158,11 +159,13 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //                ss.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 //            }
 //            et_content.setText(ss);
-            et_content.setText(_content);
-            myLinearGroup.addView(et_content);
-//            myViewGroup.addView(et_content);
+//            myLinearGroup.addView(et_content);
+            myViewGroup.setContent(_content);
+//            myViewGroup.addViewToLinear(new EditText(NoteEditActivity.this.getApplicationContext()));
+//            myViewGroup.addViewToLinear(new EditText(NoteEditActivity.this.getApplicationContext()));
+//            myViewGroup.addViewToLinear(new EditText(NoteEditActivity.this.getApplicationContext()));
         } else {
-            _content = et_content.getText().toString();   // for judgement in noteModified(), _content will be null without this sentence
+            _content = "";   // for judgement in noteModified(), _content will be null without this sentence
         }
         old_title = _title;
         old_content = _content;
@@ -286,7 +289,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //        EditText et_content = (EditText) findViewById(R.id.et_new_content);
         String t = et_title.getText().toString();
 //        String c = et_content.getText().toString();
-        String c = "";//TODO change get String
+        String c = this.myViewGroup.toDataString();
         if(old_title.equals(t) && old_content.equals(c)) {
             return false;
         }
@@ -545,7 +548,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //        EditText et_content = (EditText) findViewById(R.id.et_new_content);
         String title = et_title.getText().toString();
 //        String content = et_content.getText().toString();
-        String content = "";//TODO change get String
+        String content = this.myViewGroup.toDataString();
 
         if(newCreatedFlag) {
             try {
