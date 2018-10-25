@@ -33,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,14 +77,20 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private String old_title;
     private String old_content;
 
-    private boolean flag;
+    private boolean newCreatedFlag;
 
     private NoteDatabase noteDatabase;
 
+    private LBAbstractViewGroup myViewGroup;
+    private LBSimpleViewGroup mySimpleGroup;
+    private ScrollView myScrollGroup;
+    private LinearLayout myLinearGroup;
+
     public void dealString(String result) {
         ////
-        EditText et_content = (EditText) findViewById(R.id.et_new_content);
-        et_content.setText(et_content.getText() + result);
+//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+//        et_content.setText(et_content.getText() + result);
+        //TODO deadString
     }
 
     public void show(Dialog dialog) {
@@ -100,9 +107,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         noteDatabase = NoteDatabase.getInstance();
 
         _title = getIntent().getStringExtra("id");
-        flag = getIntent().getBooleanExtra("newCreatedNote", true);
+        newCreatedFlag = getIntent().getBooleanExtra("newCreatedNote", true);
 
         fragmentManager = getSupportFragmentManager();
+
         initToolbar();
         initMenuFragment();
         initBottombar();
@@ -126,26 +134,33 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     private void initEditText() {
+//        myViewGroup=new LBAbstractViewGroup(NoteEditActivity.this.getApplicationContext(),(LinearLayout) findViewById(R.id.linear_in_edit));
+//        myViewGroup=(ScrollView)findViewById(R.id.viewgroup);
+        myLinearGroup=(LinearLayout) findViewById(R.id.sc_linear);
+        mySimpleGroup=new LBSimpleViewGroup(myLinearGroup);
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
-        EditText et_content = (EditText) findViewById(R.id.et_new_content);
-        if(!flag) {
+        EditText et_content = new EditText(NoteEditActivity.this.getApplicationContext());
+        if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
             et_title.setText(_title);
-            Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
-            Matcher m = p.matcher(_content);
-            SpannableString ss = new SpannableString(_content);
-            while(m.find()) {
-                Log.d("RGX", m.group());
-                String tagPath = m.group();
-                String s = m.group();
-                int start = m.start();
-                int end = m.end();
-                String path = s.replaceAll("\\<img src=\"|\" \\/\\>","").trim();
-                Bitmap ori_b = BitmapFactory.decodeFile(path);
-                ImageSpan span = new ImageSpan(ori_b);
-                ss.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            et_content.setText(ss);
+//            Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
+//            Matcher m = p.matcher(_content);
+//            SpannableString ss = new SpannableString(_content);
+//            while(m.find()) {
+//                Log.d("RGX", m.group());
+//                String tagPath = m.group();
+//                String s = m.group();
+//                int start = m.start();
+//                int end = m.end();
+//                String path = s.replaceAll("\\<img src=\"|\" \\/\\>","").trim();
+//                Bitmap ori_b = BitmapFactory.decodeFile(path);
+//                ImageSpan span = new ImageSpan(ori_b);
+//                ss.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+//            et_content.setText(ss);
+            et_content.setText(_content);
+            myLinearGroup.addView(et_content);
+//            myViewGroup.addView(et_content);
         } else {
             _content = et_content.getText().toString();   // for judgement in noteModified(), _content will be null without this sentence
         }
@@ -268,10 +283,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public boolean noteModified() {
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
-        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
         String t = et_title.getText().toString();
-        String c = et_content.getText().toString();
-        if(old_title.equals(et_title.getText().toString()) && old_content.equals(et_content.getText().toString())) {
+//        String c = et_content.getText().toString();
+        String c = "";//TODO change get String
+        if(old_title.equals(t) && old_content.equals(c)) {
             return false;
         }
         return true;
@@ -422,65 +438,65 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ContentResolver resolver = getContentResolver();
-        EditText et = (EditText) findViewById(R.id.et_new_content);
-        if(requestCode == 0x111 && resultCode == RESULT_OK) {
-            Uri originalUri = data.getData();
-            Bitmap ori_bitmap = null;
-            Bitmap ori_rbitmap = null;
-            try {
-                ori_bitmap = BitmapFactory.decodeStream(resolver.openInputStream(originalUri));
-                ori_rbitmap = ImageUtils.resizeImage(ori_bitmap, 0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            String sdStatus = Environment.getExternalStorageState();
-            if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
-                Log.i("Testfile", "Can`t use sdcard");
-            }
-
-            String name = Calendar.getInstance(Locale.CHINA).getTimeInMillis() + ".jpg";
-            FileOutputStream fout = null;
-            File rootfile = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);
-            String tempFilePath = rootfile.getPath() + File.separator + "test" + File.separator;
-            File tempFile = new File(tempFilePath);
-            if(!tempFile.exists()) {
-                tempFile.mkdirs();
-            } else {
-                Log.i("FilePath", "tmpfile exists");
-            }
-
-            // TODO: 08/10/2018 Change a filepath to save the image
-            String filename = rootfile.getPath() + File.separator + "test" + File.separator + name;
-            try {
-                fout = new FileOutputStream(filename);
-                ori_rbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    fout.flush();
-                    fout.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            String myPath = filename;
-            String tagPath = "<img src=\"" + filename + "\" " + "/>";
-            Log.w(myPath, filename);
-            Toast.makeText(this, myPath, Toast.LENGTH_SHORT);
-            SpannableString span_str = new SpannableString(tagPath);
-            Bitmap my_bitmap = BitmapFactory.decodeFile(myPath);
-            Bitmap my_rbitmap = ImageUtils.resizeImage(my_bitmap, 0);
-            ImageSpan span = new ImageSpan(my_rbitmap);
-            span_str.setSpan(span, 0, tagPath.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            Editable ed = et.getText();
-            int start = et.getSelectionStart();
-            ed.insert(start, span_str);
-            et.setText((CharSequence) ed);
-            et.setSelection(start + span_str.length());
-        }
-        // TODO: 08/10/2018 Need to complete camera part 
+//        ContentResolver resolver = getContentResolver();
+//        EditText et = (EditText) findViewById(R.id.et_new_content);
+//        if(requestCode == 0x111 && resultCode == RESULT_OK) {
+//            Uri originalUri = data.getData();
+//            Bitmap ori_bitmap = null;
+//            Bitmap ori_rbitmap = null;
+//            try {
+//                ori_bitmap = BitmapFactory.decodeStream(resolver.openInputStream(originalUri));
+//                ori_rbitmap = ImageUtils.resizeImage(ori_bitmap, 0);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            String sdStatus = Environment.getExternalStorageState();
+//            if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
+//                Log.i("Testfile", "Can`t use sdcard");
+//            }
+//
+//            String name = Calendar.getInstance(Locale.CHINA).getTimeInMillis() + ".jpg";
+//            FileOutputStream fout = null;
+//            File rootfile = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);
+//            String tempFilePath = rootfile.getPath() + File.separator + "test" + File.separator;
+//            File tempFile = new File(tempFilePath);
+//            if(!tempFile.exists()) {
+//                tempFile.mkdirs();
+//            } else {
+//                Log.i("FilePath", "tmpfile exists");
+//            }
+//
+//            // TODO: 08/10/2018 Change a filepath to save the image
+//            String filename = rootfile.getPath() + File.separator + "test" + File.separator + name;
+//            try {
+//                fout = new FileOutputStream(filename);
+//                ori_rbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                try {
+//                    fout.flush();
+//                    fout.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            String myPath = filename;
+//            String tagPath = "<img src=\"" + filename + "\" " + "/>";
+//            Log.w(myPath, filename);
+//            Toast.makeText(this, myPath, Toast.LENGTH_SHORT);
+//            SpannableString span_str = new SpannableString(tagPath);
+//            Bitmap my_bitmap = BitmapFactory.decodeFile(myPath);
+//            Bitmap my_rbitmap = ImageUtils.resizeImage(my_bitmap, 0);
+//            ImageSpan span = new ImageSpan(my_rbitmap);
+//            span_str.setSpan(span, 0, tagPath.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            Editable ed = et.getText();
+//            int start = et.getSelectionStart();
+//            ed.insert(start, span_str);
+//            et.setText((CharSequence) ed);
+//            et.setSelection(start + span_str.length());
+//        }
+//        // TODO: 08/10/2018 Need to complete camera part
     }
 
     private void insertPic(Bitmap bitmap, final int index) {
@@ -526,11 +542,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          *
          */
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
-        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
         String title = et_title.getText().toString();
-        String content = et_content.getText().toString();
+//        String content = et_content.getText().toString();
+        String content = "";//TODO change get String
 
-        if(flag) {
+        if(newCreatedFlag) {
             try {
                 noteDatabase.saveNoteByTitle("", title, content);
             } catch (Exception e) {

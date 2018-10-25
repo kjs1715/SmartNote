@@ -21,7 +21,7 @@
     <include
         layout="@layout/content_et"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="@id/appbar" />
 
     <android.support.design.widget.FloatingActionButton

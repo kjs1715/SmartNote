@@ -21,20 +21,22 @@
         android:textColor="@color/black_semi_transparent"
         android:textSize="18sp" />
 
+    <!--<com.littleboss.smartnote.LBAbstractViewGroup-->
+        <!--android:id="@+id/viewgroup"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
+
     <ScrollView
         android:id="@+id/sc"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content" >
 
-        <EditText
-            android:id="@+id/et_new_content"
+        <LinearLayout
+            android:id="@+id/sc_linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="请输入内容"
-            android:padding="16dp"
-            android:textColor="@color/black_semi_transparent"
-            android:textSize="16sp" />
+            android:orientation="vertical"></LinearLayout>
     </ScrollView>
+
 
 </LinearLayout>
