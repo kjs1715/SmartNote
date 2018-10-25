@@ -9,6 +9,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.microsoft.cognitiveservices.speech.Recognizer;
+import com.microsoft.cognitiveservices.speech.ResultReason;
+import com.microsoft.cognitiveservices.speech.SpeechConfig;
+import com.microsoft.cognitiveservices.speech.SpeechRecognitionEventArgs;
+import com.microsoft.cognitiveservices.speech.SpeechRecognizer;
+import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
+import com.microsoft.cognitiveservices.speech.util.EventHandler;
+
 import java.io.IOException;
 
 /**
@@ -21,6 +29,7 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
     private EditText content;
     private String audioFilePath;
     private MediaPlayer mediaPlayer;
+    private SpeechRecognizer speechRecognizer;
     private void createPlayIconAndText() {
         playIcon = new ImageView(getContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
@@ -29,6 +38,36 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
         content = new EditText(getContext());
         addView(playIcon);
         addView(content);
+    }
+    private void startSpeechRecognizing() {
+        SpeechConfig config = SpeechConfig.fromSubscription(
+                "f1fd7166a9864c7791ff1350f8de01fb",
+                "westus"
+        );
+        config.setSpeechRecognitionLanguage("zh-Hans");
+        AudioConfig audioInput = AudioConfig.fromWavFileInput(audioFilePath);
+        speechRecognizer = new SpeechRecognizer(config, audioInput);
+
+        speechRecognizer.recognizing.addEventListener(new EventHandler<SpeechRecognitionEventArgs>() {
+            @Override
+            public void onEvent(Object o, SpeechRecognitionEventArgs e) {
+                content.setText("Recognizing... " + e.getResult().getText());
+            }
+        });
+
+        speechRecognizer.recognized.addEventListener(new EventHandler<SpeechRecognitionEventArgs>() {
+            @Override
+            public void onEvent(Object o, SpeechRecognitionEventArgs e) {
+                if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
+                    content.setText(e.getResult().getText());
+                }
+                else if (e.getResult().getReason() == ResultReason.NoMatch) {
+                    content.setText("Failed recognizing...");
+                }
+            }
+        });
+
+        speechRecognizer.startContinuousRecognitionAsync();
     }
     private void addPlayIconClickListener() {
         playIcon.setOnClickListener(new OnClickListener() {
@@ -66,7 +105,7 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
         createPlayIconAndText();
         audioFilePath = _audioFilePath;
         addPlayIconClickListener();
-        content.setText(_audioFilePath);
+        //startSpeechRecognizing();
     }
 
     /**

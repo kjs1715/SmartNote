@@ -20,6 +20,7 @@ public class AudioTestActivity extends AppCompatActivity {
     private TextView audioCount;
     public static final int WRITE_EXTERNAL_STORAGE_ID = 0;
     public static final int RECORD_AUDIO_ID = 1;
+    public static final int INTERNET_ID = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +76,13 @@ public class AudioTestActivity extends AppCompatActivity {
                     RECORD_AUDIO_ID
             );
         }
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {Manifest.permission.INTERNET},
+                    INTERNET_ID
+            );
+        }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -86,6 +93,11 @@ public class AudioTestActivity extends AppCompatActivity {
                 }
             }
             case RECORD_AUDIO_ID: {
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    System.exit(0);
+                }
+            }
+            case INTERNET_ID: {
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     System.exit(0);
                 }
