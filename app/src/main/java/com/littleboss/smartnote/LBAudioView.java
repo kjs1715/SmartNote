@@ -11,7 +11,12 @@ import android.widget.LinearLayout;
 
 import java.io.IOException;
 
-public class LBAudioView extends LinearLayout {
+/**
+ * 录音模块。
+ * 单击播放按钮可进行播放，在播放中单击播放按钮可实现暂停。
+ * 文本部分是一个内置的文本编辑可进行编辑。
+ */
+public class LBAudioView extends LinearLayout implements LBAbstractView {
     private ImageView playIcon;
     private EditText content;
     private String audioFilePath;
@@ -63,11 +68,26 @@ public class LBAudioView extends LinearLayout {
         addPlayIconClickListener();
         content.setText(_audioFilePath);
     }
+
+    /**
+     * Instantiates a new Lb audio view.
+     *
+     * @param _context       上下文环境
+     * @param _audioFilePath 音频存储的完整路径
+     * @param text           语音识别后的结果（可自己修改）
+     */
     public LBAudioView(Activity _context, String _audioFilePath, String text) {
         super(_context);
         createPlayIconAndText();
         audioFilePath = _audioFilePath;
         addPlayIconClickListener();
         content.setText(text);
+    }
+
+    @Override
+    public String toString() {
+        String replace = content.getText().toString();
+        replace.replace('"', '\"');
+        return "<audio src = \"" + audioFilePath + "\" content = \"" + replace + "\">";
     }
 }
