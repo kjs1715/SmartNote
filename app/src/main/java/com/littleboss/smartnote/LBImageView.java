@@ -7,11 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -21,22 +21,18 @@ import com.littleboss.smartnote.Utils.ImageUtils;
 import java.io.FileNotFoundException;
 
 public class LBImageView extends FrameLayout implements LBAbstractView {
-    /**
-     * @Author: Buzz Kim
-     * @Date: 24/10/2018 7:13 PM
-     * @param null
-     * @Description: Usage: LBImageView lbImageView = new LBImageView("filepath");
-     *
-     */
     private Context context;
     private LayoutInflater inflater;
     private ImageView imageView;
     private View blankView;
-    private String uriString;
-    private Uri uri;
+    private String filePath;
     private int SCREEN_WIDTH;
+    private int SCREEN_HEIGHT;
     private Bitmap image;
     private LBClickListener clickListener;
+    private int width;
+    private int height;
+    private int resizeFlag;
 
     public LBImageView(Context context) {
         this(context, null);
@@ -49,31 +45,20 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
         SCREEN_WIDTH = dm.widthPixels;
+        SCREEN_HEIGHT = dm.heightPixels;
         init();
     }
 
-    public LBImageView(String uriString,Context context) {
+    public LBImageView(String filePath,Context context) {
         this(context);
-        this.uriString = uriString;
-        this.setContent(uriString);
-    }
-
-    public LBImageView(Uri uri,Context context) {
-        this(context);
-        this.uriString = uri.toString();
-        this.uri = uri;
-        this.setContent(uri);
-    }
-
-    public LBImageView(Uri uri, Context context, AttributeSet attrs) {
-        this(context, attrs);
-        this.uriString = uri.toString();
-        this.uri = uri;
-        this.setContent(uri);
+        this.filePath = filePath;
+        this.setContent(filePath);
     }
 
     public void init() {
         this.imageView = findViewById(R.id.imageView);
+        resizeFlag = 0;
+        this.imageView = (ImageView) findViewById(R.id.imageView);
         this.blankView = findViewById(R.id.blank_view);
         this.imageView.setOnClickListener(new OnClickListener() {
             @Override
@@ -108,48 +93,93 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         });
     }
 
-    public void setContent(String uriString)
+    public void setContent(String filePath)
     {
-        this.uriString=uriString;
-        this.uri=Uri.parse(uriString);
+        this.filePath=filePath;
         getImage();
         if(this.image==null)
             return;
-        Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * 16 / 25, SCREEN_WIDTH * 9 / 25);
-        setImage(mImage);
+//        Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * 16 / 25, SCREEN_WIDTH * 9 / 25);
+        setImage(this.image);
+        getImageProperties(this.image);
     }
 
-    public void setContent(Uri uri)
-    {
-        this.uriString=uri.toString();
-        this.uri=uri;
-        getImage();
-        if(this.image==null)
+    public void getImageProperties(Bitmap mImage) {
+        if(mImage == null) {
             return;
-        Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * 16 / 25, SCREEN_WIDTH * 9 / 25);
-        setImage(mImage);
+        }
+        this.width = mImage.getWidth();
+        this.height = mImage.getHeight();
     }
 
     public void getImage() {
-        ContentResolver contentResolver=context.getContentResolver();
         try {
-            this.image = BitmapFactory.decodeStream(contentResolver.openInputStream(this.uri));
-        } catch (FileNotFoundException e) {
+            System.out.println(filePath);
+            this.image = BitmapFactory.decodeFile(this.filePath);
+            System.out.println("Successfully decode");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void setImage(Bitmap mImage) {
+        if(mImage == null) {
+            Toast.makeText(this.context, "No image!", Toast.LENGTH_SHORT);
+            return ;
+        }
         this.imageView.setImageBitmap(mImage);
+        getImageProperties(mImage);
     }
 
 
     public void imageResize(String ratio) {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 25/10/2018 10:00 PM
+         * @param ratio
+         * @Description: Resize the image with a new ratio
+         *
+         */
         String[] num = ratio.split(":");
         final int scaleSum = Integer.parseInt(num[0]) + Integer.parseInt(num[1]);;
         Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * Integer.parseInt(num[0]) / scaleSum, SCREEN_WIDTH * Integer.parseInt(num[1]) / scaleSum);
         setImage(mImage);
     }
+
+    public void imageResize(final int size, String flag) {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 25/10/2018 10:00 PM
+         * @param size
+         * @param flag
+         * @Description: Resize the image with the size provided by the user
+         *
+         */
+        Bitmap mImage = null;
+        if(flag.equals("宽度")) {
+            if(size <= 0 || size > SCREEN_WIDTH)
+            {
+                Toast.makeText(this.context,"超过了宽度范围，请重新输入大小！", Toast.LENGTH_SHORT).show();
+                return ;
+            }
+            float ratio = (float) size / this.width * this.height;
+            mImage = ImageUtils.resizeImage(this.image, size, (int) ratio);
+        } else {
+            if(size <= 0 || size > SCREEN_HEIGHT)
+            {
+                Toast.makeText(this.context,"超过了长度范围，请重新输入大小！", Toast.LENGTH_SHORT).show();
+                return ;
+            }
+            float ratio = (float) size / this.height * this.width;
+            // TODO: 26/10/2018 A little problem with ratio of width and height to fix 
+            if(ratio > SCREEN_WIDTH) {                            // If the size of height is too big, it would change the ratio of width and height, judge with resizeFlag
+            }
+            mImage = ImageUtils.resizeImage(this.image, (int) ratio, size);
+        }
+        setImage(mImage);
+
+    }
+
 
     public void imageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
@@ -176,14 +206,60 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
     public void ResizeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         builder.setTitle("选择尺寸");
-        final String[] dialogItems = {"16:9", "4:3"};
+        final String[] dialogItems = {"保持纵横比", "16:9", "4:3"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(which == 0) {
+                    imageResizeWithScaleDialog();
+                    return ;
+                }
                 imageResize(dialogItems[which]);
             }
         });
         builder.show();
+    }
+
+    public void imageResizeWithScaleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+        final String[] choice = {"高度", "宽度"};
+        builder.setSingleChoiceItems(choice, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                chooseDialog(choice[which]);
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    public void chooseDialog(final String choice) {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this.context);
+        LayoutInflater factory = LayoutInflater.from(this.context);
+        final View view = factory.inflate(R.layout.item_inputsize, null);
+        final EditText size = (EditText) view.findViewById(R.id.et);
+        mBuilder.setTitle("请输入尺寸");
+        mBuilder.setView(view);
+        if(choice.equals("长度")) {
+            size.setHint("请输入高度大小：1 ~ " + SCREEN_HEIGHT);
+        } else {
+            size.setHint("请输入宽度大小：1 ~ " + SCREEN_WIDTH);
+        }
+        mBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int mWhich) {
+                if(size.getText() == null || size.getText().toString().equals(""))
+                    return ;
+                int num = Integer.parseInt(size.getText().toString());
+                imageResize(num, choice);
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        mBuilder.show();
     }
 
     public void deleteDialog() {
@@ -205,10 +281,9 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
     }
 
 
-
     @Override
     public String toDataString() {
-        return "<image>"+ this.uriString +"</image>";
+        return "<image>"+ this.filePath +"</image>";
     }
 
     @Override
@@ -223,7 +298,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
     @Override
     public String getFilePath() {
-        return this.uriString;
+        return this.filePath;
     }
 
     @Override

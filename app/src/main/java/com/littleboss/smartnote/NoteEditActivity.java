@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -23,11 +22,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,21 +43,8 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.littleboss.smartnote.Utils.*;
-
-import static android.os.Environment.DIRECTORY_DOWNLOADS;
-
-import com.littleboss.smartnote.NoteDatabase;
 
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
 
@@ -140,31 +121,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
-//            System.out.println("get from data base:"+_content);
             et_title.setText(_title);
-//            Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
-//            Matcher m = p.matcher(_content);
-//            SpannableString ss = new SpannableString(_content);
-//            while(m.find()) {
-//                Log.d("RGX", m.group());
-//                String tagPath = m.group();
-//                String s = m.group();
-//                int start = m.start();
-//                int end = m.end();
-//                String path = s.replaceAll("\\<img src=\"|\" \\/\\>","").trim();
-//                Bitmap ori_b = BitmapFactory.decodeFile(path);
-//                ImageSpan span = new ImageSpan(ori_b);
-//                ss.setSpan(span, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            }
-//            et_content.setText(ss);
-//            myLinearGroup.addView(et_content);
-            myViewGroup.setContent(_content);
-//            myViewGroup.addViewToLinear(new EditText(NoteEditActivity.this.getApplicationContext()));
-//            myViewGroup.addViewToLinear(new EditText(NoteEditActivity.this.getApplicationContext()));
-//            myViewGroup.addViewToLinear(new EditText(NoteEditActivity.this.getApplicationContext()));
         } else {
-            _content = "";   // for judgement in noteModified(), _content will be null without this sentence
+            _content = "";
         }
+        myViewGroup.setContent(_content);
         old_title = _title;
         old_content = _content;
     }
@@ -268,15 +229,21 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             finish();
             return ;
         }
-        final AlertDialog alertdialog = new AlertDialog.Builder(this).setTitle("Go back???").setMessage("Are you sure???").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        final AlertDialog alertdialog = new AlertDialog.Builder(this).setTitle("警告").setMessage("是否保存修改的内容？").setPositiveButton("保存", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                saveNote();
                 finish();
             }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        }).setNeutralButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+            }
+        }).setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
             }
         }).create();
         alertdialog.show();
@@ -443,7 +410,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //        EditText et = (EditText) findViewById(R.id.et_new_content);
         if(requestCode == 0x111 && resultCode == RESULT_OK) {
             Uri originalUri = data.getData();
-            this.myViewGroup.addViewtoCursor(new LBImageView(originalUri.toString(),NoteEditActivity.this));
+//            System.out.println(UriParser.getPath(NoteEditActivity.this,originalUri));
+            this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
 //            Bitmap ori_bitmap = null;
 //            Bitmap ori_rbitmap = null;
 //            try {

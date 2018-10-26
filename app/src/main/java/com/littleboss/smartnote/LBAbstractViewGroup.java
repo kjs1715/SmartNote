@@ -114,6 +114,11 @@ public class LBAbstractViewGroup extends ScrollView {
             setEditViewListener((LBAbstractView)view);
             this.addViewToLinear(view);
         }
+        if(this.allLayout.getChildCount()==0)
+        {
+            LBTextView lbTextView=createEditText();
+            this.addViewtoCursor(lbTextView);
+        }
     }
 
     /**
@@ -177,6 +182,7 @@ public class LBAbstractViewGroup extends ScrollView {
         LBTextView LBTextView = new LBTextView(mContext);
         LBTextView.getEditText().setOnKeyListener(keyListener);
         LBTextView.getEditText().setOnFocusChangeListener(focusListener);
+        setEditViewListener(LBTextView);
         return LBTextView;
     }
 
@@ -387,39 +393,46 @@ public class LBAbstractViewGroup extends ScrollView {
     public void addViewtoCursor(LBAbstractView editView) {
         setEditViewListener(editView);
 
-        String lastEditStr = lastFocusView.getContent();
-        lastFocusView.reqFocus();
-        int cursorIndex = lastFocusView.getSelectionStart();
-        int lastEditIndex = allLayout.indexOfChild(lastFocusView);
-        if (cursorIndex >= 0) {
-            String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
+        if (lastFocusView != null)
+        {
+            String lastEditStr = lastFocusView.getContent();
+            lastFocusView.reqFocus();
+            int cursorIndex = lastFocusView.getSelectionStart();
+            int lastEditIndex = allLayout.indexOfChild(lastFocusView);
+            if (cursorIndex >= 0) {
+                String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
 
-            if (lastEditStr.length() == 0 || editStr1.length() == 0) {
-                // 如果EditText为空，或者光标已经顶在了editText的最前面，则直接插入组件，并且EditText下移即可
-                addEditViewAtIndexAnimation(lastEditIndex, editView);
-            } else {
-                // 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
-                lastFocusView.setText(editStr1);
-                String editStr2 = lastEditStr.substring(cursorIndex).trim();
-                if (allLayout.getChildCount() - 1 == lastEditIndex
-                        || editStr2.length() > 0) {
-                    addEditTextAtIndex(lastEditIndex + 1, editStr2);
+                if (lastEditStr.length() == 0 || editStr1.length() == 0) {
+                    // 如果EditText为空，或者光标已经顶在了editText的最前面，则直接插入组件，并且EditText下移即可
+                    addEditViewAtIndexAnimation(lastEditIndex, editView);
+                } else {
+                    // 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
+                    lastFocusView.setText(editStr1);
+                    String editStr2 = lastEditStr.substring(cursorIndex).trim();
+                    if (allLayout.getChildCount() - 1 == lastEditIndex
+                            || editStr2.length() > 0) {
+                        addEditTextAtIndex(lastEditIndex + 1, editStr2);
+                    }
+
+                    addEditViewAtIndexAnimation(lastEditIndex + 1, editView);
+                    lastFocusView.reqFocus();
+                    lastFocusView.setSelection(lastFocusView.getContent().length(), lastFocusView.getContent().length());
                 }
-
-                addEditViewAtIndexAnimation(lastEditIndex + 1, editView);
-                lastFocusView.reqFocus();
-                lastFocusView.setSelection(lastFocusView.getContent().length(), lastFocusView.getContent().length());
-            }
-            if (allLayout.indexOfChild(lastFocusView) >= allLayout.getChildCount() - 1) {
+                if (allLayout.indexOfChild(lastFocusView) >= allLayout.getChildCount() - 1) {
+                    srollToBottom();
+                }
+            } else {
+                //出现失去焦点的情况，默认添加到最后面
+                addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
                 srollToBottom();
             }
-        } else {
-            //出现失去焦点的情况，默认添加到最后面
+            hideKeyBoard();
+        }
+        else
+        {
             addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
             srollToBottom();
         }
-
-        hideKeyBoard();
     }
 
     void deleteView(int position)
