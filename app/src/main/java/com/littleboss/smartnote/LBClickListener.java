@@ -17,4 +17,11 @@ public interface LBClickListener {
      * @param widget
      */
     void onContentClick(View v, View widget);
+
+    /**
+     * 组件的长按事件
+     * @param v
+     * @param widget
+     */
+    void onContentLongClick(View v, View widget);
 }

@@ -82,7 +82,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private NoteDatabase noteDatabase;
 
     private LBAbstractViewGroup myViewGroup;
-    private LBSimpleViewGroup mySimpleGroup;
     private ScrollView myScrollGroup;
     private LinearLayout myLinearGroup;
 
@@ -138,7 +137,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //        myViewGroup=new LBAbstractViewGroup(NoteEditActivity.this.getApplicationContext(),(LinearLayout) findViewById(R.id.linear_in_edit));
         myViewGroup=findViewById(R.id.viewgroup);
 //        myLinearGroup=(LinearLayout) findViewById(R.id.sc_linear);
-//        mySimpleGroup=new LBSimpleViewGroup(myLinearGroup);
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);

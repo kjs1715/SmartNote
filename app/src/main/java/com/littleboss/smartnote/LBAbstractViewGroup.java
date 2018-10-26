@@ -109,6 +109,7 @@ public class LBAbstractViewGroup extends ScrollView {
                 ((LBTextView) view).getEditText().setOnKeyListener(keyListener);
             }
             view.setOnFocusChangeListener(focusListener);
+            setEditViewListener((LBAbstractView)view);
             this.addViewToLinear(view);
         }
     }
@@ -177,28 +178,40 @@ public class LBAbstractViewGroup extends ScrollView {
         return LBTextView;
     }
 
-    private void setEditViewListener(LBAbstractView editView) {
+    private void setEditViewListener(final LBAbstractView editView) {
         //删除按钮设置监听器
         editView.setOnClickViewListener(new LBClickListener() {
             @Override
             public void onBlankViewClick(View v, View widget) {
                 //点击组件下面的空白，如果当前组件和上下组件都不是文本框，则创建一个文本框
-                int childCount = allLayout.getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    if (allLayout.getChildAt(i) == widget) {
-                        View curView = allLayout.getChildAt(i);
-                        View nextView = allLayout.getChildAt(i + 1);
-                        if (!(curView instanceof LBTextView) && (nextView == null || !(nextView instanceof LBTextView))) {
-                            addEditTextAtIndex(i + 1, "");
-                            break;
-                        }
-                    }
+                int i=allLayout.indexOfChild(widget);
+                if(i<0)
+                    return;
+                View curView = allLayout.getChildAt(i);
+                View nextView = allLayout.getChildAt(i + 1);
+                if (!(curView instanceof LBTextView) && (nextView == null || !(nextView instanceof LBTextView))) {
+                    addEditTextAtIndex(i + 1, "");
                 }
             }
 
             @Override
             public void onContentClick(View v, View widget) {
+                LBAbstractView.ViewType viewType=editView.getViewType();
+                switch (viewType)
+                {
+                    case CONTENT:
+                        break;
+                }
+            }
 
+            @Override
+            public void onContentLongClick(View v, View widget) {
+                LBAbstractView.ViewType viewType=editView.getViewType();
+                switch (viewType)
+                {
+                    case CONTENT:
+                        break;
+                }
             }
         });
     }
@@ -350,26 +363,6 @@ public class LBAbstractViewGroup extends ScrollView {
         this.allLayout.addView(view);
     }
 
-    public void addViewToLinear(View view, int index)
-    {
-        this.allLayout.addView(view,index);
-    }
-
-    public void addViewToLinear(View view, int index, ViewGroup.LayoutParams layoutParams)
-    {
-        this.allLayout.addView(view,index,layoutParams);
-    }
-
-    public void addViewToLinear(View view, ViewGroup.LayoutParams layoutParams)
-    {
-        this.allLayout.addView(view,layoutParams);
-    }
-
-    public void addViewToLinear(View view, int height, int weight)
-    {
-        this.allLayout.addView(view,height,weight);
-    }
-
     public String toDataString()
     {
         StringBuffer stringBuffer=new StringBuffer("");
@@ -379,34 +372,10 @@ public class LBAbstractViewGroup extends ScrollView {
         }
         return stringBuffer.toString();
     }
-    void addView(LBAbstractView view, int position)
-    {
-        this.allLayout.addView((View)view,position);
-    }
-
-    void appendView(LBAbstractView view)
-    {
-        this.allLayout.addView((View)view);
-    }
 
     int getSize()
     {
         return this.allLayout.getChildCount();
-    }
-
-    LBAbstractView getView(int position)
-    {
-        return (LBAbstractView)(this.allLayout.getChildAt(position));
-    }
-
-    int getIndex(LinearLayout layout, View view)
-    {
-        for(int i=0;i<layout.getChildCount();i++)
-        {
-            if(layout.getChildAt(i).equals(view))
-                return i;
-        }
-        return -1;
     }
 
     /**
@@ -481,9 +450,5 @@ public class LBAbstractViewGroup extends ScrollView {
         allLayout.addView(midview1,position2);
         allLayout.removeViewAt(position1);
         allLayout.addView(midview2,position1);
-    }
-    void notifyDataChanged()
-    {
-
     }
 }

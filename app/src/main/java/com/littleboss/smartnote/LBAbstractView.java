@@ -9,7 +9,7 @@ public interface LBAbstractView {
     /**
      * 获取view类型
      */
-    Enum getViewType();
+    ViewType getViewType();
 
     /**
      * 获取文件本地路径
@@ -30,18 +30,12 @@ public interface LBAbstractView {
     void setOnClickViewListener(LBClickListener listener);
 
     /**
-     * 获取显示的文本
-     * @return
-     */
-    String getContent();
-
-    /**
      * 通过文本设置内容
      */
     void setContent(String s);
 
     //这里定个了多个组件类型
-    enum Type{
+    enum ViewType{
         IMAGE,FILE,VOICE,LOCATION,CONTENT,TITLE,UNKOWN
     }
 }
