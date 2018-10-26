@@ -67,10 +67,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private LinearLayout myLinearGroup;
 
     public void dealString(String result) {
-        ////
 //        EditText et_content = (EditText) findViewById(R.id.et_new_content);
 //        et_content.setText(et_content.getText() + result);
-        //TODO deadString
     }
 
     public void show(Dialog dialog) {
@@ -349,6 +347,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 break;
             case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
+                AudioFetcher.startRecording();
                 AudioInterface.listen();
                 break;
             case 3:
@@ -410,61 +409,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //        EditText et = (EditText) findViewById(R.id.et_new_content);
         if(requestCode == 0x111 && resultCode == RESULT_OK) {
             Uri originalUri = data.getData();
-//            System.out.println(UriParser.getPath(NoteEditActivity.this,originalUri));
             this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
-//            Bitmap ori_bitmap = null;
-//            Bitmap ori_rbitmap = null;
-//            try {
-//                ori_bitmap = BitmapFactory.decodeStream(resolver.openInputStream(originalUri));
-//                ori_rbitmap = ImageUtils.resizeImage(ori_bitmap, 0);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            String sdStatus = Environment.getExternalStorageState();
-//            if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
-//                Log.i("Testfile", "Can`t use sdcard");
-//            }
-//
-//            String name = Calendar.getInstance(Locale.CHINA).getTimeInMillis() + ".jpg";
-//            FileOutputStream fout = null;
-//            File rootfile = Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS);
-//            String tempFilePath = rootfile.getPath() + File.separator + "test" + File.separator;
-//            File tempFile = new File(tempFilePath);
-//            if(!tempFile.exists()) {
-//                tempFile.mkdirs();
-//            } else {
-//                Log.i("FilePath", "tmpfile exists");
-//            }
-//
 //            // TODO: 08/10/2018 Change a filepath to save the image
-//            String filename = rootfile.getPath() + File.separator + "test" + File.separator + name;
-//            try {
-//                fout = new FileOutputStream(filename);
-//                ori_rbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    fout.flush();
-//                    fout.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            String myPath = filename;
-//            String tagPath = "<img src=\"" + filename + "\" " + "/>";
-//            Log.w(myPath, filename);
-//            Toast.makeText(this, myPath, Toast.LENGTH_SHORT);
-//            SpannableString span_str = new SpannableString(tagPath);
-//            Bitmap my_bitmap = BitmapFactory.decodeFile(myPath);
-//            Bitmap my_rbitmap = ImageUtils.resizeImage(my_bitmap, 0);
-//            ImageSpan span = new ImageSpan(my_rbitmap);
-//            span_str.setSpan(span, 0, tagPath.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            Editable ed = et.getText();
-//            int start = et.getSelectionStart();
-//            ed.insert(start, span_str);
-//            et.setText((CharSequence) ed);
-//            et.setSelection(start + span_str.length());
         }
 //        // TODO: 08/10/2018 Need to complete camera part
     }

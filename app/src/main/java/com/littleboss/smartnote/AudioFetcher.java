@@ -1,9 +1,6 @@
 package com.littleboss.smartnote;
 
-import android.content.Context;
 import android.media.MediaRecorder;
-import android.os.Environment;
-import android.provider.MediaStore;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
