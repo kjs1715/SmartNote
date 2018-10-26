@@ -2,9 +2,6 @@ package com.littleboss.smartnote;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -16,11 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LBAbstractViewGroup extends ScrollView {
     public static final String KEY_TITLE = "title";
@@ -66,9 +59,11 @@ public class LBAbstractViewGroup extends ScrollView {
 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                System.out.println(String.format("onKey: keyCode=%d, event",keyCode)+event);
                 if (event.getAction() == KeyEvent.ACTION_DOWN
                         && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
                     LBTextView LBTextView = (LBTextView) v.getParent().getParent();
+//                    System.out.println("onBackspacePress: TextView="+LBTextView.getText());
                     onBackspacePress(LBTextView);
                 }
                 return false;
@@ -101,50 +96,21 @@ public class LBAbstractViewGroup extends ScrollView {
         }
     }
 
-    List<String> parse(String dataString)
-    {
-        LinkedList<String> linkedList=new LinkedList<>();
-        Pattern pattern=Pattern.compile("<([^<>]+)>([\\s\\S]*?)</([^<>]+)>");
-        Matcher matcher=pattern.matcher(dataString);
-        while(matcher.find())
-        {
-            linkedList.add(matcher.group(0));
-        }
-        return linkedList;
-    }
-
     public void setContent(String dataString)
     {
-        List<String> labels=parse(dataString);
+        List<String> labels=DataStringParser.parse(dataString);
         this.removeAll();
         for(String label:labels)
         {
-            this.addViewToLinear((View)parseLabel(label));
+            View view=(View)DataStringParser.parseLabel(label,this.mContext);
+            if(view instanceof LBTextView)
+            {
+//                System.out.println("it is an LBTextView");
+                ((LBTextView) view).getEditText().setOnKeyListener(keyListener);
+            }
+            view.setOnFocusChangeListener(focusListener);
+            this.addViewToLinear(view);
         }
-    }
-
-    LBAbstractView parseLabel(String label)
-    {
-        Pattern pattern=Pattern.compile("<([^<>]+)>([\\s\\S]*?)</([^<>]+)>");
-        Matcher matcher=pattern.matcher(label);
-        String type="",content="";
-        if(matcher.find())
-        {
-            type=matcher.group(1);
-            content=matcher.group(2);
-        }
-        if(type.equals("text"))
-        {
-            LBTextView lbTextView=new LBTextView(content,this.mContext);
-            return lbTextView;
-        }
-        //TODO: add other kinds of views
-        return new LBTextView(label,this.mContext);
-    }
-
-    public void setAllLayout(LinearLayout linearLayout)
-    {
-        this.allLayout=linearLayout;
     }
 
     /**
@@ -364,46 +330,7 @@ public class LBAbstractViewGroup extends ScrollView {
         imm.showSoftInput(view, 0);
     }
 
-    /**
-     * 插入一个编辑组件,根据焦点的不同而位置不同
-     */
-    public void insertEditView(LBAbstractView editView) {
-        setEditViewListener(editView);
 
-        String lastEditStr = lastFocusView.getContent();
-        lastFocusView.reqFocus();
-        int cursorIndex = lastFocusView.getSelectionStart();
-        int lastEditIndex = allLayout.indexOfChild(lastFocusView);
-        if (cursorIndex >= 0) {
-            String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
-
-            if (lastEditStr.length() == 0 || editStr1.length() == 0) {
-                // 如果EditText为空，或者光标已经顶在了editText的最前面，则直接插入组件，并且EditText下移即可
-                addEditViewAtIndexAnimation(lastEditIndex, editView);
-            } else {
-                // 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
-                lastFocusView.setText(editStr1);
-                String editStr2 = lastEditStr.substring(cursorIndex).trim();
-                if (allLayout.getChildCount() - 1 == lastEditIndex
-                        || editStr2.length() > 0) {
-                    addEditTextAtIndex(lastEditIndex + 1, editStr2);
-                }
-
-                addEditViewAtIndexAnimation(lastEditIndex + 1, editView);
-                lastFocusView.reqFocus();
-                lastFocusView.setSelection(lastFocusView.getContent().length(), lastFocusView.getContent().length());
-            }
-            if (allLayout.indexOfChild(lastFocusView) >= allLayout.getChildCount() - 1) {
-                srollToBottom();
-            }
-        } else {
-            //出现失去焦点的情况，默认添加到最后面
-            addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
-            srollToBottom();
-        }
-
-        hideKeyBoard();
-    }
 
     /**
      * 获取全部数据集合
@@ -482,9 +409,45 @@ public class LBAbstractViewGroup extends ScrollView {
         return -1;
     }
 
-    void addViewToCursor(LBAbstractView view)
-    {
-        this.allLayout.addView((View)view, getIndex(allLayout,(View)view));
+    /**
+     * 插入一个编辑组件,根据焦点的不同而位置不同
+     */
+    public void addViewtoCursor(LBAbstractView editView) {
+        setEditViewListener(editView);
+
+        String lastEditStr = lastFocusView.getContent();
+        lastFocusView.reqFocus();
+        int cursorIndex = lastFocusView.getSelectionStart();
+        int lastEditIndex = allLayout.indexOfChild(lastFocusView);
+        if (cursorIndex >= 0) {
+            String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
+
+            if (lastEditStr.length() == 0 || editStr1.length() == 0) {
+                // 如果EditText为空，或者光标已经顶在了editText的最前面，则直接插入组件，并且EditText下移即可
+                addEditViewAtIndexAnimation(lastEditIndex, editView);
+            } else {
+                // 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
+                lastFocusView.setText(editStr1);
+                String editStr2 = lastEditStr.substring(cursorIndex).trim();
+                if (allLayout.getChildCount() - 1 == lastEditIndex
+                        || editStr2.length() > 0) {
+                    addEditTextAtIndex(lastEditIndex + 1, editStr2);
+                }
+
+                addEditViewAtIndexAnimation(lastEditIndex + 1, editView);
+                lastFocusView.reqFocus();
+                lastFocusView.setSelection(lastFocusView.getContent().length(), lastFocusView.getContent().length());
+            }
+            if (allLayout.indexOfChild(lastFocusView) >= allLayout.getChildCount() - 1) {
+                srollToBottom();
+            }
+        } else {
+            //出现失去焦点的情况，默认添加到最后面
+            addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
+            srollToBottom();
+        }
+
+        hideKeyBoard();
     }
 
     void deleteView(int position)

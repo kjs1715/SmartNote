@@ -142,7 +142,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
-            System.out.println("get from data base:"+_content);
+//            System.out.println("get from data base:"+_content);
             et_title.setText(_title);
 //            Pattern p = Pattern.compile("\\<img src=\".*?\" \\/\\>");
 //            Matcher m = p.matcher(_content);

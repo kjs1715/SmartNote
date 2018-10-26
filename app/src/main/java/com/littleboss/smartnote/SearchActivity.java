@@ -115,7 +115,6 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onResume()
     {
-        System.out.println("OnResume");
         new Thread(new Runnable(){
             @Override
             public void run()
