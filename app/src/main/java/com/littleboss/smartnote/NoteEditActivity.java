@@ -439,10 +439,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        ContentResolver resolver = getContentResolver();
+        ContentResolver resolver = getContentResolver();
 //        EditText et = (EditText) findViewById(R.id.et_new_content);
-//        if(requestCode == 0x111 && resultCode == RESULT_OK) {
-//            Uri originalUri = data.getData();
+        if(requestCode == 0x111 && resultCode == RESULT_OK) {
+            Uri originalUri = data.getData();
+            this.myViewGroup.addViewtoCursor(new LBImageView(originalUri.toString(),NoteEditActivity.this));
 //            Bitmap ori_bitmap = null;
 //            Bitmap ori_rbitmap = null;
 //            try {
@@ -496,7 +497,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 //            ed.insert(start, span_str);
 //            et.setText((CharSequence) ed);
 //            et.setSelection(start + span_str.length());
-//        }
+        }
 //        // TODO: 08/10/2018 Need to complete camera part
     }
 

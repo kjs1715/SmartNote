@@ -6,6 +6,7 @@
 public class 子类名称 extends FrameLayout implements LBAbstractView {
     private Context context;
     private 内容类名 contentView;
+    private View blankView;
     private LayoutInflater inflater;
     private LBClickListener clickListener;
 
@@ -27,27 +28,32 @@ public class 子类名称 extends FrameLayout implements LBAbstractView {
 
     public void init() {
         contentView = this.findViewById(R.id.子类的layout名称);
-        contentView.setSingleLine(false);
+        blankView = findViewById(R.id.blank_view);
         contentView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("editText.click");
                 if(clickListener != null)
                     clickListener.onContentClick(view, 子类名称.this);
             }
         });
-        findViewById(R.id.布局文件中空白view的名字).setOnClickListener( new OnClickListener() {
+        contentView.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(clickListener != null)
+                    clickListener.onContentLongClick(view, 子类名称.this);
+                return false;
+            }
+        });
+        blankView.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("blank_view.click");
                 if(clickListener != null)
                     clickListener.onBlankViewClick(view, 子类名称.this);
             }
         });
-        findViewById(R.id.blank_view).setOnLongClickListener(new OnLongClickListener() {
+        blankView.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                System.out.println("blank_view.longclick");
                 if(clickListener != null)
                     clickListener.onContentLongClick(view, 子类名称.this);
                 return true;
@@ -56,7 +62,6 @@ public class 子类名称 extends FrameLayout implements LBAbstractView {
         this.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                System.out.println("FrameLayout.longclick");
                 if(clickListener != null)
                     clickListener.onContentLongClick(view, 子类名称.this);
                 return true;

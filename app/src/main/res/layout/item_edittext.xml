@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:gravity="top|start"
-        android:hint="this is an edittext"
+        android:hint="请输入文本"
         android:inputType="text"
         android:minHeight="25dp"
         android:textColor="@color/text_color"

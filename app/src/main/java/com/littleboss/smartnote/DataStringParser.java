@@ -23,6 +23,11 @@ public class DataStringParser {
             LBTextView lbTextView=new LBTextView(content,context);
             return lbTextView;
         }
+        else if(type.equals("image"))
+        {
+            LBImageView view=new LBImageView(content,context);
+            return view;
+        }
         //TODO: add other kinds of views
         else
         {

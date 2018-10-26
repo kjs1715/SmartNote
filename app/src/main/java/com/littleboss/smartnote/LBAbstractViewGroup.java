@@ -75,6 +75,7 @@ public class LBAbstractViewGroup extends ScrollView {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                System.out.println("lastFocusView changed to"+v.toString()+new Boolean(hasFocus).toString());
                 if (hasFocus) {
                     lastFocusView = (LBTextView) v.getParent().getParent();
                 }
@@ -107,8 +108,9 @@ public class LBAbstractViewGroup extends ScrollView {
             {
 //                System.out.println("it is an LBTextView");
                 ((LBTextView) view).getEditText().setOnKeyListener(keyListener);
+                ((LBTextView) view).getEditText().setOnFocusChangeListener(focusListener);
             }
-            view.setOnFocusChangeListener(focusListener);
+            System.out.println("added focusListener to"+view.toString());
             setEditViewListener((LBAbstractView)view);
             this.addViewToLinear(view);
         }
@@ -199,7 +201,8 @@ public class LBAbstractViewGroup extends ScrollView {
                 LBAbstractView.ViewType viewType=editView.getViewType();
                 switch (viewType)
                 {
-                    case CONTENT:
+                    case IMAGE:
+                        //TODO ((LBImageView)editView).查看大图();
                         break;
                 }
             }
@@ -209,8 +212,8 @@ public class LBAbstractViewGroup extends ScrollView {
                 LBAbstractView.ViewType viewType=editView.getViewType();
                 switch (viewType)
                 {
-                    case CONTENT:
-                        break;
+                    case IMAGE:
+                        ((LBImageView)editView).imageDialog();
                 }
             }
         });
@@ -358,7 +361,7 @@ public class LBAbstractViewGroup extends ScrollView {
         return dataList;
     }
 
-    public void addViewToLinear(View view)
+    private void addViewToLinear(View view)
     {
         this.allLayout.addView(view);
     }
