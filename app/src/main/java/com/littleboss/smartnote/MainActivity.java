@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity{
     MyAdapter adapter;
 
     private final int WRITE_EXTERNAL_STORAGE_ID = 0;
-
+    private final int RECORD_AUDIO_ID = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +100,15 @@ public class MainActivity extends AppCompatActivity{
                     WRITE_EXTERNAL_STORAGE_ID
             );
         }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {Manifest.permission.RECORD_AUDIO},
+                    RECORD_AUDIO_ID
+            );
+        }
+
 
         handler=new Handler();
 
@@ -431,6 +440,11 @@ public class MainActivity extends AppCompatActivity{
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE_ID: {
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    System.exit(0);
+                }
+            }
+            case RECORD_AUDIO_ID: {
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     System.exit(0);
                 }

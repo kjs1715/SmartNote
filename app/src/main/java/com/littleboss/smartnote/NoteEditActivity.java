@@ -2,7 +2,7 @@ package com.littleboss.smartnote;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,13 +28,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
@@ -69,6 +65,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private LBAbstractViewGroup myViewGroup;
 
     private Uri imageTakeUri;
+    private boolean isRecording=false;
 
     public void dealString(String result) {
 //        EditText et_content = (EditText) findViewById(R.id.et_new_content);
@@ -99,9 +96,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initScrollButton();
         initEditText();
 
-        // must set client-activity first
-        SpeechUtility.createUtility(this, SpeechConstant.APPID +getString(R.string.APPID));
-        AudioInterface.setEnvActivity(this);
     }
 
     private void initScrollButton() {
@@ -352,8 +346,21 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 break;
             case 1:
                 Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
-                AudioFetcher.startRecording();
-                AudioInterface.listen();
+                if(!isRecording)
+                {
+                    AudioFetcher.startRecording();
+                    isRecording=true;
+                }
+                else
+                {
+                    String latestAudioLocation=AudioFetcher.stopRecording();
+                    isRecording=false;
+                    myViewGroup.addViewtoCursor(new LBAudioView(
+                            latestAudioLocation,
+                            NoteEditActivity.this,
+                            null
+                    ));
+                }
                 break;
             case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
@@ -394,18 +401,31 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         startActivityForResult(albumIntent, 0x101);
                         break;
                     case 1:
-                        // Open the system camera
-                        Intent intent=new Intent();
-                        // 指定开启系统相机的Action
-                        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.addCategory(Intent.CATEGORY_DEFAULT);
-                        String filepath="/storage/emulated/0/DCIM/Camera/IMG_"+new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())+".jpg";
-                        File file=new File(filepath);
-                        // 把文件地址转换成Uri格式
-                        imageTakeUri=Uri.fromFile(file);
-                        // 设置系统相机拍摄照片完成后图片文件的存放地址
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageTakeUri);
-                        startActivityForResult(intent,0x102);
+//                        // Open the system camera
+//                        Intent intent=new Intent();
+//                        // 指定开启系统相机的Action
+//                        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+//                        String filepath="/storage/emulated/0/DCIM/Camera/IMG_"+new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())+".jpg";
+//                        File file=new File(filepath);
+//                        // 把文件地址转换成Uri格式
+//                        imageTakeUri=Uri.fromFile(file);
+//                        // 设置系统相机拍摄照片完成后图片文件的存放地址
+//                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageTakeUri);
+//                        startActivityForResult(intent,0x102);
+
+//                        if(checkSelfPermission(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+//                            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},200);
+//                            return;
+//                        }
+//                        Intent intent = new Intent();
+//                        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        File imagePath = new File(Context.getFilesDir(), "images");
+//                        File newFile = new File(imagePath, "test.jpg");
+//                        Uri contentUri = FileProvider.getUriForFile(NoteEditActivity.this, "com.littleboss.smartnote", newFile);
+//                        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+//                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                        startActivityForResult(intent,200);
                         break;
                     default:
                         break;

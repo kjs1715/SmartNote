@@ -33,6 +33,11 @@ public class DataStringParser {
             LBVideoView view=new LBVideoView(content,context);
             return view;
         }
+        else if(type.equals("audio"))
+        {
+            LBAudioView view=new LBAudioView(content,context);
+            return view;
+        }
         //TODO: add other kinds of views
         else
         {
