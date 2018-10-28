@@ -14,7 +14,6 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
@@ -47,7 +46,8 @@
         <activity
             android:name=".NoteEditActivity"
             android:theme="@style/Theme" />
-        <activity android:name=".LBVideoActivity"/>
+        <activity android:name=".LBVideoActivity" />
+        <activity android:name=".LBImageActivity"></activity>
     </application>
 
 </manifest>

@@ -201,14 +201,17 @@ public class LBAbstractViewGroup extends ScrollView {
             @Override
             public void onContentClick(View v, View widget) {
                 LBAbstractView.ViewType viewType=editView.getViewType();
+                Intent intent;
                 switch (viewType)
                 {
                     case IMAGE:
-                        //TODO ((LBImageView)editView).查看大图();
+                        intent = new Intent(getContext(), LBImageActivity.class);
+                        intent.putExtra("filepath",editView.getFilePath());
+                        getContext().startActivity(intent);
                         break;
                     case VIDEO:
-                        Intent intent = new Intent(getContext(), LBVideoActivity.class);
-                        intent.putExtra("filepath",((LBVideoView)editView).getFilePath());
+                        intent = new Intent(getContext(), LBVideoActivity.class);
+                        intent.putExtra("filepath",editView.getFilePath());
                         getContext().startActivity(intent);
                         break;
                 }
