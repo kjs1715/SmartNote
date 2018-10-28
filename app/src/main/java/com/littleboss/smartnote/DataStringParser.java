@@ -28,6 +28,11 @@ public class DataStringParser {
             LBImageView view=new LBImageView(content,context);
             return view;
         }
+        else if(type.equals("video"))
+        {
+            LBVideoView view=new LBVideoView(content,context);
+            return view;
+        }
         //TODO: add other kinds of views
         else
         {

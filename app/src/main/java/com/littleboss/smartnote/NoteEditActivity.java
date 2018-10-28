@@ -113,9 +113,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     private void initEditText() {
-//        myViewGroup=new LBAbstractViewGroup(NoteEditActivity.this.getApplicationContext(),(LinearLayout) findViewById(R.id.linear_in_edit));
         myViewGroup=findViewById(R.id.viewgroup);
-//        myLinearGroup=(LinearLayout) findViewById(R.id.sc_linear);
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
@@ -185,6 +183,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         menuObjects.add(like);
         menuObjects.add(addFr);
         menuObjects.add(addFav);
+
         return menuObjects;
     }
 
@@ -286,13 +285,16 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         mToolbar.setNavigationIcon(R.drawable.btn_back);
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolBarTextView.setText("NoteEditActivity");
+        mToolBarTextView.setText("编辑笔记");
+        mToolBarTextView.setTextColor(getResources().getColor(R.color.white));
+
     }
 
     private void initBottombar() {
@@ -306,6 +308,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         final BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.navigation_view);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED_NO_TITLE)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_DEFAULT);
+        bottomNavigationBar.setBarBackgroundColor(R.color.colorPrimaryDark);
+        bottomNavigationBar.setInActiveColor(R.color.colorPrimary);
+        bottomNavigationBar.setActiveColor(R.color.white);
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener() {
             @Override
             public void onTabSelected(int position) {
@@ -322,8 +327,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 chooseTab(position);
             }
         });
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
-                .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
                 .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
                 .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
                 .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
@@ -339,21 +343,19 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          */
         switch(pos) {
             case 0:
-                Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
+                requestPermissionsForPhoto();
                 break;
             case 1:
-                Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
-                requestPermissions();
-                break;
-            case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
                 AudioFetcher.startRecording();
                 AudioInterface.listen();
                 break;
-            case 3:
+            case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
+                requestPermissionsForVideo();
                 break;
-            case 4:
+            case 3:
                 Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
                 saveNote();
                 finish();
@@ -384,6 +386,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
                         albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
                         albumIntent.setType("image/*");
+//                        albumIntent.setType("video/*");
                         startActivityForResult(albumIntent, 0x111);
                         break;
                     case 1:
@@ -403,6 +406,40 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         alb.show();
     }
 
+    private void onVideoButtonClicked() {
+        AlertDialog.Builder alb = new AlertDialog.Builder(NoteEditActivity.this);
+        alb.setTitle("获取录像方式");
+        final String[] methods = { "从图库导入", "打开摄像机" };
+        alb.setItems(methods, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch(i) {
+                    case 0:
+                        // Open an image from system album
+
+                        Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
+//                        albumIntent.setType("image/*");
+                        albumIntent.setType("video/*");
+                        startActivityForResult(albumIntent, 0x112);
+                        break;
+                    case 1:
+                        // TODO Open the system camera
+//                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
+//
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "No camera", Toast.LENGTH_SHORT).show();
+//                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        alb.show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         ContentResolver resolver = getContentResolver();
@@ -412,6 +449,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
 //            // TODO: 08/10/2018 Change a filepath to save the image
         }
+        else if(requestCode == 0x112 && resultCode == RESULT_OK) {
+            Uri originalUri = data.getData();
+            this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
+//            // TODO: 08/10/2018 Change a filepath to save the image
+        }
 //        // TODO: 08/10/2018 Need to complete camera part
     }
 
@@ -419,7 +461,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     }
 
-    private void requestPermissions() {
+    private void requestPermissionsForPhoto() {
         /**
          * @Author: Buzz Kim
          * @Date: 08/10/2018 8:01 PM
@@ -430,6 +472,20 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         } else {
             onPhotoButtonClicked();
+        }
+    }
+
+    private void requestPermissionsForVideo() {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 08/10/2018 8:01 PM
+         * @param
+         * @Description: Request for SDcard permissions
+         */
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        } else {
+            onVideoButtonClicked();
         }
     }
 

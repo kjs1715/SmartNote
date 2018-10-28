@@ -2,6 +2,7 @@ package com.littleboss.smartnote;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -59,11 +60,9 @@ public class LBAbstractViewGroup extends ScrollView {
 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                System.out.println(String.format("onKey: keyCode=%d, event",keyCode)+event);
                 if (event.getAction() == KeyEvent.ACTION_DOWN
                         && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
                     LBTextView LBTextView = (LBTextView) v.getParent().getParent();
-//                    System.out.println("onBackspacePress: TextView="+LBTextView.getText());
                     onBackspacePress(LBTextView);
                 }
                 return false;
@@ -75,7 +74,6 @@ public class LBAbstractViewGroup extends ScrollView {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                System.out.println("lastFocusView changed to"+v.toString()+new Boolean(hasFocus).toString());
                 if (hasFocus) {
                     lastFocusView = (LBTextView) v.getParent().getParent();
                 }
@@ -106,11 +104,9 @@ public class LBAbstractViewGroup extends ScrollView {
             View view=(View)DataStringParser.parseLabel(label,this.mContext);
             if(view instanceof LBTextView)
             {
-//                System.out.println("it is an LBTextView");
                 ((LBTextView) view).getEditText().setOnKeyListener(keyListener);
                 ((LBTextView) view).getEditText().setOnFocusChangeListener(focusListener);
             }
-            System.out.println("added focusListener to"+view.toString());
             setEditViewListener((LBAbstractView)view);
             this.addViewToLinear(view);
         }
@@ -210,6 +206,11 @@ public class LBAbstractViewGroup extends ScrollView {
                     case IMAGE:
                         //TODO ((LBImageView)editView).查看大图();
                         break;
+                    case VIDEO:
+                        Intent intent = new Intent(getContext(), LBVideoActivity.class);
+                        intent.putExtra("filepath",((LBVideoView)editView).getFilePath());
+                        getContext().startActivity(intent);
+                        break;
                 }
             }
 
@@ -220,6 +221,10 @@ public class LBAbstractViewGroup extends ScrollView {
                 {
                     case IMAGE:
                         ((LBImageView)editView).imageDialog();
+                        break;
+                    case VIDEO:
+                        ((LBVideoView)editView).imageDialog();
+                        break;
                 }
             }
         });

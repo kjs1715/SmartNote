@@ -231,6 +231,11 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         }
+        else if(id==R.id.videoitem)
+        {
+            Intent intent = new Intent(MainActivity.this, LBVideoActivity.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
 

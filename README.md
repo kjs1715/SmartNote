@@ -80,7 +80,7 @@ public class 子类名称 extends FrameLayout implements LBAbstractView {
 
     @Override
     public ViewType getViewType() {
-        return Type.子类Type名称;
+        return ViewType.子类Type名称;
     }
 
     @Override

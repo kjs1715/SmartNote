@@ -36,6 +36,6 @@ public interface LBAbstractView {
 
     //这里定个了多个组件类型
     enum ViewType{
-        IMAGE,FILE,VOICE,LOCATION,CONTENT,TITLE,UNKOWN
+        IMAGE,FILE,VOICE,VIDEO,LOCATION,CONTENT,TITLE,UNKOWN
     }
 }

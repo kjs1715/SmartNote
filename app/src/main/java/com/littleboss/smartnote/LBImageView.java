@@ -21,18 +21,18 @@ import com.littleboss.smartnote.Utils.ImageUtils;
 import java.io.FileNotFoundException;
 
 public class LBImageView extends FrameLayout implements LBAbstractView {
-    private Context context;
-    private LayoutInflater inflater;
-    private ImageView imageView;
-    private View blankView;
-    private String filePath;
-    private int SCREEN_WIDTH;
-    private int SCREEN_HEIGHT;
-    private Bitmap image;
-    private LBClickListener clickListener;
-    private int width;
-    private int height;
-    private int resizeFlag;
+    protected Context context;
+    protected LayoutInflater inflater;
+    protected ImageView imageView;
+    protected View blankView;
+    protected String filePath;
+    protected int SCREEN_WIDTH;
+    protected int SCREEN_HEIGHT;
+    protected Bitmap image;
+    protected LBClickListener clickListener;
+    protected int width;
+    protected int height;
+    protected int resizeFlag;
 
     public LBImageView(Context context) {
         this(context, null);
@@ -116,7 +116,6 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         try {
             System.out.println(filePath);
             this.image = BitmapFactory.decodeFile(this.filePath);
-            System.out.println("Successfully decode");
         } catch (Exception e) {
             e.printStackTrace();
         }

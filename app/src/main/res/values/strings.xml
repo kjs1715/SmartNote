@@ -5,4 +5,5 @@
     <string name="search">搜索笔记</string>
     <string name="searchButtonText">搜索</string>
     <string name="APPID">=5bacbfa8</string>
+    <string name="title_activity_lbvideo">LBVideoActivity</string>
 </resources>
