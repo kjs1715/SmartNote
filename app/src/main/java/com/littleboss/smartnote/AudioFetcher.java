@@ -34,7 +34,7 @@ public class AudioFetcher {
     static private PullableSource mic() {
         return new PullableSource.Default(
                 new AudioRecordConfig.Default(
-                        MediaRecorder.AudioSource.MIC,
+                        MediaRecorder.AudioSource.VOICE_RECOGNITION,
                         AudioFormat.ENCODING_PCM_16BIT,
                         AudioFormat.CHANNEL_IN_MONO,
                         16000

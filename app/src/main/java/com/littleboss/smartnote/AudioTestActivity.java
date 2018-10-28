@@ -53,12 +53,19 @@ public class AudioTestActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                LBAudioView newAudioComponent = new LBAudioView(
+                        thisContext,
+                        latestAudioLocation
+                );
+                audioLayout.addView(newAudioComponent);
+                /*
                 audioLayout.addView(
                         new LBAudioView(
                                 thisContext,
                                 latestAudioLocation
                         )
                 );
+                */
             }
         });
 

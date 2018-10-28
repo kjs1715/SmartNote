@@ -9,15 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.microsoft.cognitiveservices.speech.Recognizer;
-import com.microsoft.cognitiveservices.speech.ResultReason;
-import com.microsoft.cognitiveservices.speech.SpeechConfig;
-import com.microsoft.cognitiveservices.speech.SpeechRecognitionEventArgs;
-import com.microsoft.cognitiveservices.speech.SpeechRecognizer;
-import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
-import com.microsoft.cognitiveservices.speech.util.EventHandler;
-
 import java.io.IOException;
+
 
 /**
  * 录音模块。
@@ -29,7 +22,7 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
     private EditText content;
     private String audioFilePath;
     private MediaPlayer mediaPlayer;
-    private SpeechRecognizer speechRecognizer;
+    private Activity activity;
     private void createPlayIconAndText() {
         playIcon = new ImageView(getContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
@@ -39,41 +32,7 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
         addView(playIcon);
         addView(content);
     }
-    private void startSpeechRecognizing() {
-        SpeechConfig config = SpeechConfig.fromSubscription(
-                "65b7cc0c702146d4a6e15b48e79cc0fa",
-                "westus"
-        );
-        //config.setSpeechRecognitionLanguage("zh-Hans");
-        AudioConfig audioInput = AudioConfig.fromWavFileInput(audioFilePath);
-        speechRecognizer = new SpeechRecognizer(config, audioInput);
 
-        speechRecognizer.recognizing.addEventListener(new EventHandler<SpeechRecognitionEventArgs>() {
-            @Override
-            public void onEvent(Object o, SpeechRecognitionEventArgs e) {
-                content.setText("Recognizing... " + e.getResult().getText());
-            }
-        });
-
-        speechRecognizer.recognized.addEventListener(new EventHandler<SpeechRecognitionEventArgs>() {
-            @Override
-            public void onEvent(Object o, SpeechRecognitionEventArgs e) {
-                if (e.getResult().getReason() == ResultReason.RecognizedSpeech) {
-                    content.setText(e.getResult().getText());
-                }
-                else if (e.getResult().getReason() == ResultReason.NoMatch) {
-                    content.setText("Failed recognizing...");
-                }
-            }
-        });
-
-        try {
-            speechRecognizer.startContinuousRecognitionAsync().get();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     private void addPlayIconClickListener() {
         playIcon.setOnClickListener(new OnClickListener() {
             @Override
@@ -101,17 +60,28 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
             }
         });
     }
+
+    public void setRecognizedText(String text) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                content.setText(text);
+            }
+        });
+    }
+
     public LBAudioView(Activity _context) {
         super(_context);
+        activity = _context;
         createPlayIconAndText();
     }
     public LBAudioView(Activity _context, String _audioFilePath) {
         super(_context);
+        activity = _context;
         createPlayIconAndText();
         audioFilePath = _audioFilePath;
         addPlayIconClickListener();
-        //startSpeechRecognizing();
-        content.setText(_audioFilePath);
+        new MSSpeechRecognizer().getRecognizedText(_audioFilePath, this);
     }
 
     /**
@@ -123,6 +93,7 @@ public class LBAudioView extends LinearLayout implements LBAbstractView {
      */
     public LBAudioView(Activity _context, String _audioFilePath, String text) {
         super(_context);
+        activity = _context;
         createPlayIconAndText();
         audioFilePath = _audioFilePath;
         addPlayIconClickListener();
