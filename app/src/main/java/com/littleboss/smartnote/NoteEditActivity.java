@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -43,7 +44,10 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
@@ -63,8 +67,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private NoteDatabase noteDatabase;
 
     private LBAbstractViewGroup myViewGroup;
-    private ScrollView myScrollGroup;
-    private LinearLayout myLinearGroup;
+
+    private Uri imageTakeUri;
 
     public void dealString(String result) {
 //        EditText et_content = (EditText) findViewById(R.id.et_new_content);
@@ -387,16 +391,21 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
                         albumIntent.setType("image/*");
 //                        albumIntent.setType("video/*");
-                        startActivityForResult(albumIntent, 0x111);
+                        startActivityForResult(albumIntent, 0x101);
                         break;
                     case 1:
                         // Open the system camera
-                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "No camera", Toast.LENGTH_SHORT).show();
-                        }
+                        Intent intent=new Intent();
+                        // 指定开启系统相机的Action
+                        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        String filepath="/storage/emulated/0/DCIM/Camera/IMG_"+new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())+".jpg";
+                        File file=new File(filepath);
+                        // 把文件地址转换成Uri格式
+                        imageTakeUri=Uri.fromFile(file);
+                        // 设置系统相机拍摄照片完成后图片文件的存放地址
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageTakeUri);
+                        startActivityForResult(intent,0x102);
                         break;
                     default:
                         break;
@@ -413,24 +422,28 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         alb.setItems(methods, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent;
                 switch(i) {
                     case 0:
                         // Open an image from system album
 
-                        Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                        albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
 //                        albumIntent.setType("image/*");
-                        albumIntent.setType("video/*");
-                        startActivityForResult(albumIntent, 0x112);
+                        intent.setType("video/*");
+                        startActivityForResult(intent, 0x201);
                         break;
                     case 1:
-                        // TODO Open the system camera
-//                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
-//
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "No camera", Toast.LENGTH_SHORT).show();
-//                        }
+//                         TODO Open the system camera
+                        intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        String filepath="/storage/emulated/0/DCIM/Camera/VID_"+new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())+".mp4";
+                        File file=new File(filepath);
+                        // 把文件地址转换成Uri格式
+                        Uri uri=Uri.fromFile(file);
+                        // 设置系统相机拍摄照片完成后图片文件的存放地址
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        startActivityForResult(intent,0x202);
                         break;
                     default:
                         break;
@@ -442,19 +455,25 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ContentResolver resolver = getContentResolver();
-//        EditText et = (EditText) findViewById(R.id.et_new_content);
-        if(requestCode == 0x111 && resultCode == RESULT_OK) {
-            Uri originalUri = data.getData();
-            this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
-//            // TODO: 08/10/2018 Change a filepath to save the image
+        System.out.println(data==null);
+        if(resultCode==RESULT_OK)
+        {
+            if(requestCode == 0x101) {
+                Uri originalUri = data.getData();
+                this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
+            }
+            else if(requestCode == 0x102) {
+                this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,imageTakeUri),NoteEditActivity.this));
+            }
+            else if(requestCode == 0x201) {
+                Uri originalUri = data.getData();
+                this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
+            }
+            else if(requestCode == 0x202) {
+                Uri originalUri = data.getData();
+                this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
+            }
         }
-        else if(requestCode == 0x112 && resultCode == RESULT_OK) {
-            Uri originalUri = data.getData();
-            this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
-//            // TODO: 08/10/2018 Change a filepath to save the image
-        }
-//        // TODO: 08/10/2018 Need to complete camera part
     }
 
     private void insertPic(Bitmap bitmap, final int index) {
@@ -532,13 +551,5 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 e.printStackTrace();
             }
         }
-    }
-
-    private void getImage() {
-        // TODO: 03/10/2018 Image getter
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, 0);
     }
 }

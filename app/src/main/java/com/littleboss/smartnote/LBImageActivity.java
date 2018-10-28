@@ -20,7 +20,7 @@ public class LBImageActivity extends AppCompatActivity {
 
     private void initView() {
         imageView = findViewById(R.id.bigimage);
-        String filepath = getIntent().getStringExtra("filepath");//获取视频路径
+        String filepath = getIntent().getStringExtra("filepath");
         try {
             this.image = BitmapFactory.decodeFile(filepath);
         } catch (Exception e) {

@@ -7,11 +7,6 @@ import android.net.Uri;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-/**
- * 需要注意的是我实验了.mp4,3gp和avi3种格式的视频，在5.1的真机和模拟器上avi格式都是只有声音没有影像，其他两种格式
- * 播放正常。
- */
-
 public class LBVideoActivity extends AppCompatActivity {
 
     private VideoView video;
