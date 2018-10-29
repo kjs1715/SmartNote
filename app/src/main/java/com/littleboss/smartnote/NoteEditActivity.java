@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -572,25 +573,32 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          * @Description: Save note into database
          *
          */
-        EditText et_title = (EditText) findViewById(R.id.et_new_title);
-//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
-        String title = et_title.getText().toString();
-//        String content = et_content.getText().toString();
-        String content = this.myViewGroup.toDataString();
 
-        if(newCreatedFlag) {
-            try {
-                noteDatabase.saveNoteByTitle("", title, content);
-            } catch (Exception e) {
-                e.printStackTrace();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                EditText et_title = (EditText) findViewById(R.id.et_new_title);
+//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+                String title = et_title.getText().toString();
+//        String content = et_content.getText().toString();
+                String content = myViewGroup.toDataString();
+
+                if(newCreatedFlag) {
+                    try {
+                        noteDatabase.saveNoteByTitle("", title, content);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        noteDatabase.saveNoteByTitle(_title, title, content);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        } else {
-            try {
-                noteDatabase.saveNoteByTitle(_title, title, content);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        }).start();
+
     }
 
     public void initKeyboardListener() {

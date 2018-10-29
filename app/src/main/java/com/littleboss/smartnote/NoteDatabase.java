@@ -106,13 +106,18 @@ public class NoteDatabase {
         if (!oldTitle.equals("")) {
             cursor = db.rawQuery("select * from notes where title = ?;", new String[] {oldTitle});
             if (cursor != null && cursor.getCount() > 0) {
-                cursor.moveToFirst();
+                //cursor.moveToFirst();
                 modify_time = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
-                db.execSQL("delete from notes where title = ?;", new String[] {oldTitle});
+                //db.execSQL("delete from notes where title = ?;", new String[] {oldTitle});
+                db.execSQL(
+                        "update notes set modify_time = ?, content = ? where title = ?;",
+                        new String[] {modify_time, content, oldTitle}
+                );
             }
             else {
                 throw new NoteNotExistException("Note whose title is \"" + oldTitle + "\" doesn't exist!");
             }
+            return;
         }
 
         String create_time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

@@ -69,6 +69,12 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         });
     }
 
+    /**
+     * 识别结束后的回调函数。
+     * 这类函数的ui操作必须放在ui线程执行。
+     *
+     * @param text the text
+     */
     public void setRecognizedText(final String text) {
         activity.runOnUiThread(new Runnable() {
             @Override
