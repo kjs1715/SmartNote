@@ -323,6 +323,8 @@ public class LBAbstractViewGroup extends ScrollView {
         for (int i = childCount - 1; i >= 0; i--) {
             View childAt = allLayout.getChildAt(i);
             if (childAt instanceof LBTextView) {
+//                String content = ((LBTextView) childAt).getContent();
+//                ((LBTextView) childAt).setFocusSelection(content.length());
                 ((LBTextView) childAt).reqFocus();
                 showKeyBoard(((LBTextView) childAt).getEditText());
                 return;
@@ -353,10 +355,11 @@ public class LBAbstractViewGroup extends ScrollView {
 
     public void showKeyBoard(EditText view) {
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        view.setSelection(0);
+        int clength = view.getText().toString().length();
+        view.setSelection(clength);
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);
-        view.requestFocus();
+//        view.requestFocus();
         imm.showSoftInput(view, 0);
     }
 

@@ -122,6 +122,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         myViewGroup.setContent(_content);
         old_title = _title;
         old_content = _content;
+        myViewGroup.setLastEditTextFocus();
+        if(et_title.getText().toString().equals("")) {
+            et_title.requestFocus();
+        }
     }
 
     /**

@@ -94,6 +94,8 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
         editText.setSelection(start,stop);
     }
 
+    public void setFocusSelection(int length) { editText.setSelection(length); }
+
     public void reqFocus(){
         editText.requestFocus();
     }
