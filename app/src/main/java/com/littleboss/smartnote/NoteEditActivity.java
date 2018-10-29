@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -270,6 +271,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         Toast.makeText(this, "Long clicked on position: " + position, Toast.LENGTH_SHORT).show();
     }
 
+
     private void initToolbar() {
         /**
          * @Author: Buzz Kim
@@ -333,6 +335,20 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
                 .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
                 .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
+
+//         Hide bottombar when keyboard is hiding
+        KeyboardChangeListener softKeyboardStateHelper = new KeyboardChangeListener(this);
+        softKeyboardStateHelper.setKeyBoardListener(new KeyboardChangeListener.KeyBoardListener() {
+            @Override
+            public void onKeyboardChange(boolean isShow, int keyboardHeight) {
+                if (isShow) {
+                    bottomNavigationBar.hide();
+                } else {
+                    //键盘的收起
+                    bottomNavigationBar.show();
+                }
+            }
+        });
     }
 
     private void chooseTab(int pos) {
@@ -575,5 +591,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 e.printStackTrace();
             }
         }
+    }
+
+    public void initKeyboardListener() {
+
     }
 }

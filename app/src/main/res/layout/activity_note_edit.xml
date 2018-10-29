@@ -50,7 +50,7 @@
             app:bnbBackgroundColor="@color/blue"
             app:bnbActiveColor="@color/white"
             app:bnbInactiveColor="@color/blue"
-            app:bnbMode="mode_fixed_no_title"/>
+            app:bnbMode="mode_fixed_no_title" />
     </ScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
