@@ -1,10 +1,8 @@
 package com.littleboss.smartnote;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+
 import android.content.Context;
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,27 +11,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -42,13 +31,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
 import com.littleboss.smartnote.Utils.DateUtils;
-
-import java.util.LinkedList;
 
 
 class ListData {
@@ -253,11 +239,6 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         }
-        else if(id==R.id.videoitem)
-        {
-            Intent intent = new Intent(MainActivity.this, LBVideoActivity.class);
-            startActivity(intent);
-        }
 
         return super.onOptionsItemSelected(item);
 
@@ -401,8 +382,8 @@ public class MainActivity extends AppCompatActivity{
 
             String modified = DateUtils.display(list.get(position).modifyDate);
             String created = DateUtils.display(list.get(position).createDate);
-            viewHolder.modifyDate.setText("created: " + modified);
-            viewHolder.createDate.setText("modified: " + created);
+            viewHolder.modifyDate.setText("上次修改: " + modified);
+            viewHolder.createDate.setText("创建时间: " + created);
 
             convertView.setOnLongClickListener(new onMyLongClick(position,list));
             convertView.setOnClickListener(new onMyClick(position,list));

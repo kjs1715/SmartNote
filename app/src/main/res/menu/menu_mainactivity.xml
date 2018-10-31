@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.jiaminglin.myapplication.MainActivity">
     <item
-        android:id="@+id/videoitem"
-        android:title="视频播放" />
-    <item
         android:id="@+id/searchitem"
         android:checkable="false"
         android:checked="false"

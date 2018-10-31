@@ -54,7 +54,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final SimpleAdapter myAdapter = new SimpleAdapter(SearchActivity.super.getApplicationContext(), listitem,
-                        R.layout.item_main, new String[]{"title"},new int[]{R.id.notetitle}){
+                        R.layout.item_search, new String[]{"title"},new int[]{R.id.notetitle}){
                 };
 
                 listView.setClickable(true);

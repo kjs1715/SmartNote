@@ -426,7 +426,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(context, "删除了图片", Toast.LENGTH_SHORT).show();
             }
-        }).setNegativeButton("不了不了", new DialogInterface.OnClickListener() {
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(context,"取消删除", Toast.LENGTH_SHORT).show();
