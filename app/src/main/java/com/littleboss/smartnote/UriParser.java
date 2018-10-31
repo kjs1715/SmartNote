@@ -71,10 +71,7 @@ public class UriParser {
             // 1.2 DownloadsProvider
             else if (isDownloadsDocument(uri)) {
                 final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.
-                        withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                return pathHead + getDataColumn(context,
-                        contentUri, null, null);
+                return id.substring(4);
             }
             // 1.3 MediaProvider
             else if (isMediaDocument(uri)) {

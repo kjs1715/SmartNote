@@ -3,10 +3,13 @@ package com.littleboss.smartnote;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.littleboss.smartnote.Utils.DateUtils;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 class NoteNotExistException extends Exception {
     public NoteNotExistException(String msg) {
@@ -46,6 +49,7 @@ public class NoteDatabase {
     static NoteDatabase instance = null;
     static SQLiteDatabase db;
     static String noteDatabasePath = "data/data/com.littleboss.smartnote/app_databases/data.db";
+
     private NoteDatabase() {
         new File(noteDatabasePath).getParentFile().mkdirs();
         db = SQLiteDatabase.openOrCreateDatabase(noteDatabasePath, null);
@@ -138,16 +142,23 @@ public class NoteDatabase {
      *
      * @return 所有笔记的标题列表。若不存在任何笔记，则返回null。
      */
-    public static LinkedList<String> getNotesTitleList() {
+    public static LinkedList<ListData> getNotesTitleList() {
         Cursor cursor = db.rawQuery("select * from notes;", null);
         if (cursor == null || cursor.getCount() == 0) {
             cursor.close();
             return new LinkedList<>();
         }
         cursor.moveToFirst();
-        LinkedList<String> titleList = new LinkedList<String>();
+        LinkedList<ListData> titleList = new LinkedList();
         while (true) {
-            titleList.add(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+            String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+            String create_string = cursor.getString(cursor.getColumnIndexOrThrow("create_time"));
+            String modify_string = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
+            Date create = DateUtils.String2Date(create_string);
+            Date modify = DateUtils.String2Date(modify_string);
+            titleList.add(
+                    new ListData(title, create, modify)
+            );
             if (cursor.isLast())
                 break;
             cursor.moveToNext();
@@ -162,9 +173,10 @@ public class NoteDatabase {
      * @param deleteTitleList 删除笔记的标题列表。
      * @throws NoteNotExistException 当列表中的某条笔记的标题在数据库中并不存在会抛出此异常。
      */
-    public static void deleteNotesTitleList(LinkedList<String> deleteTitleList) throws NoteNotExistException {
+    public static void deleteNotesTitleList(LinkedList<ListData> deleteTitleList) throws NoteNotExistException {
         Cursor cursor;
-        for (String deleteTitle : deleteTitleList) {
+        for (ListData deleted: deleteTitleList) {
+            String deleteTitle = deleted.title;
             cursor = db.rawQuery("select * from notes where title = ?;", new String[] {deleteTitle});
             if (cursor == null || cursor.getCount() == 0) {
                 throw new NoteNotExistException("Note whose title is \"" + deleteTitle + "\" doesn't exist!");

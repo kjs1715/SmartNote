@@ -6,4 +6,9 @@
     <string name="searchButtonText">搜索</string>
     <string name="APPID">=5bacbfa8</string>
     <string name="title_activity_lbvideo">LBVideoActivity</string>
+    <string name="nHeight">高</string>
+    <string name="nWidth">宽</string>
+    <string name="keep_ratio">保持纵横比</string>
+    <string name="save">保存</string>
+    <string name="giveup">取消</string>
 </resources>

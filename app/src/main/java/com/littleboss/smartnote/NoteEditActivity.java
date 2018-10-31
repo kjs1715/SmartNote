@@ -69,10 +69,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private Uri imageTakeUri;
     private boolean isRecording=false;
 
-    public void dealString(String result) {
-//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
-//        et_content.setText(et_content.getText() + result);
-    }
 
     public void show(Dialog dialog) {
         dialog.show();
@@ -230,18 +226,27 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             finish();
             return ;
         }
-        final AlertDialog alertdialog = new AlertDialog.Builder(this).setTitle("警告").setMessage("是否保存修改的内容？").setPositiveButton("保存", new DialogInterface.OnClickListener() {
+        final AlertDialog alertdialog = new AlertDialog.Builder(this)
+                .setTitle("警告")
+                .setMessage("是否保存修改的内容？")
+        .setPositiveButton("保存",
+        new DialogInterface.OnClickListener()
+        {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 saveNote();
                 finish();
             }
-        }).setNeutralButton("取消", new DialogInterface.OnClickListener() {
+        })
+        .setNeutralButton("取消",
+        new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
-        }).setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+        })
+        .setNegativeButton("放弃",
+        new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
@@ -411,6 +416,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         alb.setItems(methods, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                /**
+                 * i == 0: from system album;
+                 * i == 1: from system camera;
+                 * */
                 switch(i) {
                     case 0:
                         // Open an image from system album
@@ -501,7 +510,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         {
             if(requestCode == 0x101) {
                 Uri originalUri = data.getData();
-                this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
+                String img_path = UriParser.getPath(
+                        NoteEditActivity.this,
+                        originalUri
+                );
+                this.myViewGroup.addViewtoCursor(new LBImageView(img_path, NoteEditActivity.this));
             }
             else if(requestCode == 0x102) {
                 this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,imageTakeUri),NoteEditActivity.this));
@@ -577,10 +590,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         new Thread(new Runnable() {
             @Override
             public void run() {
-                EditText et_title = (EditText) findViewById(R.id.et_new_title);
-//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
+                EditText et_title = findViewById(R.id.et_new_title);
                 String title = et_title.getText().toString();
-//        String content = et_content.getText().toString();
                 String content = myViewGroup.toDataString();
 
                 if(newCreatedFlag) {

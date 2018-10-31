@@ -37,6 +37,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,13 +46,25 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
+import com.littleboss.smartnote.Utils.DateUtils;
+
 import java.util.LinkedList;
 
+
+class ListData {
+    String title;
+    Date createDate, modifyDate;
+    ListData(String title, Date createDate, Date modifyDate) {
+        this.title = title;
+        this.createDate = createDate;
+        this.modifyDate = modifyDate;
+    }
+}
 
 public class MainActivity extends AppCompatActivity{
 
     private static final int NOSELECT_STATE = -1;// 表示未选中任何CheckBox
-    LinkedList<String> notesList;
+    LinkedList<ListData> notesList;
     private List<Map<String, String>> listitem;
     private ListView listView;
     Handler handler;
@@ -62,7 +75,7 @@ public class MainActivity extends AppCompatActivity{
     private Button bt_cancel, bt_delete;
     private TextView tv_sum;
     private LinearLayout linearLayout;
-    private LinkedList<String> list_delete = new LinkedList<String>();// 需要删除的数据
+    private LinkedList<ListData> list_delete = new LinkedList();// 需要删除的数据
     private boolean isMultiSelect = false;// 是否处于多选状态
     FloatingActionButton fab;
     MyAdapter adapter;
@@ -130,7 +143,7 @@ public class MainActivity extends AppCompatActivity{
                 int len = notesList.size();
                 for (int i = 0; i < len; i++) {
                     HashMap<String, String> showitem = new HashMap<>();
-                    showitem.put("title", notesList.get(i));
+                    showitem.put("title", notesList.get(i).title);
                     listitem.add(showitem);
                 }
                 handler.post(runnableUi);
@@ -254,10 +267,9 @@ public class MainActivity extends AppCompatActivity{
         public HashMap<Integer, Integer> isCheckBoxVisible;// 用来记录是否显示checkBox
         public HashMap<Integer, Boolean> isChecked;// 用来记录是否被选中
         private LayoutInflater inflater;
-        private List<String> list;
+        private List<ListData> list;
 
-
-        public MyAdapter(Context context, List<String> list, int position) {
+        public MyAdapter(Context context, List<ListData> list, int position) {
             inflater = LayoutInflater.from(context);
             this.list = notesList;
             isCheckBoxVisible = new HashMap<Integer, Integer>();
@@ -299,10 +311,10 @@ public class MainActivity extends AppCompatActivity{
         class onMyLongClick implements OnLongClickListener {
 
             private int position;
-            private List<String> list;
+            private List<ListData> list;
 
             // 获取数据，与长按Item的position
-            public onMyLongClick(int position, List<String> list) {
+            public onMyLongClick(int position, List<ListData> list) {
                 this.position = position;
                 this.list = list;
             }
@@ -330,10 +342,10 @@ public class MainActivity extends AppCompatActivity{
         class onMyClick implements OnClickListener {
 
             private int position;
-            private List<String> list;
+            private List<ListData> list;
 
             // 获取数据，与长按Item的position
-            public onMyClick(int position, List<String> list) {
+            public onMyClick(int position, List<ListData> list) {
                 this.position = position;
                 this.list = list;
             }
@@ -357,7 +369,7 @@ public class MainActivity extends AppCompatActivity{
                 else
                 {
                     Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
-                    intent.putExtra("id", (String)(notesList.get(position)));
+                    intent.putExtra("id", (notesList.get(position)).title);
                     intent.putExtra("newCreatedNote", false);
                     startActivity(intent);
                 }
@@ -367,22 +379,34 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder viewHolder;
+
             if (convertView == null) {
                 viewHolder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.item_main, null);
-                viewHolder.tv_Name = (TextView) convertView.findViewById(R.id.notetitle);
-                viewHolder.cb = (CheckBox) convertView.findViewById(R.id.item_check);
+                viewHolder.tv_Name    = convertView.findViewById(R.id.notetitle);
+                viewHolder.cb         = convertView.findViewById(R.id.item_check);
+                viewHolder.createDate = convertView.findViewById(R.id.createDate);
+                viewHolder.modifyDate = convertView.findViewById(R.id.modifyDate);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            final String str = list.get(position);
+
+            final String str = list.get(position).title;
             viewHolder.tv_Name.setText(str);
+
             // 根据position设置CheckBox是否可见，是否选中
             viewHolder.cb.setChecked(isChecked.get(position));
             viewHolder.cb.setVisibility(isCheckBoxVisible.get(position));
+
+            String modified = DateUtils.display(list.get(position).modifyDate);
+            String created = DateUtils.display(list.get(position).createDate);
+            viewHolder.modifyDate.setText("created: " + modified);
+            viewHolder.createDate.setText("modified: " + created);
+
             convertView.setOnLongClickListener(new onMyLongClick(position,list));
             convertView.setOnClickListener(new onMyClick(position,list));
+
             return convertView;
         }
 
@@ -426,7 +450,7 @@ public class MainActivity extends AppCompatActivity{
             return isChecked.get(position);
         }
 
-        public String getNotesTitle(int index)
+        public ListData getNotesTitle(int index)
         {
             return list.get(index);
         }
@@ -434,6 +458,8 @@ public class MainActivity extends AppCompatActivity{
         class ViewHolder {
             public TextView tv_Name;
             public CheckBox cb;
+            public TextView createDate;
+            public TextView modifyDate;
         }
     }
     @Override

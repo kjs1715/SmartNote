@@ -29,7 +29,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private Button button;
     private EditText editText;
-    private LinkedList<String> notesTitleList;
+    private LinkedList<ListData> notesTitleList;
     private List<Map<String, String>> listitem;
     private ListView listView;
     private Handler handler;
@@ -80,7 +80,7 @@ public class SearchActivity extends AppCompatActivity {
                 int len=notesTitleList.size();
                 for (int i = 0; i < len; i++) {
                     HashMap<String, String> showitem = new HashMap<>();
-                    showitem.put("title", notesTitleList.get(i));
+                    showitem.put("title", notesTitleList.get(i).title);
                     listitem.add(showitem);
                 }
 
@@ -95,14 +95,14 @@ public class SearchActivity extends AppCompatActivity {
                 new Thread(new Runnable(){
                     @Override
                     public void run() {
-                        String[] p=editText.getText().toString().split(" ");
+                        String[] p = editText.getText().toString().split(" ");
                         notesTitleList=new LinkedList<>();
-                        LinkedList<String> allTitles=NoteDatabase.getNotesTitleList();
-                        for(Iterator<String> iterator=allTitles.iterator();iterator.hasNext();)
+                        LinkedList<ListData> allTitles = NoteDatabase.getNotesTitleList();
+                        for(Iterator<ListData> iterator=allTitles.iterator(); iterator.hasNext(); )
                         {
-                            String title=iterator.next();
-                            if(contains(p,title))
-                                notesTitleList.add(title);
+                            ListData item=iterator.next();
+                            if(contains(p, item.title))
+                                notesTitleList.add(item);
                         }
                         new Thread(listGenerateRunnable).start();
                     }
@@ -119,7 +119,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void run()
             {
-                notesTitleList=noteDatabase.getNotesTitleList();
+                notesTitleList = noteDatabase.getNotesTitleList();
                 if(notesTitleList!=null)
                     new Thread(listGenerateRunnable).start();
             }
