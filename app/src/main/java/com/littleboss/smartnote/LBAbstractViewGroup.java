@@ -259,7 +259,6 @@ public class LBAbstractViewGroup extends ScrollView {
             @Override
             public void run() {
                 allLayout.addView(editView.getView(), index);
-
             }
         }, 200);
 
@@ -477,5 +476,14 @@ public class LBAbstractViewGroup extends ScrollView {
         allLayout.addView(midview1,position2);
         allLayout.removeViewAt(position1);
         allLayout.addView(midview2,position1);
+    }
+
+    public void onNewTextEvent() {
+        int lastEditIndex = allLayout.indexOfChild(lastFocusView);
+        View curView = allLayout.getChildAt(lastEditIndex);
+        View nextView = allLayout.getChildAt(lastEditIndex + 1);
+        if (!(curView instanceof LBTextView) && (nextView == null || !(nextView instanceof LBTextView))) {
+            addEditTextAtIndex(lastEditIndex + 1, "");
+        }
     }
 }
