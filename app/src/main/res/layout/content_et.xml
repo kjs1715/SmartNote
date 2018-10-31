@@ -11,20 +11,31 @@
     tools:context="com.littleboss.smartnote.NoteEditActivity"
     tools:showIn="@layout/activity_note_edit">
 
-    <EditText
-        android:id="@+id/et_new_title"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="请输入标题"
-        android:padding="16dp"
-        android:textColor="@color/black_semi_transparent"
-        android:textSize="24sp" />
+        android:layout_height="match_parent">
 
-    <com.littleboss.smartnote.LBAbstractViewGroup
-        android:id="@+id/viewgroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/et_new_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="请输入标题"
+                android:padding="16dp"
+                android:textColor="@color/black_semi_transparent"
+                android:textSize="24sp" />
+
+            <com.littleboss.smartnote.LBAbstractViewGroup
+                android:id="@+id/viewgroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
 
     <!--<ScrollView-->
         <!--android:id="@+id/sc"-->
