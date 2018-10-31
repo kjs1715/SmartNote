@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/resize_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/resize_menu"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/resize_dialog"
+        app:layout_constraintEnd_toEndOf="@id/resize_dialog"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/resize_dialog"
+        app:layout_constraintTop_toTopOf="@id/resize_dialog"
+        app:layout_constraintVertical_bias="0.0">
+
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/nHeight"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/nWidth"
+            app:layout_constraintEnd_toEndOf="@id/resize_menu"
+            app:layout_constraintStart_toStartOf="@id/resize_menu"
+            app:layout_constraintTop_toTopOf="@id/resize_menu">
+
+            <TextView
+                android:id="@+id/label_nHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/nHeight"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/nHeight"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/nHeight_input"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:ems="10"
+                android:hint="@string/nHeight"
+                android:digits="0123456789"
+                android:inputType="number"
+                app:layout_constraintBottom_toBottomOf="@+id/nHeight"
+                app:layout_constraintEnd_toEndOf="@id/nHeight"
+                app:layout_constraintStart_toEndOf="@+id/label_nHeight"
+                app:layout_constraintTop_toTopOf="@id/nHeight" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/nWidth"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/keep_ratio"
+            app:layout_constraintEnd_toEndOf="@id/resize_menu"
+            app:layout_constraintStart_toStartOf="@id/resize_menu"
+            app:layout_constraintTop_toBottomOf="@id/nHeight">
+
+            <TextView
+                android:id="@+id/label_nWidth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/nWidth"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/nWidth"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/nWidth_input"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:ems="10"
+                android:hint="@string/nWidth"
+                android:inputType="numberSigned"
+                app:layout_constraintBottom_toBottomOf="@id/nWidth"
+                app:layout_constraintEnd_toEndOf="@id/nWidth"
+                app:layout_constraintStart_toEndOf="@+id/label_nWidth"
+                app:layout_constraintTop_toTopOf="@id/nWidth" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/keep_ratio"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/resize_menu"
+            app:layout_constraintEnd_toEndOf="@id/resize_menu"
+            app:layout_constraintStart_toStartOf="@id/resize_menu"
+            app:layout_constraintTop_toBottomOf="@id/nWidth">
+
+            <CheckBox
+                android:id="@+id/keep_ratio_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/keep_ratio"
+                app:layout_constraintBottom_toBottomOf="@id/keep_ratio"
+                app:layout_constraintEnd_toEndOf="@id/keep_ratio"
+                app:layout_constraintStart_toStartOf="@id/keep_ratio"
+                app:layout_constraintTop_toTopOf="@id/keep_ratio" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
