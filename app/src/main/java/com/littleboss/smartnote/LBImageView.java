@@ -33,12 +33,15 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
     protected int width;
     protected int height;
     protected int resizeFlag;
+    protected boolean isFirst = true;
 
     public LBImageView(Context context) {
         this(context, null);
     }
     public LBImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.width = -1;
+        this.height = -1;    // initialize width and height
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.inflater.inflate(R.layout.item_imageview, this);
@@ -51,8 +54,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
     public LBImageView(String filePath,Context context) {
         this(context);
-        this.filePath = filePath;
-        this.setContent(filePath);
+        parseImageSize(filePath);
+        this.setContent(this.filePath);
     }
 
     public void init() {
@@ -97,11 +100,18 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
     {
         this.filePath=filePath;
         getImage();
-        if(this.image==null)
+        if(isFirst) {
+            setImage(this.image);
+            return ;
+        }
+
+        if(this.image == null)
             return;
-//        Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * 16 / 25, SCREEN_WIDTH * 9 / 25);
-        setImage(this.image);
-        getImageProperties(this.image);
+//        setImage(this.image);
+        Bitmap mImage = ImageUtils.resizeImage(this.image, this.width, this.height);
+        getImageProperties(mImage);
+        setImage(mImage);
+        this.image = mImage;
     }
 
     public void getImageProperties(Bitmap mImage) {
@@ -128,6 +138,23 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         }
         this.imageView.setImageBitmap(mImage);
         getImageProperties(mImage);
+    }
+
+    public void parseImageSize(String str) {
+        /**
+         * @Author: Buzz Kim
+         * @Date: 31/10/2018 8:05 PM
+         * @param str
+         * @Description: for parse the size of source image
+         *
+         */
+        String[] buf = str.split("\\+");
+        this.filePath = buf[0];
+        if(buf.length > 2) {
+            this.width = Integer.parseInt(buf[1]);
+            this.height = Integer.parseInt(buf[2]);
+            this.isFirst = false;
+        }
     }
 
 
@@ -282,7 +309,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
     @Override
     public String toDataString() {
-        return "<image>"+ this.filePath +"</image>";
+        return "<image>"+ this.filePath + "+" + this.width + "+" + this.height +"</image>";
     }
 
     @Override
