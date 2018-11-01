@@ -337,7 +337,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 chooseTab(position);
             }
         });
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
+                .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
                 .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
                 .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
                 .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
@@ -367,10 +368,15 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          */
         switch(pos) {
             case 0:
+                Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
+                myViewGroup.onNewTextEvent();
+                myViewGroup.setLastEditTextFocus();
+                break;
+            case 1:
                 Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
                 requestPermissionsForPhoto();
                 break;
-            case 1:
+            case 2:
                 Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
                 if(!isRecording)
                 {
@@ -388,11 +394,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                     ));
                 }
                 break;
-            case 2:
+            case 3:
                 Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
                 requestPermissionsForVideo();
                 break;
-            case 3:
+            case 4:
                 Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
                 saveNote();
                 finish();
