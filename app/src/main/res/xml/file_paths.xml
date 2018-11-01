@@ -2,7 +2,7 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-files-path
         name="my_images"
-        path="data/data/com.littleboss.smartnote/resources/images" />
+        path="data/data/com.littleboss.smartnote/resources/provider" />
     <root-path
         name="root_path"
         path="."/>

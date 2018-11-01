@@ -81,6 +81,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
 
     private Uri latestCameraPhotoUri;
+
+    private static final int photoFromGalleryCode = 0x101;
+    private static final int photoFromCameraCode = 0x102;
+    private static final int videoFromGalleryCode = 0x201;
+    private static final int videoFromCameraCode = 0x202;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -436,30 +442,19 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                  * */
                 switch(i) {
                     case 0:
-                        // Open an image from system album
-
                         Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
                         albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
                         albumIntent.setType("image/*");
-//                        albumIntent.setType("video/*");
-                        startActivityForResult(albumIntent, 0x101);
+                        startActivityForResult(albumIntent, photoFromGalleryCode);
                         break;
                     case 1:
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-
                         File imageFile = null;
-
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                         imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");
                         imageFile.getParentFile().mkdirs();
                         latestCameraResultPath = imageFile.getAbsolutePath();
-                        //String path = "data/data/com.littleboss.smartnote/resources/images";
-
-
                         if (imageFile != null) {
-                            //takePictureIntent.setType("image/*");
-
                             takePictureIntent.putExtra(
                                     MediaStore.EXTRA_OUTPUT,
                                     FileProvider.getUriForFile(
@@ -468,36 +463,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                                             imageFile
                                     )
                             );
-
-
-                            startActivityForResult(takePictureIntent, 0x102);
+                            startActivityForResult(takePictureIntent, photoFromCameraCode);
                         }
 
-//                        // Open the system camera
-//                        Intent intent=new Intent();
-//                        // 指定开启系统相机的Action
-//                        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        intent.addCategory(Intent.CATEGORY_DEFAULT);
-//                        String filepath="/storage/emulated/0/DCIM/Camera/IMG_"+new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())+".jpg";
-//                        File file=new File(filepath);
-//                        // 把文件地址转换成Uri格式
-//                        imageTakeUri=Uri.fromFile(file);
-//                        // 设置系统相机拍摄照片完成后图片文件的存放地址
-//                        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageTakeUri);
-//                        startActivityForResult(intent,0x102);
-
-//                        if(checkSelfPermission(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-//                            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},200);
-//                            return;
-//                        }
-//                        Intent intent = new Intent();
-//                        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        File imagePath = new File(Context.getFilesDir(), "images");
-//                        File newFile = new File(imagePath, "test.jpg");
-//                        Uri contentUri = FileProvider.getUriForFile(NoteEditActivity.this, "com.littleboss.smartnote", newFile);
-//                        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-//                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//                        startActivityForResult(intent,200);
                         break;
                     default:
                         break;
@@ -521,21 +489,27 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
                         intent = new Intent(Intent.ACTION_GET_CONTENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
-//                        albumIntent.setType("image/*");
                         intent.setType("video/*");
-                        startActivityForResult(intent, 0x201);
+                        startActivityForResult(intent, videoFromGalleryCode);
                         break;
                     case 1:
-//                         TODO Open the system camera
-                        intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        intent.addCategory(Intent.CATEGORY_DEFAULT);
-                        String filepath="/storage/emulated/0/DCIM/Camera/VID_"+new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())+".mp4";
-                        File file=new File(filepath);
-                        // 把文件地址转换成Uri格式
-                        Uri uri=Uri.fromFile(file);
-                        // 设置系统相机拍摄照片完成后图片文件的存放地址
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                        startActivityForResult(intent,0x202);
+                        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                        File videoFile = null;
+                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        videoFile = new File("data/data/com.littleboss.smartnote/resources/videos/" + timeStamp + ".avi");
+                        videoFile.getParentFile().mkdirs();
+                        latestCameraResultPath = videoFile.getAbsolutePath();
+                        if (videoFile != null) {
+                            takeVideoIntent.putExtra(
+                                    MediaStore.EXTRA_OUTPUT,
+                                    FileProvider.getUriForFile(
+                                            thisActivity,
+                                            "com.littleboss.smartnote.fileprovider",
+                                            videoFile
+                                    )
+                            );
+                            startActivityForResult(takeVideoIntent, videoFromCameraCode);
+                        }
                         break;
                     default:
                         break;
@@ -550,7 +524,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         System.out.println(data==null);
         if(resultCode==RESULT_OK)
         {
-            if(requestCode == 0x101) {
+            if(requestCode == photoFromGalleryCode) {
                 Uri originalUri = data.getData();
                 String img_path = UriParser.getPath(
                         NoteEditActivity.this,
@@ -558,18 +532,15 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 );
                 this.myViewGroup.addViewtoCursor(new LBImageView(img_path, NoteEditActivity.this));
             }
-            else if(requestCode == 0x102) {
-
-                //Log.i("", latestCameraPhotoUri.toString());
+            else if(requestCode == photoFromCameraCode) {
                 this.myViewGroup.addViewtoCursor(new LBImageView(latestCameraResultPath ,NoteEditActivity.this));
             }
-            else if(requestCode == 0x201) {
+            else if(requestCode == videoFromGalleryCode) {
                 Uri originalUri = data.getData();
                 this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
             }
-            else if(requestCode == 0x202) {
-                Uri originalUri = data.getData();
-                this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
+            else if(requestCode == videoFromCameraCode) {
+                this.myViewGroup.addViewtoCursor(new LBVideoView(latestCameraResultPath,NoteEditActivity.this));
             }
         }
     }
