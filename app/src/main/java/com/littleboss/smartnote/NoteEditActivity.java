@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +26,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +46,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,19 +70,23 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private LBAbstractViewGroup myViewGroup;
 
-    private Uri imageTakeUri;
+    private String latestCameraResultPath;
+
     private boolean isRecording=false;
 
-
+    private Activity thisActivity;
     public void show(Dialog dialog) {
         dialog.show();
     }
 
 
+    private Uri latestCameraPhotoUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_edit);
+
+        thisActivity = this;
 
         getDir("databases", MODE_PRIVATE);
         noteDatabase = NoteDatabase.getInstance();
@@ -437,6 +445,34 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         startActivityForResult(albumIntent, 0x101);
                         break;
                     case 1:
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
+                        File imageFile = null;
+
+                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");
+                        imageFile.getParentFile().mkdirs();
+                        latestCameraResultPath = imageFile.getAbsolutePath();
+                        //String path = "data/data/com.littleboss.smartnote/resources/images";
+
+
+                        if (imageFile != null) {
+                            //takePictureIntent.setType("image/*");
+
+                            takePictureIntent.putExtra(
+                                    MediaStore.EXTRA_OUTPUT,
+                                    FileProvider.getUriForFile(
+                                            thisActivity,
+                                            "com.littleboss.smartnote.fileprovider",
+                                            imageFile
+                                    )
+                            );
+
+
+                            startActivityForResult(takePictureIntent, 0x102);
+                        }
+
 //                        // Open the system camera
 //                        Intent intent=new Intent();
 //                        // 指定开启系统相机的Action
@@ -523,7 +559,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 this.myViewGroup.addViewtoCursor(new LBImageView(img_path, NoteEditActivity.this));
             }
             else if(requestCode == 0x102) {
-                this.myViewGroup.addViewtoCursor(new LBImageView(UriParser.getPath(NoteEditActivity.this,imageTakeUri),NoteEditActivity.this));
+
+                //Log.i("", latestCameraPhotoUri.toString());
+                this.myViewGroup.addViewtoCursor(new LBImageView(latestCameraResultPath ,NoteEditActivity.this));
             }
             else if(requestCode == 0x201) {
                 Uri originalUri = data.getData();

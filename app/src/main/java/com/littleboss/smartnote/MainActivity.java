@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity{
 
     private final int WRITE_EXTERNAL_STORAGE_ID = 0;
     private final int RECORD_AUDIO_ID = 1;
+    private final int CAMERA_ID = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +106,14 @@ public class MainActivity extends AppCompatActivity{
                     this,
                     new String[] {Manifest.permission.RECORD_AUDIO},
                     RECORD_AUDIO_ID
+            );
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[] {Manifest.permission.CAMERA},
+                    CAMERA_ID
             );
         }
 
@@ -452,6 +461,11 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
             case RECORD_AUDIO_ID: {
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    System.exit(0);
+                }
+            }
+            case CAMERA_ID: {
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     System.exit(0);
                 }
