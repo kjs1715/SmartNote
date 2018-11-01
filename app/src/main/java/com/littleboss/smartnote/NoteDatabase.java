@@ -112,8 +112,8 @@ public class NoteDatabase {
             if (cursor != null && cursor.getCount() > 0) {
                 modify_time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 db.execSQL(
-                        "update notes set modify_time = ?, content = ? where title = ?;",
-                        new String[] {modify_time, content, oldTitle}
+                        "update notes set modify_time = ?, content = ?, title = ? where title = ?;",
+                        new String[] {modify_time, content, newTitle, oldTitle}
                 );
             }
             else {
