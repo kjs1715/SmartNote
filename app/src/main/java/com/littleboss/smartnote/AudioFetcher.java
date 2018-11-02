@@ -46,28 +46,6 @@ public class AudioFetcher {
 
         isRecording = true;
 
-        /*
-        mediaRecorder = new MediaRecorder();
-        String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        audioFile = new File(audioPath + "/" + curTime + ".m4a");
-        audioFile.getParentFile().mkdirs();
-        try {
-            audioFile.createNewFile();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mediaRecorder.setAudioSamplingRate(44100);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-            mediaRecorder.setAudioEncodingBitRate(96000);
-            mediaRecorder.setOutputFile(audioFile);
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
-
-
         String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         audioFile = new File(audioPath + "/" + curTime + ".wav");
         audioFile.getParentFile().mkdirs();
@@ -94,12 +72,6 @@ public class AudioFetcher {
     static String stopRecording() {
         if (!isRecording)
             return null;
-
-        /*
-        mediaRecorder.stop();
-        mediaRecorder.release();
-        */
-
 
         try {
             recorder.stopRecording();
