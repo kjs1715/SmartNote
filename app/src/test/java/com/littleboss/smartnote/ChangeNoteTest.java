@@ -1,5 +1,8 @@
 package com.littleboss.smartnote;
 
+import android.util.Log;
+
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -8,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+
 
 @RunWith(RobolectricTestRunner.class)
 public class ChangeNoteTest {
@@ -26,5 +30,10 @@ public class ChangeNoteTest {
             e.printStackTrace();
         }
         assertEquals(result, content);
+    }
+    @After
+    public void afterTest() {
+        // clear local database file
+        Log.i("ChangeNoteTest", "afterTest");
     }
 }

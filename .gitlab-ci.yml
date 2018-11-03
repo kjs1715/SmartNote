@@ -27,7 +27,7 @@ build:
 unitTests:
   stage: test
   script:
-    - ./gradlew test --stacktrace
+    - ./gradlew test
     - ./gradlew jacocoTestReport
   after_script:
     - SUFFIX=$RANDOM
