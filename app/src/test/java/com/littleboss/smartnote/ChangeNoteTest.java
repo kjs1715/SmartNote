@@ -4,11 +4,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
 public class ChangeNoteTest {
-    private final String newTitle = "newTitle";
+    private final String newTitle = "newTitle" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     private final String content = "...content...";
     @Test
     public void startTest() {
