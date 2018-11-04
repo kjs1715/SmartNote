@@ -66,13 +66,8 @@ dependencies {
 }
 
 repositories {
-    maven {
-        url "https://jitpack.io"
-    }
-    maven {
-        url "https://maven.google.com"
-    }
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
 }
 
 task jacocoTestReport(type: JacocoReport) {
