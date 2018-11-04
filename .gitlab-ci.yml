@@ -1,4 +1,4 @@
-image: jangrewe/gitlab-ci-android
+image: runmymind/docker-android-sdk:ubuntu-standalone
 
 variables:
   ANDROID_COMPILE_SDK: "26"
