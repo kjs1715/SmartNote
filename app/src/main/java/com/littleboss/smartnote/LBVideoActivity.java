@@ -1,9 +1,11 @@
 package com.littleboss.smartnote;
 
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -31,5 +33,17 @@ public class LBVideoActivity extends AppCompatActivity {
                 video.start();//开始播放视频
             }
         });
+
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            getWindow().getDecorView().setSystemUiVisibility(View.INVISIBLE);
+        }
+
+        else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            // this.requestWindowFeature(Window.f);// 去掉标题栏
+            // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            // WindowManager.LayoutParams.FLAG_FULLSCREEN);// 去掉信息栏
+        }
     }
 }
