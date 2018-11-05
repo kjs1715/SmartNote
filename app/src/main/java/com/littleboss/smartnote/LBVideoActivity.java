@@ -22,14 +22,18 @@ public class LBVideoActivity extends AppCompatActivity {
     private void initView() {
         video = findViewById(R.id.video);
         String path = getIntent().getStringExtra("filepath");//获取视频路径
-        Uri uri = Uri.parse(path);//将路径转换成uri
-        video.setVideoURI(uri);//为视频播放器设置视频路径
-        video.setMediaController(new MediaController(LBVideoActivity.this));//显示控制栏
-        video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                video.start();//开始播放视频
-            }
-        });
+        try {
+            Uri uri = Uri.parse(path);//将路径转换成uri
+            video.setVideoURI(uri);//为视频播放器设置视频路径
+            video.setMediaController(new MediaController(LBVideoActivity.this));//显示控制栏
+            video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    video.start();//开始播放视频
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
