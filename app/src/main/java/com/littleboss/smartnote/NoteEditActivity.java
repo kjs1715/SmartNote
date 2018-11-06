@@ -70,6 +70,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private LBAbstractViewGroup myViewGroup;
 
+    private BottomNavigationBar bottomNavigationBar;
+
     private String latestCameraResultPath;
 
     private boolean isRecording=false;
@@ -329,7 +331,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          * @Description: Initialize bottom bar, for choices of multimedia
          *
          */
-        final BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.navigation_view);
+        bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.navigation_view);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED_NO_TITLE)
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_DEFAULT);
         bottomNavigationBar.setBarBackgroundColor(R.color.colorPrimaryDark);
@@ -372,7 +374,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         });
     }
 
-    private void chooseTab(int pos) {
+    public void chooseTab(int pos) {
         /**
          * @Author: Buzz Kim
          * @Date: 09/10/2018 1:53 PM
@@ -422,7 +424,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    private void onPhotoButtonClicked() {
+    public void onPhotoButtonClicked() {
         /**
          * @Author: Buzz Kim
          * @Date: 08/10/2018 1:49 PM
@@ -475,7 +477,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         alb.show();
     }
 
-    private void onVideoButtonClicked() {
+    public void onVideoButtonClicked() {
         AlertDialog.Builder alb = new AlertDialog.Builder(NoteEditActivity.this);
         alb.setTitle("获取录像方式");
         final String[] methods = { "从图库导入", "打开摄像机" };
@@ -627,7 +629,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     }
 
-    public void initKeyboardListener() {
-
+    public BottomNavigationBar getBottomNavigationbar() {
+        return this.bottomNavigationBar;
     }
 }
