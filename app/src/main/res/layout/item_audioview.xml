@@ -27,8 +27,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:ems="10"
+
             android:inputType="textMultiLine"
             android:singleLine="false" />
+
     </LinearLayout>
     <View
         xmlns:android="http://schemas.android.com/apk/res/android"

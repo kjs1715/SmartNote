@@ -77,12 +77,16 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private boolean isRecording=false;
 
     private Activity thisActivity;
+
+    private long deamonRecordStartTime;
+    private long recordStartTime;
+    private long recordEndTime;
+    private boolean isDeamonRecording;
+    private int recordStartSecondsAgo;
+
     public void show(Dialog dialog) {
         dialog.show();
     }
-
-
-    private Uri latestCameraPhotoUri;
 
     private static final int photoFromGalleryCode = 0x101;
     private static final int photoFromCameraCode = 0x102;
@@ -109,7 +113,24 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initBottombar();
         initScrollButton();
         initEditText();
+        startDeamonRecording();
+    }
 
+    private void startDeamonRecording()
+    {
+        if(isDeamonRecording)
+            return;
+        AudioFetcher.startRecording();
+        isDeamonRecording=true;
+        deamonRecordStartTime=System.currentTimeMillis();
+    }
+
+    private void stopDeamonRecording()
+    {
+        if(!isDeamonRecording)
+            return;
+        AudioFetcher.stopAndDiscard();
+        isDeamonRecording=false;
     }
 
     private void initScrollButton() {
@@ -384,40 +405,23 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          */
         switch(pos) {
             case 0:
-                //Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
                 myViewGroup.onNewTextEvent();
                 myViewGroup.setLastEditTextFocus();
                 break;
             case 1:
-                //Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
+
+//                Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
                 requestPermissionsForPhoto();
                 break;
             case 2:
-
-                if(!isRecording)
-                {
-                    Toast.makeText(NoteEditActivity.this, "录音开始", Toast.LENGTH_SHORT).show();
-                    AudioFetcher.startRecording();
-                    isRecording=true;
-                }
-                else
-                {
-                    Toast.makeText(NoteEditActivity.this, "开始转换，请耐心等待", Toast.LENGTH_SHORT).show();
-                    String latestAudioLocation=AudioFetcher.stopRecording();
-                    isRecording=false;
-                    myViewGroup.addViewtoCursor(new LBAudioView(
-                            latestAudioLocation,
-                            NoteEditActivity.this,
-                            null
-                    ));
-                }
+                onAudioButtonClicked();
                 break;
             case 3:
-                //Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
                 requestPermissionsForVideo();
                 break;
             case 4:
-                //Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
                 saveNote();
                 finish();
                 break;
@@ -426,7 +430,91 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    public void onPhotoButtonClicked() {
+
+    private void onAudioButtonClicked()
+    {
+        if(!isRecording)
+        {
+            tryStartRecording();
+        }
+        else
+        {
+            stopRecording();
+        }
+    }
+
+    public void tryStartRecording()
+    {
+        AudioDialog();
+    }
+
+    public void stopRecording()
+    {
+        recordEndTime=System.currentTimeMillis();
+        String latestAudioLocation=AudioFetcher.stopRecording(recordEndTime-recordStartTime);
+        Toast.makeText(NoteEditActivity.this, String.format("已保存录音，时长%d秒，开始转换为文字，请耐心等待",(recordEndTime-recordStartTime)/1000), Toast.LENGTH_SHORT).show();
+        isRecording=false;
+        myViewGroup.addViewtoCursor(new LBAudioView(
+                latestAudioLocation,
+                NoteEditActivity.this,
+                null
+        ));
+        startDeamonRecording();
+    }
+
+    public void AudioDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NoteEditActivity.this);
+        builder.setTitle("开始录音时间");
+        final String[] dialogItems = {"现在", "15秒之前","30秒之前","60秒之前"};
+        builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        recordStartSecondsAgo=0;
+                        break;
+                    case 1:
+                        recordStartSecondsAgo=15;
+                        break;
+                    case 2:
+                        recordStartSecondsAgo=30;
+                        break;
+                    case 3:
+                        recordStartSecondsAgo=60;
+                        break;
+                    default:
+                        recordStartSecondsAgo=-1;
+                        break;
+                }
+                AudioDialogChoosed();
+            }
+        });
+        builder.show();
+    }
+
+    private void AudioDialogChoosed()
+    {
+        if(recordStartSecondsAgo==-1)
+            return;
+        recordStartTime=System.currentTimeMillis()-recordStartSecondsAgo*1000;
+        if(recordStartTime<deamonRecordStartTime)
+        {
+            recordStartTime=deamonRecordStartTime;
+            recordStartSecondsAgo=(int)((System.currentTimeMillis()-recordStartTime)/1000);
+        }
+        switch(recordStartSecondsAgo)
+        {
+            case 0:
+                Toast.makeText(NoteEditActivity.this, "已开始录音", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Toast.makeText(NoteEditActivity.this, String.format("已从%d秒前开始录音",recordStartSecondsAgo), Toast.LENGTH_SHORT).show();
+        }
+        AudioFetcher.startRecording();
+        isRecording=true;
+    }
+
+    private void onPhotoButtonClicked() {
         /**
          * @Author: Buzz Kim
          * @Date: 08/10/2018 1:49 PM
@@ -486,34 +574,17 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         alb.setItems(methods, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Intent intent;
                 switch(i) {
                     case 0:
                         // Open an image from system album
-
+                        Intent intent;
                         intent = new Intent(Intent.ACTION_GET_CONTENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                         intent.setType("video/*");
                         startActivityForResult(intent, videoFromGalleryCode);
                         break;
                     case 1:
-                        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        File videoFile = null;
-                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        videoFile = new File("data/data/com.littleboss.smartnote/resources/videos/" + timeStamp + ".avi");
-                        videoFile.getParentFile().mkdirs();
-                        latestCameraResultPath = videoFile.getAbsolutePath();
-                        if (videoFile != null) {
-                            takeVideoIntent.putExtra(
-                                    MediaStore.EXTRA_OUTPUT,
-                                    FileProvider.getUriForFile(
-                                            thisActivity,
-                                            "com.littleboss.smartnote.fileprovider",
-                                            videoFile
-                                    )
-                            );
-                            startActivityForResult(takeVideoIntent, videoFromCameraCode);
-                        }
+                        takeVideo();
                         break;
                     default:
                         break;
@@ -521,6 +592,43 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             }
         });
         alb.show();
+    }
+
+    protected void takeVideo()
+    {
+        if(!isRecording)
+            stopDeamonRecording();
+        else{
+            stopRecording();
+            stopDeamonRecording();
+        }
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        File videoFile = null;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        videoFile = new File("data/data/com.littleboss.smartnote/resources/videos/" + timeStamp + ".avi");
+        videoFile.getParentFile().mkdirs();
+        latestCameraResultPath = videoFile.getAbsolutePath();
+        if (videoFile != null) {
+            takeVideoIntent.putExtra(
+                    MediaStore.EXTRA_OUTPUT,
+                    FileProvider.getUriForFile(
+                            thisActivity,
+                            "com.littleboss.smartnote.fileprovider",
+                            videoFile
+                    )
+            );
+            startActivityForResult(takeVideoIntent, videoFromCameraCode);
+        }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if(!isDeamonRecording)
+        {
+            startDeamonRecording();
+        }
     }
 
     @Override
@@ -539,7 +647,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             else if(requestCode == photoFromCameraCode) {
                 this.myViewGroup.addViewtoCursor(new LBImageView(latestCameraResultPath ,NoteEditActivity.this));
             }
-            else if(requestCode == videoFromGalleryCode) {
+            else if(requestCode == videoFromGalleryCode){
                 Uri originalUri = data.getData();
                 this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
             }
@@ -547,10 +655,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 this.myViewGroup.addViewtoCursor(new LBVideoView(latestCameraResultPath,NoteEditActivity.this));
             }
         }
-    }
-
-    private void insertPic(Bitmap bitmap, final int index) {
-
     }
 
     private void requestPermissionsForPhoto() {

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 
+import com.littleboss.smartnote.Utils.AudioClipper;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,7 +22,7 @@ import omrecorder.Recorder;
 public class AudioFetcher {
     static private String audioPath = "data/data/com.littleboss.smartnote/resources/audios";
     static MediaRecorder mediaRecorder;
-    static File audioFile;
+    static File audioFile, clippedAudioFile;
     static boolean isRecording = false;
     static private Recorder recorder;
     /**
@@ -69,7 +71,9 @@ public class AudioFetcher {
      * 停止录音并将已保存的录音的位置存储到数据库中.
      * 若当前没有在录音则会直接返回。
      */
-    static String stopRecording() {
+
+    static String stopRecording(long saveMillis){
+
         if (!isRecording)
             return null;
 
@@ -80,11 +84,25 @@ public class AudioFetcher {
             e.printStackTrace();
         }
 
-        String latestAudioLocation = audioFile.getAbsolutePath();
 
-        NoteDatabase noteDatabase = NoteDatabase.getInstance();
-        noteDatabase.setLatestAudioLocation(latestAudioLocation);
+        String result = "";
+        if (saveMillis != 0) {
+            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            clippedAudioFile = new File(audioPath + "/" + curTime + ".wav");
+            new AudioClipper().audioClip(
+                    audioFile.getAbsolutePath(),
+                    clippedAudioFile.getAbsolutePath(),
+                    saveMillis
+            );
+            result = clippedAudioFile.getAbsolutePath();
+        }
+        // remove audioFile
+        audioFile.delete();
         isRecording = false;
-        return latestAudioLocation;
+        return result;
+    }
+
+    static void stopAndDiscard(){
+        stopRecording(0);
     }
 }
