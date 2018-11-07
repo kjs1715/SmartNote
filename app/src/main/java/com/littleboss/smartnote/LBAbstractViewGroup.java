@@ -79,14 +79,6 @@ public class LBAbstractViewGroup extends ScrollView {
                 }
             }
         };
-
-        //初始化生成一个编辑文本框
-//        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
-//                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//        LBTextView view = createEditText();
-//        System.out.println("addView:"+view.toString());
-//        allLayout.addView(view, firstEditParam);
-//        lastFocusView = view;
     }
 
     public void removeAll() {
