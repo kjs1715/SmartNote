@@ -69,6 +69,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private NoteDatabase noteDatabase;
 
     private LBAbstractViewGroup myViewGroup;
+    public LBAbstractViewGroup getMyViewGroup() {
+        return myViewGroup;
+    }
 
     private BottomNavigationBar bottomNavigationBar;
 
@@ -536,9 +539,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         break;
                     case 1:
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        File imageFile = null;
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");
+                        File imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");
                         imageFile.getParentFile().mkdirs();
                         latestCameraResultPath = imageFile.getAbsolutePath();
                         if (imageFile != null) {
@@ -637,7 +639,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                         NoteEditActivity.this,
                         originalUri
                 );
-                this.myViewGroup.addViewtoCursor(new LBImageView(img_path, NoteEditActivity.this));
+                LBImageView added = new LBImageView(img_path, NoteEditActivity.this);
+                this.myViewGroup.addViewtoCursor(added);
             }
             else if(requestCode == photoFromCameraCode) {
                 this.myViewGroup.addViewtoCursor(new LBImageView(latestCameraResultPath ,NoteEditActivity.this));
@@ -728,9 +731,5 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             }
         }).start();
 
-    }
-
-    public BottomNavigationBar getBottomNavigationbar() {
-        return this.bottomNavigationBar;
     }
 }
