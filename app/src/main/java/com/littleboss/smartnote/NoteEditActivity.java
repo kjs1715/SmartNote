@@ -509,7 +509,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         isRecording=true;
     }
 
-    private void onPhotoButtonClicked() {
+    public void onPhotoButtonClicked() {
         /**
          * @Author: Buzz Kim
          * @Date: 08/10/2018 1:49 PM
