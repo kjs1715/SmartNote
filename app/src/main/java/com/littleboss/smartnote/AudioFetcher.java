@@ -69,7 +69,7 @@ public class AudioFetcher {
      * 停止录音并将已保存的录音的位置存储到数据库中.
      * 若当前没有在录音则会直接返回。
      */
-    static String stopRecording() {
+    static String stopRecording(long saveMillis){
         if (!isRecording)
             return null;
 
@@ -86,5 +86,9 @@ public class AudioFetcher {
         noteDatabase.setLatestAudioLocation(latestAudioLocation);
         isRecording = false;
         return latestAudioLocation;
+    }
+
+    static void stopAndDiscard(){
+        stopRecording(0);
     }
 }

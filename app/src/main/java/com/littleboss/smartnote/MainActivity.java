@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity{
                     e.printStackTrace();
                 }
                 hideLinearLayout();
-                flushList();
+                readListandFlush();
                 isMultiSelect = false;
             }
         });
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-    protected void flushList()
+    protected void readListandFlush()
     {
         new Thread(new Runnable(){
             @Override
@@ -215,10 +216,22 @@ public class MainActivity extends AppCompatActivity{
         }).start();
     }
 
+    protected void flushList()
+    {
+        new Thread(new Runnable(){
+            @Override
+            public void run()
+            {
+                if(notesList!=null)
+                    new Thread(listGenerate).start();
+            }
+        }).start();
+    }
+
     @Override
     protected void onResume()
     {
-        flushList();
+        readListandFlush();
         super.onResume();
     }
 
