@@ -27,14 +27,8 @@ public class LBAbstractViewGroup extends ScrollView {
     private LayoutTransition mTransitioner; // 只在图片View添加或remove时，触发transition动画
     private Context mContext;
 
-    private boolean hasTitle = false;
     public LBAbstractViewGroup(Context context) {
         this(context, null);
-    }
-
-    public LBAbstractViewGroup(String dataString,Context context) {
-        this(context, null,0);
-        this.setContent(dataString);
     }
 
     public LBAbstractViewGroup(Context context, AttributeSet attrs) {
@@ -48,7 +42,6 @@ public class LBAbstractViewGroup extends ScrollView {
         // 初始化allLayout，用来存放所有富文本组件
         allLayout = new LinearLayout(context);
         allLayout.setOrientation(LinearLayout.VERTICAL);
-//        allLayout.setBackgroundColor(Color.WHITE);
         setupLayoutTransitions();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
@@ -57,7 +50,6 @@ public class LBAbstractViewGroup extends ScrollView {
         // 键盘退格监听
         // 主要用来处理点击回删按钮时，view的一些列合并操作
         keyListener = new OnKeyListener() {
-
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN
