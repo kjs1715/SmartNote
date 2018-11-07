@@ -382,23 +382,25 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          */
         switch(pos) {
             case 0:
-                Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NoteEditActivity.this, "Choosed text", Toast.LENGTH_SHORT).show();
                 myViewGroup.onNewTextEvent();
                 myViewGroup.setLastEditTextFocus();
                 break;
             case 1:
-                Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NoteEditActivity.this, "Choosed image", Toast.LENGTH_SHORT).show();
                 requestPermissionsForPhoto();
                 break;
             case 2:
-                Toast.makeText(NoteEditActivity.this, "Choosed voice", Toast.LENGTH_SHORT).show();
+
                 if(!isRecording)
                 {
+                    Toast.makeText(NoteEditActivity.this, "录音开始", Toast.LENGTH_SHORT).show();
                     AudioFetcher.startRecording();
                     isRecording=true;
                 }
                 else
                 {
+                    Toast.makeText(NoteEditActivity.this, "开始转换，请耐心等待", Toast.LENGTH_SHORT).show();
                     String latestAudioLocation=AudioFetcher.stopRecording();
                     isRecording=false;
                     myViewGroup.addViewtoCursor(new LBAudioView(
@@ -409,11 +411,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 }
                 break;
             case 3:
-                Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NoteEditActivity.this, "Choosed video", Toast.LENGTH_SHORT).show();
                 requestPermissionsForVideo();
                 break;
             case 4:
-                Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NoteEditActivity.this, "Choosed save", Toast.LENGTH_SHORT).show();
                 saveNote();
                 finish();
                 break;
