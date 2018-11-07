@@ -528,22 +528,9 @@ public class MainActivity extends AppCompatActivity{
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case WRITE_EXTERNAL_STORAGE_ID: {
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    System.exit(0);
-                }
-            }
-            case RECORD_AUDIO_ID: {
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    System.exit(0);
-                }
-            }
-            case CAMERA_ID: {
-                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    System.exit(0);
-                }
-            }
+        if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            System.exit(0);
+
         }
     }
 }
