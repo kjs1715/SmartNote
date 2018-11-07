@@ -11,4 +11,5 @@
     <string name="keep_ratio">保持纵横比</string>
     <string name="save">保存</string>
     <string name="giveup">取消</string>
+    <string name="sort">笔记排序</string>
 </resources>

@@ -247,6 +247,8 @@ public class MainActivity extends AppCompatActivity{
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(intent);
             }
+        } else if(id == R.id.sortitem) {
+            sortNotesList();
         }
 
         return super.onOptionsItemSelected(item);
@@ -471,5 +473,9 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         }
+    }
+
+    public void sortNotesList() {
+
     }
 }

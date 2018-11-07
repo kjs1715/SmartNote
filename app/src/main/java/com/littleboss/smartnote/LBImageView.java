@@ -117,7 +117,11 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
         if(this.image == null)
             return;
-//        setImage(this.image);
+        if(this.height > this.width && this.height > 1000) {
+            float ratio = (float)(this.width) / this.height;
+            this.height = 1000;
+            this.width = (int)(ratio * this.height);
+        }
         Bitmap mImage = ImageUtils.resizeImage(this.image, this.width, this.height);
         getImageProperties(mImage);
         setImage(mImage);
@@ -166,59 +170,6 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
             this.isFirst = false;
         }
     }
-
-
-    public void imageResize(String ratio) {
-        /**
-         * @Author: Buzz Kim
-         * @Date: 25/10/2018 10:00 PM
-         * @param ratio
-         * @Description: Resize the image with a new ratio
-         *
-         */
-        String[] num = ratio.split(":");
-        final int scaleSum = Integer.parseInt(num[0]) + Integer.parseInt(num[1]);;
-        Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * Integer.parseInt(num[0]) / scaleSum, SCREEN_WIDTH * Integer.parseInt(num[1]) / scaleSum);
-        setImage(mImage);
-    }
-
-    public void imageResize(final int size, String flag) {
-        /**
-         * @Author: Buzz Kim
-         * @Date: 25/10/2018 10:00 PM
-         * @param size
-         * @param flag
-         * @Description: Resize the image with the size provided by the user
-         *
-         */
-        Bitmap mImage = null;
-        if(flag.equals("宽度")) {
-            if(size <= 0 || size > SCREEN_WIDTH)
-            {
-                Toast.makeText(this.context,"超过了宽度范围，请重新输入大小！", Toast.LENGTH_SHORT).show();
-                return ;
-            }
-            float ratio = (float) size / this.width * this.height;
-            mImage = ImageUtils.resizeImage(this.image, size, (int) ratio);
-        } else {
-            if(size <= 0 || size > SCREEN_HEIGHT)
-            {
-                Toast.makeText(this.context,"超过了长度范围，请重新输入大小！", Toast.LENGTH_SHORT).show();
-                return ;
-            }
-            float ratio = (float) size / this.height * this.width;
-            // TODO: 26/10/2018 A little problem with ratio of width and height to fix 
-            if(ratio > SCREEN_WIDTH) {                            // If the size of height is too big, it would change the ratio of width and height, judge with resizeFlag
-            }
-            mImage = ImageUtils.resizeImage(this.image, (int) ratio, size);
-        }
-        setImage(mImage);
-
-    }
-
-//    不需要的函数
-//    public void imageResize(String ratio);
-//    public void imageResize(final int size, String flag);
 
     public void imageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
