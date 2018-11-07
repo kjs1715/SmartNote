@@ -3,9 +3,11 @@ package com.littleboss.smartnote;
 
 import android.content.Context;
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +28,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -178,10 +182,66 @@ public class MainActivity extends AppCompatActivity{
                     e.printStackTrace();
                 }
                 hideLinearLayout();
-                flushList();
+                readListandFlush();
                 isMultiSelect = false;
             }
         });
+    }
+
+    public void sortNotesList(int type) {
+        switch(type) {
+            case 0:                         // by time
+                Collections.sort(notesList, new Comparator<ListData>() {
+                    @Override
+                    public int compare(ListData o1, ListData o2) {
+                        if(o1.createDate.before(o2.createDate)) {
+                            return 1;
+                        } else if (o2.createDate.before(o1.createDate)) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+                break ;
+            case 1:
+                Collections.sort(notesList, new Comparator<ListData>() {
+                    @Override
+                    public int compare(ListData o1, ListData o2) {
+                        if(o1.modifyDate.before(o2.modifyDate)) {
+                            return 1;
+                        } else if (o2.modifyDate.before(o1.modifyDate)) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+                break ;
+            case 2:
+                Collections.sort(notesList, new Comparator<ListData>() {
+                    @Override
+                    public int compare(ListData o1, ListData o2) {
+                        return o1.title.compareTo(o2.title);
+                    }
+                });
+                break;
+            default :
+                break;
+        }
+        flushList();
+    }
+
+    public void sortDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final String[] dialogItems = { "按创建时间排序","按修改时间排序", "按名称排序" };
+        builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sortNotesList(which);
+            }
+        });
+        builder.show();
     }
 
     protected void showLinearLayout()
@@ -202,7 +262,7 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-    protected void flushList()
+    protected void readListandFlush()
     {
         new Thread(new Runnable(){
             @Override
@@ -215,10 +275,22 @@ public class MainActivity extends AppCompatActivity{
         }).start();
     }
 
+    protected void flushList()
+    {
+        new Thread(new Runnable(){
+            @Override
+            public void run()
+            {
+                if(notesList!=null)
+                    new Thread(listGenerate).start();
+            }
+        }).start();
+    }
+
     @Override
     protected void onResume()
     {
-        flushList();
+        readListandFlush();
         super.onResume();
     }
 
@@ -248,7 +320,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         } else if(id == R.id.sortitem) {
-            sortNotesList();
+            sortDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -473,9 +545,5 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         }
-    }
-
-    public void sortNotesList() {
-
     }
 }
