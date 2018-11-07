@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:ems="10"
-            android:inputType="textPersonName"
+            android:inputType="textMultiLine"
             android:singleLine="false" />
     </LinearLayout>
     <View
