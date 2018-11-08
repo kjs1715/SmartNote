@@ -16,13 +16,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
-            testCoverageEnabled true
-        }
-
-    }
-    lintOptions {
-        abortOnError false
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -64,6 +57,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.0'
 //    implementation 'com.google.guava:guava:25.0-android'
+    implementation 'com.google.guava:guava:25.0-android'
 
 //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 //    androidTestImplementation 'androidx.test:core:1.0.0'
@@ -73,31 +67,21 @@ dependencies {
 //    testImplementation 'androidx.test:core:1.0.0'
 //    testImplementation 'androidx.test.ext:junit:1.0.0'
 //    testImplementation 'org.robolectric:robolectric:4.0.1'
-
 }
 
 repositories {
-    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-    maven{ url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
-    google()
-    jcenter()
-    mavenCentral()
-    maven { url 'https://dl.google.com/dl/android/maven2/' }
     maven {
         url "https://jitpack.io"
     }
-    maven { url 'https://maven.google.com' }
-    maven { url 'https://csspeechstorage.blob.core.windows.net/maven/' }
+    maven {
+        url "https://maven.google.com"
+    }
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
     maven { url 'http://repo1.maven.org/maven2' }
     jcenter { url "http://jcenter.bintray.com/" }
 }
 
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+task jacocoTestReport(type: JacocoReport) {
     group = "Reporting"
 
     reports {
