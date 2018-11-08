@@ -116,7 +116,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initBottombar();
         initScrollButton();
         initEditText();
-        startDeamonRecording();
+        if (noteDatabase.getTestMod() == -1)
+            startDeamonRecording();
     }
 
     public void startDeamonRecording()
