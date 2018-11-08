@@ -188,7 +188,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
          */
         String[] buf = str.split("\\+");
         this.filePath = buf[0];
-        if(buf.length > 2) {
+        if(buf.length > 1) {
             this.width = Integer.parseInt(buf[1]);
             this.height = Integer.parseInt(buf[2]);
             this.isFirst = false;
@@ -312,8 +312,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                             }
                             // 用户将输入框更改为非法数字
                             catch (NumberFormatException e) {
-                                nWidth.setText(Integer.toString(original_width));
-                                nHeight.setText(Integer.toString(original_height));
+//                                nWidth.setText(Integer.toString(original_width));
+//                                nHeight.setText(Integer.toString(original_height));
                             }
                             adjustment_clear = true;
                         } else {
@@ -342,8 +342,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                             }
                             // 用户将输入框更改为非法数字
                             catch (NumberFormatException e) {
-                                nWidth.setText(Integer.toString(original_width));
-                                nHeight.setText(Integer.toString(original_height));
+//                                nWidth.setText(Integer.toString(original_width));
+//                                nHeight.setText(Integer.toString(original_height));
                             }
                             adjustment_clear = true;
                         } else {
@@ -361,16 +361,22 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                     public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                         if(checked && text_has_changed_when_unchecked) {
                             // 假设切换到keep ratio之前的长宽不合比例：视作未经调整的
+
                             adjustment_clear = false;
-                            int new_width = Integer.parseInt(nWidth.getText().toString());
-                            int new_height = Integer.parseInt(nHeight.getText().toString());
-                            if(last_edit==0) {
-                                new_height = (int)(new_width / original_ratio);
-                            } else {
-                                new_width = (int)(new_height * original_ratio);
+                            int new_width=0,new_height=0;
+                            try {
+                                new_width = Integer.parseInt(nWidth.getText().toString());
+                                new_height = Integer.parseInt(nHeight.getText().toString());
+                                if(last_edit==0) {
+                                    new_height = (int)(new_width / original_ratio);
+                                } else {
+                                    new_width = (int)(new_height * original_ratio);
+                                }
+                                nWidth.setText(Integer.toString(new_width));
+                                nHeight.setText(Integer.toString(new_height));
                             }
-                            nWidth.setText(Integer.toString(new_width));
-                            nHeight.setText(Integer.toString(new_height));
+                            catch (NumberFormatException ne){
+                            }
                             adjustment_clear = true;
                             text_has_changed_when_unchecked = false;
                         }

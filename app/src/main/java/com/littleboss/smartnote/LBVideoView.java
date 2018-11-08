@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,7 +25,7 @@ public class LBVideoView extends LBImageView {
     public LBVideoView(String content,Context context) {
         this(context);
         parseImageSize(content);
-        setContent(content);
+        setContent(this.filePath);
     }
 
     @Override
@@ -38,16 +39,17 @@ public class LBVideoView extends LBImageView {
     }
 
     @Override
-    public void setContent(String filePath)
+    public void setContent(String filepath)
     {
-        this.filePath=filePath;
         getImage();
         if(this.image==null)
             return;
-        Bitmap mImage = ImageUtils.resizeImage(this.image, this.width, this.height);
+        Bitmap mImage;
+        if(this.width!=-1)
+            mImage = ImageUtils.resizeImage(this.image, this.width, this.height);
+        else
+            mImage=this.image;
         setImage(mImage);
-        getImageProperties(mImage);
-        this.image = mImage;
     }
 
     @Override

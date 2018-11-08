@@ -38,7 +38,6 @@ public class DataStringParser {
             LBAudioView view=new LBAudioView(content,context);
             return view;
         }
-        //TODO: add other kinds of views
         else
         {
             return new LBTextView(label,context);

@@ -112,7 +112,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         addPlayIconClickListener();
         initGeneralListener();
 
-        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
+//        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
 
     }
 

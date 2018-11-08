@@ -13,7 +13,6 @@ import android.graphics.Matrix;
  */
 public class ImageUtils {
     public static Bitmap resizeImage(Bitmap originalBitmap, int nWidth, int nHeight) {
-        // TODO: 08/10/2018 Modify the best size for the application
         if(originalBitmap == null)
             return null;
         int height = originalBitmap.getHeight();
