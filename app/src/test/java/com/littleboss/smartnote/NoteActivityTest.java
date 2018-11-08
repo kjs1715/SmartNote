@@ -37,13 +37,14 @@ public class NoteActivityTest {
         NoteDatabase.dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
-        controller = Robolectric.buildActivity(NoteEditActivity.class).create().start();
+        controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume().visible();
     }
 
     @After
     public void afterTest() {
         NoteDatabase.closeConnection();
     }
+
     @Test
     public void startTest() throws Exception {
         Activity activity = controller.get();
@@ -57,16 +58,12 @@ public class NoteActivityTest {
         assertNotNull(lbAbstractViewGroup);
     }
 
-
-
     @Test
     public void testBottomNavigationbar() throws Exception {
         BottomNavigationBar bottomNavigationBar = controller.get().getBottomNavigationbar();
         bottomNavigationBar.performClick();
         assertTrue(!bottomNavigationBar.isHidden());
     }
-
-    
 
     @Test
     public void testChooseTab() throws Exception {

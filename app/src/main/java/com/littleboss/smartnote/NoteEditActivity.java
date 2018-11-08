@@ -116,12 +116,13 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initBottombar();
         initScrollButton();
         initEditText();
-        if (noteDatabase.getTestMod() == -1)
-            startDeamonRecording();
+        startDeamonRecording();
     }
 
     public void startDeamonRecording()
     {
+        if (noteDatabase.getTestMod() != -1)
+            return;
         if(isDeamonRecording)
             return;
         AudioFetcher.startRecording();
@@ -131,6 +132,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void stopDeamonRecording()
     {
+        if (noteDatabase.getTestMod() != -1)
+            return;
         if(!isDeamonRecording)
             return;
         AudioFetcher.stopAndDiscard();
