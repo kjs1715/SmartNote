@@ -8,6 +8,8 @@ import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.util.AttributeSet;
 
+import com.littleboss.smartnote.Utils.ImageUtils;
+
 
 public class LBVideoView extends LBImageView {
 
@@ -21,12 +23,13 @@ public class LBVideoView extends LBImageView {
 
     public LBVideoView(String content,Context context) {
         this(context);
+        parseImageSize(content);
         setContent(content);
     }
 
     @Override
     public String toDataString() {
-        return "<video>"+getFilePath()+"</video>";
+        return "<video>"+ getFilePath()+ "+" + this.width + "+" + this.height + "</video>";
     }
 
     @Override
@@ -41,9 +44,10 @@ public class LBVideoView extends LBImageView {
         getImage();
         if(this.image==null)
             return;
-//        Bitmap mImage = ImageUtils.resizeImage(this.image, SCREEN_WIDTH * 16 / 25, SCREEN_WIDTH * 9 / 25);
-        setImage(this.image);
-        getImageProperties(this.image);
+        Bitmap mImage = ImageUtils.resizeImage(this.image, this.width, this.height);
+        setImage(mImage);
+        getImageProperties(mImage);
+        this.image = mImage;
     }
 
     @Override

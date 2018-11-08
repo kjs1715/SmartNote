@@ -1,7 +1,9 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
@@ -9,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -138,6 +141,53 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                 return true;
             }
         });
+    }
+
+    public void audioDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("语音菜单");
+        final String[] dialogItems = {"删除","上移","下移"};
+        builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        deleteDialog();
+                        break;
+                    case 1:
+                        clickListener.moveUp(LBAudioView.this);
+                        break;
+                    case 2:
+                        clickListener.moveDown(LBAudioView.this);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void removeMyself() {
+        ((ViewManager)this.getParent()).removeView(this);
+    }
+
+
+    public void deleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("删除语音");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeMyself();
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        builder.show();
     }
 
     //根据content内容设置audioView的显示与动作

@@ -30,7 +30,6 @@ public class LBVideoViewActivityTest {
 
     @Test
     public void startTest() {
-        try {
             ActivityController<LBVideoActivity> controller =
                     Robolectric.buildActivity(LBVideoActivity.class)
                             .create()
@@ -39,10 +38,5 @@ public class LBVideoViewActivityTest {
                             .visible();
             Activity activity = controller.get();
             assertNotNull(activity);
-        }
-        catch (Exception e)
-        {
-
-        }
     }
 }

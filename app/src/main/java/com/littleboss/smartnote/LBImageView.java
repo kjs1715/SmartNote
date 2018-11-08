@@ -198,7 +198,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
     public void imageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         builder.setTitle("图片菜单");
-        final String[] dialogItems = {"修改图片尺寸比例", "删除图片"};
+        final String[] dialogItems = {"修改尺寸比例", "删除","上移","下移"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -208,6 +208,12 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                         break;
                     case 1:
                         deleteDialog();
+                        break;
+                    case 2:
+                        clickListener.moveUp(LBImageView.this);
+                        break;
+                    case 3:
+                        clickListener.moveDown(LBImageView.this);
                         break;
                     default:
                         break;
@@ -439,12 +445,10 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 removeMyself();
-                Toast.makeText(context, "删除了图片", Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(context,"取消删除", Toast.LENGTH_SHORT).show();
             }
         });
 

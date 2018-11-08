@@ -212,7 +212,22 @@ public class LBAbstractViewGroup extends ScrollView {
                     case VIDEO:
                         ((LBVideoView)editView).imageDialog();
                         break;
+                    case AUDIO:
+                        ((LBAudioView)editView).audioDialog();
+                        break;
                 }
+            }
+
+            @Override
+            public void moveUp(View widget) {
+                int i=allLayout.indexOfChild(widget);
+                moveViewUp(i);
+            }
+
+            @Override
+            public void moveDown(View widget) {
+                int i=allLayout.indexOfChild(widget);
+                moveViewDown(i);
             }
         });
     }
@@ -457,9 +472,9 @@ public class LBAbstractViewGroup extends ScrollView {
         View midview1=allLayout.getChildAt(position1);
         View midview2=allLayout.getChildAt(position2);
         allLayout.removeViewAt(position2);
-        allLayout.addView(midview1,position2);
         allLayout.removeViewAt(position1);
         allLayout.addView(midview2,position1);
+        allLayout.addView(midview1,position2);
     }
 
     public void onNewTextEvent() {

@@ -29,18 +29,11 @@ public class NoteActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        try {
             controller = Robolectric.buildActivity(NoteEditActivity.class)
                     .create()
                     .start()
                     .resume()
                     .visible();
-
-        }
-        catch (Exception e)
-        {
-
-        }
     }
     @Test
     public void startTest() throws Exception {

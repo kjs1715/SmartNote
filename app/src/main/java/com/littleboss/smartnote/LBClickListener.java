@@ -24,4 +24,7 @@ public interface LBClickListener {
      * @param widget
      */
     void onContentLongClick(View v, View widget);
+
+    void moveUp(View view);
+    void moveDown(View view);
 }
