@@ -9,3 +9,5 @@
 /captures
 .externalNativeBuild
 /app/data
+/app/src/main/assets/iflytek
+/app/src/main/jniLibs

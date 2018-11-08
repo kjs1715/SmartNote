@@ -121,6 +121,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void startDeamonRecording()
     {
+        if (noteDatabase.getTestMod() != -1)
+            return;
         if(isDeamonRecording)
             return;
         AudioFetcher.startRecording();
@@ -130,6 +132,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void stopDeamonRecording()
     {
+        if (noteDatabase.getTestMod() != -1)
+            return;
         if(!isDeamonRecording)
             return;
         AudioFetcher.stopAndDiscard();
@@ -317,6 +321,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             return false;
         }
         return true;
+    }
+
+
+    public BottomNavigationBar getBottomNavigationbar() {
+        return this.bottomNavigationBar;
+        // fix for unittest
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,14 +14,17 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.littleboss.smartnote.Utils.ImageUtils;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ImageUtil;
+
+
 import static org.junit.Assert.*;
 
 
@@ -28,13 +33,18 @@ public class NoteActivityTest {
     ActivityController<NoteEditActivity> controller;
 
     @Before
-    public void setUp() throws Exception {
-            controller = Robolectric.buildActivity(NoteEditActivity.class)
-                    .create()
-                    .start()
-                    .resume()
-                    .visible();
+    public void setUp() {
+        NoteDatabase.dropDatabaseIfExist();
+        NoteDatabase database = NoteDatabase.getInstance();
+        database.setTestMod(1);
+        controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume().visible();
     }
+
+    @After
+    public void afterTest() {
+        NoteDatabase.closeConnection();
+    }
+
     @Test
     public void startTest() throws Exception {
         Activity activity = controller.get();
@@ -58,11 +68,12 @@ public class NoteActivityTest {
     @Test
     public void testChooseTab() throws Exception {
         // TODO: 06/11/2018 AudioPart could not pass
+        NoteEditActivity activity = controller.get();
         for(int i = 0; i < 2; i++) {
-            controller.get().chooseTab(i);
+            activity.chooseTab(i);
         }
-        controller.get().chooseTab(3);
-        controller.get().chooseTab(4);
+        activity.chooseTab(3);
+        activity.chooseTab(4);
     }
 
     @Test
@@ -75,6 +86,5 @@ public class NoteActivityTest {
     public void testMethods() throws Exception {
         controller.get().onPhotoButtonClicked();
         controller.get().onVideoButtonClicked();
-
     }
 }
