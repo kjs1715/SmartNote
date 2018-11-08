@@ -283,6 +283,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         return true;
     }
 
+
+    public BottomNavigationBar getBottomNavigationbar() {
+        return this.bottomNavigationBar;
+        // fix for unittest
+    }
+
     @Override
     public void onMenuItemClick(View clickedView, int position) {
         Toast.makeText(this, "Clicked on position: " + position, Toast.LENGTH_SHORT).show();
@@ -629,9 +635,5 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             }
         }).start();
 
-    }
-
-    public BottomNavigationBar getBottomNavigationbar() {
-        return this.bottomNavigationBar;
     }
 }
