@@ -22,28 +22,33 @@ public class LBVideoActivity extends AppCompatActivity {
 
     //初始化控件，并且为进度条和图像控件添加监听
     private void initView() {
-        video = findViewById(R.id.video);
-        String path = getIntent().getStringExtra("filepath");//获取视频路径
-        Uri uri = Uri.parse(path);//将路径转换成uri
-        video.setVideoURI(uri);//为视频播放器设置视频路径
-        video.setMediaController(new MediaController(LBVideoActivity.this));//显示控制栏
-        video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                video.start();//开始播放视频
+        try {
+            video = findViewById(R.id.video);
+            String path = getIntent().getStringExtra("filepath");//获取视频路径
+            Uri uri = Uri.parse(path);//将路径转换成uri
+            if (uri == null)
+                return;
+            video.setVideoURI(uri);//为视频播放器设置视频路径
+            video.setMediaController(new MediaController(LBVideoActivity.this));//显示控制栏
+            video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    video.start();//开始播放视频
+                }
+            });
+
+            if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+                getWindow().getDecorView().setSystemUiVisibility(View.INVISIBLE);
+            } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+                // this.requestWindowFeature(Window.f);// 去掉标题栏
+                // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                // WindowManager.LayoutParams.FLAG_FULLSCREEN);// 去掉信息栏
             }
-        });
-
-        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            getWindow().getDecorView().setSystemUiVisibility(View.INVISIBLE);
         }
-
-        else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-
-            // this.requestWindowFeature(Window.f);// 去掉标题栏
-            // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            // WindowManager.LayoutParams.FLAG_FULLSCREEN);// 去掉信息栏
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
