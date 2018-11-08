@@ -116,7 +116,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         startDeamonRecording();
     }
 
-    private void startDeamonRecording()
+    public void startDeamonRecording()
     {
         if(isDeamonRecording)
             return;
@@ -125,7 +125,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         deamonRecordStartTime=System.currentTimeMillis();
     }
 
-    private void stopDeamonRecording()
+    public void stopDeamonRecording()
     {
         if(!isDeamonRecording)
             return;
@@ -133,7 +133,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         isDeamonRecording=false;
     }
 
-    private void initScrollButton() {
+    public void initScrollButton() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.goToTop);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +145,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         });
     }
 
-    private void initEditText() {
+    public void initEditText() {
         myViewGroup=findViewById(R.id.viewgroup);
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
@@ -167,7 +167,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
      * Refered from library of Toolbar
      *
      * **/
-    private void initMenuFragment() {
+    public void initMenuFragment() {
         MenuParams menuParams = new MenuParams();
         menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
         menuParams.setMenuObjects(getMenuObjects());
@@ -177,7 +177,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         mMenuDialogFragment.setItemLongClickListener(this);
     }
 
-    private List<MenuObject> getMenuObjects() {
+    public List<MenuObject> getMenuObjects() {
         // You can use any [resource, bitmap, drawable, color] as image:
         // item.setResource(...)
         // item.setBitmap(...)
@@ -315,7 +315,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
 
-    private void initToolbar() {
+    public void initToolbar() {
         /**
          * @Author: Buzz Kim
          * @Date: 03/10/2018 5:51 PM
@@ -344,7 +344,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     }
 
-    private void initBottombar() {
+    public void initBottombar() {
         /**
          * @Author: Buzz Kim
          * @Date: 03/10/2018 5:52 PM
@@ -426,7 +426,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    private void onAudioButtonClicked()
+    public void onAudioButtonClicked()
     {
         if(!isRecording)
         {
@@ -487,7 +487,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         builder.show();
     }
 
-    private void AudioDialogChoosed()
+    public void AudioDialogChoosed()
     {
         if(recordStartSecondsAgo==-1)
             return;
@@ -652,7 +652,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    private void requestPermissionsForPhoto() {
+    public void requestPermissionsForPhoto() {
         /**
          * @Author: Buzz Kim
          * @Date: 08/10/2018 8:01 PM
@@ -666,7 +666,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    private void requestPermissionsForVideo() {
+    public void requestPermissionsForVideo() {
         /**
          * @Author: Buzz Kim
          * @Date: 08/10/2018 8:01 PM
@@ -696,7 +696,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
     }
 
-    private void saveNote() {
+    public void saveNote() {
         /**
          * @Author: Buzz Kim
          * @Date: 03/10/2018 8:57 PM
