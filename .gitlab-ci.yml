@@ -1,7 +1,7 @@
 image: runmymind/docker-android-sdk:ubuntu-standalone
 
 variables:
-  ANDROID_COMPILE_SDK: "26"
+  ANDROID_COMPILE_SDK: "28"
 
 before_script:
   - source /opt/android-sdk-linux/bin/android-env.sh

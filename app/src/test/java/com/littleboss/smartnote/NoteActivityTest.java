@@ -22,6 +22,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
 
 
 import static org.junit.Assert.*;
@@ -57,14 +58,14 @@ public class NoteActivityTest {
     }
 
 
-    /*
+
     @Test
     public void testBottomNavigationbar() throws Exception {
         BottomNavigationBar bottomNavigationBar = controller.get().getBottomNavigationbar();
         bottomNavigationBar.performClick();
         assertTrue(!bottomNavigationBar.isHidden());
     }
-    */
+
     
 
     @Test
