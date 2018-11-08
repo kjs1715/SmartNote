@@ -753,9 +753,4 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             }
         }).start();
     }
-
-    public BottomNavigationBar getBottomNavigationbar()
-    {
-        return bottomNavigationBar;
-    }
 }
