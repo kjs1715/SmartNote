@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.littleboss.smartnote.Utils.ImageUtils;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,10 @@ public class LBImageActivityTest {
         database.setTestMod(1);
     }
 
+    @After
+    public void afterTest() {
+        NoteDatabase.closeConnection();
+    }
     @Test
     public void startTest() throws Exception {
         ActivityController<LBImageActivity> controller = Robolectric.buildActivity(LBImageActivity.class).create().start().resume().visible();

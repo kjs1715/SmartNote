@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.littleboss.smartnote.Utils.ImageUtils;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,11 @@ public class SearchActivityTest {
         NoteDatabase.dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
+    }
+
+    @After
+    public void afterTest() {
+        NoteDatabase.closeConnection();
     }
 
     @Test
