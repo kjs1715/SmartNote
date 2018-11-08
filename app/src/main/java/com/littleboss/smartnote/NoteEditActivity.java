@@ -263,6 +263,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     @Override
     public void onBackPressed() {
         if(!noteModified()) {
+            if(!isRecording)
+                stopDeamonRecording();
+            else
+                Toast.makeText(this, "后台持续录音", Toast.LENGTH_SHORT).show();
             finish();
             return ;
         }
@@ -275,6 +279,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 saveNote();
+                if(!isRecording)
+                    stopDeamonRecording();
+                else
+                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
                 finish();
             }
         })
@@ -289,6 +297,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                if(!isRecording)
+                    stopDeamonRecording();
+                else
+                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }).create();
@@ -730,6 +742,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 }
             }
         }).start();
+    }
 
+    public BottomNavigationBar getBottomNavigationbar()
+    {
+        return bottomNavigationBar;
     }
 }

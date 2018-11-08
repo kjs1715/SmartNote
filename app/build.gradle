@@ -55,7 +55,7 @@ dependencies {
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
     // test dependencies
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:4.0'
+//    testImplementation 'org.robolectric:robolectric:4.0'
 //    implementation 'com.google.guava:guava:25.0-android'
     implementation 'com.google.guava:guava:25.0-android'
 
