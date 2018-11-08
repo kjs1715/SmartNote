@@ -53,9 +53,9 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
+                android:digits="0123456789"
                 android:ems="10"
                 android:hint="@string/nHeight"
-                android:digits="0123456789"
                 android:inputType="number"
                 app:layout_constraintBottom_toBottomOf="@+id/nHeight"
                 app:layout_constraintEnd_toEndOf="@id/nHeight"
@@ -121,7 +121,19 @@
                 app:layout_constraintEnd_toEndOf="@id/keep_ratio"
                 app:layout_constraintStart_toStartOf="@id/keep_ratio"
                 app:layout_constraintTop_toTopOf="@id/keep_ratio" />
+
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/notify_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@id/resize_dialog"
+        app:layout_constraintLeft_toLeftOf="@id/resize_dialog"
+        app:layout_constraintRight_toRightOf="@id/resize_dialog"
+        app:layout_constraintTop_toBottomOf="@id/resize_menu" />
+
 </android.support.constraint.ConstraintLayout>

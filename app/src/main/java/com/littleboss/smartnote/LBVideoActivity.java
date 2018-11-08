@@ -1,9 +1,11 @@
 package com.littleboss.smartnote;
 
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -22,18 +24,26 @@ public class LBVideoActivity extends AppCompatActivity {
     private void initView() {
         video = findViewById(R.id.video);
         String path = getIntent().getStringExtra("filepath");//获取视频路径
-        try {
-            Uri uri = Uri.parse(path);//将路径转换成uri
-            video.setVideoURI(uri);//为视频播放器设置视频路径
-            video.setMediaController(new MediaController(LBVideoActivity.this));//显示控制栏
-            video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    video.start();//开始播放视频
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
+        Uri uri = Uri.parse(path);//将路径转换成uri
+        video.setVideoURI(uri);//为视频播放器设置视频路径
+        video.setMediaController(new MediaController(LBVideoActivity.this));//显示控制栏
+        video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                video.start();//开始播放视频
+            }
+        });
+
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            getWindow().getDecorView().setSystemUiVisibility(View.INVISIBLE);
+        }
+
+        else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+            // this.requestWindowFeature(Window.f);// 去掉标题栏
+            // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            // WindowManager.LayoutParams.FLAG_FULLSCREEN);// 去掉信息栏
         }
     }
 }
