@@ -50,6 +50,12 @@ public class NoteDatabase {
     static SQLiteDatabase db;
     static String noteDatabasePath = "data/data/com.littleboss.smartnote/app_databases/data.db";
 
+    static public void dropDatabaseIfExist() {
+        File database = new File(noteDatabasePath);
+        if (database.exists())
+            database.delete();
+    }
+
     private NoteDatabase() {
         new File(noteDatabasePath).getParentFile().mkdirs();
         db = SQLiteDatabase.openOrCreateDatabase(noteDatabasePath, null);
@@ -137,6 +143,41 @@ public class NoteDatabase {
         );
     }
 
+    /**
+     * Sets test mode.
+     * level >= 1
+     */
+    public static void setTestMod(int level) {
+        db.execSQL("create table testMod (mod integer);", new String[] {});
+        db.execSQL("insert into testMod (mod) values (?);", new String[] {String.valueOf(level)});
+    }
+
+    /**
+     * Gets test mod.
+     *
+     * @return the test mod or -1
+     */
+    public int getTestMod() {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("select * from testMod", new String[]{});
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (cursor == null || cursor.getCount() == 0)
+            return -1;
+        cursor.moveToFirst();
+        return cursor.getInt(cursor.getColumnIndexOrThrow("mod"));
+    }
+
+    /**
+     * Close connection.
+     */
+    public static void closeConnection() {
+        db.close();
+        instance = null;
+    }
     /**
      * 获取所有笔记的标题列表。
      *

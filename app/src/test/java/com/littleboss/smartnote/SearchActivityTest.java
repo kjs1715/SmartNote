@@ -25,7 +25,9 @@ import static org.junit.Assert.*;
 public class SearchActivityTest {
     @Before
     public void setUp() throws Exception {
-
+        NoteDatabase.dropDatabaseIfExist();
+        NoteDatabase database = NoteDatabase.getInstance();
+        database.setTestMod(1);
     }
 
     @Test
