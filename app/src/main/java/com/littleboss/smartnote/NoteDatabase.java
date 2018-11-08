@@ -144,7 +144,10 @@ public class NoteDatabase {
      */
     public static LinkedList<ListData> getNotesTitleList() {
         Cursor cursor = db.rawQuery("select * from notes;", null);
-        if (cursor == null || cursor.getCount() == 0) {
+        if(cursor == null ) {
+            return new LinkedList<>();
+        }
+        if (cursor.getCount() == 0) {
             cursor.close();
             return new LinkedList<>();
         }
