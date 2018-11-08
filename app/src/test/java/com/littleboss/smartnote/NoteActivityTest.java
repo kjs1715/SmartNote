@@ -57,12 +57,14 @@ public class NoteActivityTest {
     }
 
 
+    /*
     @Test
     public void testBottomNavigationbar() throws Exception {
         BottomNavigationBar bottomNavigationBar = controller.get().getBottomNavigationbar();
         bottomNavigationBar.performClick();
         assertTrue(!bottomNavigationBar.isHidden());
     }
+    */
     
 
     @Test
