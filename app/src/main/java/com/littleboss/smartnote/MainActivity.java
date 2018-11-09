@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity{
                 isMultiSelect = false;
             }
         });
+
+        readListandFlush();
     }
 
     public void sortNotesList(int type) {
@@ -239,6 +241,22 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sortNotesList(which);
+            }
+        });
+        builder.show();
+    }
+
+    public void enterNoteDialog(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final String[] dialogItems = { "预览","编辑"};
+        builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
+                intent.putExtra("id", (notesList.get(position)).title);
+                intent.putExtra("newCreatedNote", false);
+                intent.putExtra("canChange", which);
+                startActivity(intent);
             }
         });
         builder.show();
@@ -309,22 +327,21 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.searchitem) {
             if(isMultiSelect)
             {
-                Toast.makeText(MainActivity.this.getApplicationContext(),"请先确定是否删除笔记",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this.getApplicationContext(),"请先退出多选模式",Toast.LENGTH_SHORT).show();
             }
             else
             {
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(intent);
+                if (id == R.id.searchitem) {
+                    Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                    startActivity(intent);
+                }
+                else if(id == R.id.sortitem) {
+                    sortDialog();
+                }
             }
-        } else if(id == R.id.sortitem) {
-            sortDialog();
-        }
-
         return super.onOptionsItemSelected(item);
-
     }
 
     class MyAdapter extends BaseAdapter{
@@ -432,10 +449,7 @@ public class MainActivity extends AppCompatActivity{
                 }
                 else
                 {
-                    Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
-                    intent.putExtra("id", (notesList.get(position)).title);
-                    intent.putExtra("newCreatedNote", false);
-                    startActivity(intent);
+                    enterNoteDialog(position);
                 }
             }
         }

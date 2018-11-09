@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 public class LBAudioView extends FrameLayout implements LBAbstractView {
     private ImageView playIcon;
-    private EditText content;
+    public EditText content;
     private String audioFilePath;
     private MediaPlayer mediaPlayer;
     private Activity activity;

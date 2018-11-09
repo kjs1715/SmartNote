@@ -26,6 +26,7 @@ public class LBAbstractViewGroup extends ScrollView {
     public LBTextView lastFocusView; // 最近被聚焦的view
     private LayoutTransition mTransitioner; // 只在图片View添加或remove时，触发transition动画
     private Context mContext;
+    private boolean editable=true;
 
     public LBAbstractViewGroup(Context context) {
         this(context, null);
@@ -71,6 +72,45 @@ public class LBAbstractViewGroup extends ScrollView {
                 }
             }
         };
+    }
+
+    public void disableClick()
+    {
+        editable=false;
+
+        for(int i=0;i<allLayout.getChildCount();i++)
+        {
+            LBAbstractView view=(LBAbstractView)allLayout.getChildAt(i);
+            if(view instanceof LBTextView)
+            {
+                ((LBTextView) view).getEditText().setFocusable(false);
+                ((LBTextView) view).getEditText().setEnabled(false);
+            }
+            else if(view instanceof LBAudioView)
+            {
+                ((LBAudioView)view).content.setFocusable(false);
+                ((LBAudioView)view).content.setEnabled(false);
+            }
+        }
+    }
+
+    public void enableClick()
+    {
+        editable=true;
+        for(int i=0;i<allLayout.getChildCount();i++)
+        {
+            LBAbstractView view=(LBAbstractView)allLayout.getChildAt(i);
+            if(view instanceof LBTextView)
+            {
+                ((LBTextView) view).getEditText().setFocusable(true);
+                ((LBTextView) view).getEditText().setEnabled(true);
+            }
+            else if(view instanceof LBAudioView)
+            {
+                ((LBAudioView)view).content.setFocusable(true);
+                ((LBAudioView)view).content.setEnabled(true);
+            }
+        }
     }
 
     public void removeAll() {
@@ -172,6 +212,8 @@ public class LBAbstractViewGroup extends ScrollView {
             @Override
             public void onBlankViewClick(View v, View widget) {
                 //点击组件下面的空白，如果当前组件和上下组件都不是文本框，则创建一个文本框
+                if(!editable)
+                    return;
                 int i=allLayout.indexOfChild(widget);
                 if(i<0)
                     return;
@@ -203,6 +245,8 @@ public class LBAbstractViewGroup extends ScrollView {
 
             @Override
             public void onContentLongClick(View v, View widget) {
+                if(!editable)
+                    return;
                 LBAbstractView.ViewType viewType=editView.getViewType();
                 switch (viewType)
                 {

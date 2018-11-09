@@ -75,6 +75,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     private BottomNavigationBar bottomNavigationBar;
 
+    EditText et_title;
+
     private String latestCameraResultPath;
 
     private boolean isRecording=false;
@@ -86,6 +88,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private long recordEndTime;
     private boolean isDeamonRecording;
     private int recordStartSecondsAgo;
+    private boolean editable=true;
 
     public void show(Dialog dialog) {
         dialog.show();
@@ -108,6 +111,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
         _title = getIntent().getStringExtra("id");
         newCreatedFlag = getIntent().getBooleanExtra("newCreatedNote", true);
+        editable = (getIntent().getIntExtra("canChange", 1)==1);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -116,7 +120,16 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         initBottombar();
         initScrollButton();
         initEditText();
-        startDeamonRecording();
+        if(editable)
+        {
+            startDeamonRecording();
+        }
+        else
+        {
+            this.myViewGroup.disableClick();
+            et_title.setFocusable(false);
+            et_title.setEnabled(false);
+        }
     }
 
     public void startDeamonRecording()
@@ -154,7 +167,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void initEditText() {
         myViewGroup=findViewById(R.id.viewgroup);
-        EditText et_title = (EditText) findViewById(R.id.et_new_title);
+        et_title = (EditText) findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
             et_title.setText(_title);
@@ -266,6 +279,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     @Override
     public void onBackPressed() {
+        if(!editable)
+            finish();
         if(!noteModified()) {
             if(!isRecording)
                 stopDeamonRecording();
@@ -364,7 +379,10 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 onBackPressed();
             }
         });
-        mToolBarTextView.setText("编辑笔记");
+        if(editable)
+            mToolBarTextView.setText("编辑笔记");
+        else
+            mToolBarTextView.setText("预览笔记");
         mToolBarTextView.setTextColor(getResources().getColor(R.color.white));
 
     }
@@ -428,6 +446,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          * @Description: function for tabSelected and tabUnselected
          *
          */
+        if(!editable)
+            return;
         switch(pos) {
             case 0:
                 myViewGroup.onNewTextEvent();
