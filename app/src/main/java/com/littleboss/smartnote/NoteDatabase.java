@@ -2,6 +2,7 @@ package com.littleboss.smartnote;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.littleboss.smartnote.Utils.DateUtils;
 
@@ -83,7 +84,7 @@ public class NoteDatabase {
         if (instance == null)
             instance = new NoteDatabase();
         return instance;
-    }
+}
 
     /**
      * 根据笔记标题获取笔记内容。
@@ -199,6 +200,9 @@ public class NoteDatabase {
             String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
             String create_string = cursor.getString(cursor.getColumnIndexOrThrow("create_time"));
             String modify_string = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
+            Log.i("fuck create : ", create_string);
+            Log.i("mf modify : ", modify_string);
+            Log.i("count = ", String.valueOf(cursor.getCount()));
             Date create = DateUtils.String2Date(create_string);
             Date modify = DateUtils.String2Date(modify_string);
             titleList.add(
