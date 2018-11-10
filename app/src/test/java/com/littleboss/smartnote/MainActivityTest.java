@@ -42,15 +42,12 @@ import static org.robolectric.shadows.ShadowDialog.getShownDialogs;
 
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
-    ActivityController<MainActivity> mainActivityActivityController;
     @Before
     public void setUp() throws Exception {
         NoteDatabase.dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         NoteDatabase.saveNoteByTitle("", "test", "test");
         database.setTestMod(1);
-        mainActivityActivityController = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
-
     }
 
     @After
@@ -60,15 +57,16 @@ public class MainActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        Activity activity = mainActivityActivityController.get();
+        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        Activity activity = controller.get();
         ShadowActivity shadowActivity = Shadows.shadowOf(activity);
         assertNotNull(shadowActivity);
     }
 
     @Test
     public void uiTests() throws Exception {
-        Activity activity = mainActivityActivityController.get();
-
+        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        Activity activity = controller.get();
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
 
@@ -84,9 +82,9 @@ public class MainActivityTest {
         item.performClick();
         item.performLongClick();
 
-        mainActivityActivityController.get().sortNotesList(0);
-        mainActivityActivityController.get().sortNotesList(1);
-        mainActivityActivityController.get().sortNotesList(2);
+        controller.get().sortNotesList(0);
+        controller.get().sortNotesList(1);
+        controller.get().sortNotesList(2);
 
         Menu menu = activity.findViewById(R.menu.menu_mainactivity);
         MenuItem sortItem = new RoboMenuItem(R.id.sortitem);

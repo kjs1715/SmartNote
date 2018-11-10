@@ -39,10 +39,10 @@ public class SearchActivityTest {
         NoteDatabase.saveNoteByTitle("", "test", "test");
     }
 
-//    @After
-//    public void afterTest() {
-//        NoteDatabase.closeConnection();
-//    }
+    @After
+    public void afterTest() {
+        NoteDatabase.closeConnection();
+    }
 
     @Test
     public void startTest() throws Exception {
