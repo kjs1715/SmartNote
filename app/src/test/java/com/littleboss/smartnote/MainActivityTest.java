@@ -49,7 +49,7 @@ public class MainActivityTest {
         NoteDatabase database = NoteDatabase.getInstance();
         NoteDatabase.saveNoteByTitle("", "test", "test");
         database.setTestMod(1);
-        mainActivityActivityController = Robolectric.buildActivity(MainActivity.class).create();
+        mainActivityActivityController = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
 
     }
 
@@ -60,14 +60,14 @@ public class MainActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        Activity activity = mainActivityActivityController.start().resume().visible().get();
+        Activity activity = mainActivityActivityController.get();
         ShadowActivity shadowActivity = Shadows.shadowOf(activity);
         assertNotNull(shadowActivity);
     }
 
     @Test
     public void uiTests() throws Exception {
-        Activity activity = mainActivityActivityController.start().resume().visible().get();
+        Activity activity = mainActivityActivityController.get();
 
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
