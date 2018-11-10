@@ -86,14 +86,13 @@ public class MainActivityTest {
         controller.get().sortNotesList(1);
         controller.get().sortNotesList(2);
 
+        AlertDialog sortDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNull(sortDialog);
         Menu menu = activity.findViewById(R.menu.menu_mainactivity);
         MenuItem sortItem = new RoboMenuItem(R.id.sortitem);
         activity.onOptionsItemSelected(sortItem);
-
-
-//        AlertDialog sortDialog = ShadowAlertDialog.getLatestAlertDialog();
-//        Button item1 = sortDialog.getButton(0);
-//        item1.performClick();
+        sortDialog = ShadowAlertDialog.getLatestAlertDialog();
+        // TODO: 2018/11/10 sortDialog would be null
 //        assertNotNull(sortDialog);
     }
 }
