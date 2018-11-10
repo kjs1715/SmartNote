@@ -39,11 +39,6 @@ public class SearchActivityTest {
         NoteDatabase.saveNoteByTitle("", "test", "test");
     }
 
-    @After
-    public void afterTest() {
-        NoteDatabase.closeConnection();
-    }
-
     @Test
     public void startTest() throws Exception {
         ActivityController<SearchActivity> controller = Robolectric.buildActivity(SearchActivity.class).create().start().resume().visible();
@@ -56,5 +51,10 @@ public class SearchActivityTest {
         ListView listView = activity.findViewById(R.id.searchlistview);
         ShadowListView shadowListView = Shadows.shadowOf(listView);
         shadowListView.performItemClick(0);
+    }
+
+    @After
+    public void afterTest() {
+        NoteDatabase.closeConnection();
     }
 }

@@ -196,13 +196,7 @@ public class MainActivity extends AppCompatActivity{
                 Collections.sort(notesList, new Comparator<ListData>() {
                     @Override
                     public int compare(ListData o1, ListData o2) {
-                        if(o1.createDate.before(o2.createDate)) {
-                            return 1;
-                        } else if (o2.createDate.before(o1.createDate)) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+                        return Compare(0, o1, o2);
                     }
                 });
                 break ;
@@ -210,13 +204,7 @@ public class MainActivity extends AppCompatActivity{
                 Collections.sort(notesList, new Comparator<ListData>() {
                     @Override
                     public int compare(ListData o1, ListData o2) {
-                        if(o1.modifyDate.before(o2.modifyDate)) {
-                            return 1;
-                        } else if (o2.modifyDate.before(o1.modifyDate)) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+                        return Compare(1, o1, o2);
                     }
                 });
                 break ;
@@ -224,7 +212,7 @@ public class MainActivity extends AppCompatActivity{
                 Collections.sort(notesList, new Comparator<ListData>() {
                     @Override
                     public int compare(ListData o1, ListData o2) {
-                        return o1.title.compareTo(o2.title);
+                        return Compare(2, o1, o2);
                     }
                 });
                 break;
@@ -545,6 +533,28 @@ public class MainActivity extends AppCompatActivity{
         if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
             System.exit(0);
 
+        }
+    }
+
+    public int Compare(int type, ListData o1, ListData o2) {
+        if(type == 0) {
+            if(o1.createDate.before(o2.createDate)) {
+                return 1;
+            } else if (o2.createDate.before(o1.createDate)) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else if(type == 1) {
+            if(o1.modifyDate.before(o2.modifyDate)) {
+                return 1;
+            } else if (o2.modifyDate.before(o1.modifyDate)) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else {
+                return o1.title.compareTo(o2.title);
         }
     }
 }
