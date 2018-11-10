@@ -70,18 +70,6 @@ public class MainActivityTest {
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
 
-        // buttons tests
-        Button bt_cancel = activity.findViewById(R.id.bt_cancel);
-        Button bt_delete = activity.findViewById(R.id.bt_delete);
-        bt_cancel.performClick();
-        bt_delete.performClick();
-
-        // mainlist test
-        ListView listView = activity.findViewById(R.id.mainlist);
-        View item = listView.getAdapter().getView(0, null, null);
-        item.performClick();
-        item.performLongClick();
-
         controller.get().sortNotesList(0);
         controller.get().sortNotesList(1);
         controller.get().sortNotesList(2);
@@ -94,5 +82,27 @@ public class MainActivityTest {
         sortDialog = ShadowAlertDialog.getLatestAlertDialog();
         // TODO: 2018/11/10 sortDialog would be null
 //        assertNotNull(sortDialog);
+    }
+
+    @Test
+    public void buttonTests() throws Exception {
+        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        Activity activity = controller.get();
+        // buttons tests
+        Button bt_cancel = activity.findViewById(R.id.bt_cancel);
+        Button bt_delete = activity.findViewById(R.id.bt_delete);
+        bt_cancel.performClick();
+        bt_delete.performClick();
+    }
+
+    @Test
+    public void mainListTest() throws Exception {
+        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        Activity activity = controller.get();
+        // mainlist test
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+        item.performClick();
+        item.performLongClick();
     }
 }
