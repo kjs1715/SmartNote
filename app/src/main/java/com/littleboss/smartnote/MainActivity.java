@@ -186,8 +186,6 @@ public class MainActivity extends AppCompatActivity{
                 isMultiSelect = false;
             }
         });
-
-        readListandFlush();
     }
 
     public void sortNotesList(int type) {
