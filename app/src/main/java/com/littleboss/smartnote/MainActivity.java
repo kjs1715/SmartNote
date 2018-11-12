@@ -40,14 +40,16 @@ import android.view.View.OnLongClickListener;
 
 import com.littleboss.smartnote.Utils.DateUtils;
 
-
 class ListData {
     String title;
     Date createDate, modifyDate;
-    ListData(String title, Date createDate, Date modifyDate) {
+    List<Tag> tagList;
+    ListData(String title, Date createDate, Date modifyDate, String tagListString) {
         this.title = title;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
+        this.tagList=new LinkedList<>();
+        String[]
     }
 }
 

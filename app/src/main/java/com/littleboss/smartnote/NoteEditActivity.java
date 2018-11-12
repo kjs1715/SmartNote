@@ -277,9 +277,19 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     @Override
+    public void finish()
+    {
+        stopDeamonRecording();
+        super.finish();
+    }
+
+    @Override
     public void onBackPressed() {
         if(!editable)
+        {
             finish();
+            return;
+        }
         if(!noteModified()) {
             if(!isRecording)
                 stopDeamonRecording();

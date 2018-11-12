@@ -200,9 +200,6 @@ public class NoteDatabase {
             String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
             String create_string = cursor.getString(cursor.getColumnIndexOrThrow("create_time"));
             String modify_string = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
-            Log.i("fuck create : ", create_string);
-            Log.i("mf modify : ", modify_string);
-            Log.i("count = ", String.valueOf(cursor.getCount()));
             Date create = DateUtils.String2Date(create_string);
             Date modify = DateUtils.String2Date(modify_string);
             titleList.add(
