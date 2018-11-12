@@ -8,9 +8,9 @@ import java.util.Date;
 
 public class DateUtils {
     public static final String format = "yyyyMMdd_HHmmss";
-    private static SimpleDateFormat formatter = new SimpleDateFormat(format);
+    private static SimpleDateFormat formatter;
     public static final String display_format = "yyyy-MM-dd HH:mm:ss";
-    private static SimpleDateFormat display_formatter = new SimpleDateFormat(display_format);
+    private static SimpleDateFormat display_formatter;
 
     final private static SimpleDateFormat getFormatter() {
         if (formatter==null) {
@@ -36,6 +36,7 @@ public class DateUtils {
 
     public static Date String2Date(String date) {
         try {
+            System.out.println("date is "+date);
             return getFormatter().parse(date);
         } catch (ParseException e) {
             Log.e("", e.toString());

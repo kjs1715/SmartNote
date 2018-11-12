@@ -128,7 +128,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         {
             this.myViewGroup.disableClick();
             et_title.setFocusable(false);
-            et_title.setEnabled(false);
         }
     }
 

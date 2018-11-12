@@ -52,17 +52,21 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     try {
+                        System.out.println("audioFilePath:"+audioFilePath);
                         mediaPlayer.setDataSource(audioFilePath);
+                        System.out.println("audioFilePath set successfully");
                     }
-                    catch (IOException e) {
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mediaPlayer) {
+                            System.out.println("Prepared.");
                             mediaPlayer.start();
                         }
                     });
+                    System.out.println("Start preparing.");
                     mediaPlayer.prepareAsync();
                 }
                 else {
@@ -112,7 +116,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         addPlayIconClickListener();
         initGeneralListener();
 
-//        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
+        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
 
     }
 

@@ -87,13 +87,16 @@ public class AudioFetcher {
 
         String result = "";
         if (saveMillis != 0) {
-            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            clippedAudioFile = new File(audioPath + "/" + curTime + ".wav");
+//            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            clippedAudioFile = new File(audioPath + "/last" +saveMillis + "MillisOf_" + audioFile.getName());
             new AudioClipper().audioClip(
                     audioFile.getAbsolutePath(),
                     clippedAudioFile.getAbsolutePath(),
                     saveMillis
             );
+            System.out.println(String.format("audioClipped(%s,%s,%d)",audioFile.getAbsolutePath(),
+                    clippedAudioFile.getAbsolutePath(),
+                    saveMillis));
             result = clippedAudioFile.getAbsolutePath();
         }
         // remove audioFile

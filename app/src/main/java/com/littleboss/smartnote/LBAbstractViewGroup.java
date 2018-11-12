@@ -84,12 +84,12 @@ public class LBAbstractViewGroup extends ScrollView {
             if(view instanceof LBTextView)
             {
                 ((LBTextView) view).getEditText().setFocusable(false);
-                ((LBTextView) view).getEditText().setEnabled(false);
+//                ((LBTextView) view).getEditText().setEnabled(false);
             }
             else if(view instanceof LBAudioView)
             {
                 ((LBAudioView)view).content.setFocusable(false);
-                ((LBAudioView)view).content.setEnabled(false);
+//                ((LBAudioView)view).content.setEnabled(false);
             }
         }
     }
