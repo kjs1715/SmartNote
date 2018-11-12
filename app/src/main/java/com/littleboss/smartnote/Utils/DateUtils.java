@@ -36,7 +36,6 @@ public class DateUtils {
 
     public static Date String2Date(String date) {
         try {
-            System.out.println("date is "+date);
             return getFormatter().parse(date);
         } catch (ParseException e) {
             Log.e("", e.toString());
