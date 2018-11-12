@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.util.ExceptionCatchingInputStream;
 import com.littleboss.smartnote.Utils.ImageUtils;
 
 import org.apache.tools.ant.Main;
@@ -38,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.ShadowDialog.getShownDialogs;
 
 
@@ -48,6 +50,8 @@ public class MainActivityTest {
         NoteDatabase.dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         NoteDatabase.saveNoteByTitle("", "test", "test");
+        NoteDatabase.saveNoteByTitle("", "test111", "test111");
+
         database.setTestMod(1);
     }
 
@@ -60,7 +64,7 @@ public class MainActivityTest {
     public void startTest() throws Exception {
         ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
-        ShadowActivity shadowActivity = Shadows.shadowOf(activity);
+        ShadowActivity shadowActivity = shadowOf(activity);
         assertNotNull(shadowActivity);
     }
 
@@ -70,15 +74,17 @@ public class MainActivityTest {
         Activity activity = controller.get();
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
+    }
 
+    @Test
+    public void menuTest() throws Exception {
+        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        MainActivity activity = controller.get();
         AlertDialog sortDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNull(sortDialog);
-        Menu menu = activity.findViewById(R.menu.menu_mainactivity);
-        MenuItem sortItem = new RoboMenuItem(R.id.sortitem);
-        activity.onOptionsItemSelected(sortItem);
-        sortDialog = ShadowAlertDialog.getLatestAlertDialog();
-        // TODO: 2018/11/10 sortDialog would be null
-//        assertNotNull(sortDialog);
+        MenuItem menuItem = new RoboMenuItem(R.id.sortitem);
+        activity.onOptionsItemSelected(menuItem);
+        activity.sortDialog();
     }
 
     @Test
@@ -128,5 +134,33 @@ public class MainActivityTest {
         controller.get().Compare(0, test1, test2);
         controller.get().Compare(1, test1, test2);
         controller.get().Compare(2, test1, test2);
+    }
+
+    @Test
+    public void enterDialogTest() throws Exception {
+        MainActivity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+        item.performClick();
+        View item1 = activity.enterNoteDialog(0).getListView().getAdapter().getView(0, null, null);
+        item1.performClick();
+//        AlertDialog enterDialog = ShadowAlertDialog.getLatestAlertDialog();
+//        assertNotNull(enterDialog);
+    }
+
+    @Test
+    public void testLongClick() throws Exception {
+        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+        item.performLongClick();
+        item.performClick();
+    }
+
+    @Test
+    public void testRequestPermission() throws Exception {
+        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+        String[] permissions = {"Camera"};
+        activity.requestPermissions(permissions,0);
     }
 }

@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity{
         flushList();
     }
 
-    public void sortDialog() {
+    public AlertDialog sortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] dialogItems = { "按创建时间排序","按修改时间排序", "按名称排序" };
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
@@ -231,10 +231,10 @@ public class MainActivity extends AppCompatActivity{
                 sortNotesList(which);
             }
         });
-        builder.show();
+        return builder.show();
     }
 
-    public void enterNoteDialog(int position) {
+    public AlertDialog enterNoteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] dialogItems = { "预览","编辑"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
-        builder.show();
+        return builder.show();
     }
 
     protected void showLinearLayout()
