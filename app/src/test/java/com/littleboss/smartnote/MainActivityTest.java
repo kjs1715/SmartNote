@@ -27,6 +27,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
+    ActivityController<MainActivity> controller;
     @Before
     public void setUp() throws Exception {
         NoteDatabase.getInstance().dropDatabaseIfExist();
@@ -34,6 +35,7 @@ public class MainActivityTest {
         NoteDatabase.getInstance().saveNoteByTitle("", "test", "test","test");
 //        NoteDatabase.getInstance().saveNoteByTitle("", "test111", "test111");
         database.setTestMod(1);
+        controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }
 
     @After
@@ -43,7 +45,6 @@ public class MainActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
         ShadowActivity shadowActivity = shadowOf(activity);
         assertNotNull(shadowActivity);
@@ -51,7 +52,6 @@ public class MainActivityTest {
 
     @Test
     public void uiTests() throws Exception {
-        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
@@ -59,7 +59,6 @@ public class MainActivityTest {
 
     @Test
     public void menuTest() throws Exception {
-        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         MainActivity activity = controller.get();
         AlertDialog sortDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNull(sortDialog);
@@ -70,7 +69,6 @@ public class MainActivityTest {
 
     @Test
     public void buttonTests() throws Exception {
-        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
         // buttons tests
         Button bt_cancel = activity.findViewById(R.id.bt_cancel);
@@ -81,7 +79,6 @@ public class MainActivityTest {
 
     @Test
     public void mainListTest() throws Exception {
-        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
         // mainlist test
         ListView listView = activity.findViewById(R.id.mainlist);
@@ -92,7 +89,6 @@ public class MainActivityTest {
 
     @Test
     public void testSorting() throws Exception {
-        ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
 
         NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
@@ -119,7 +115,7 @@ public class MainActivityTest {
 
     @Test
     public void enterDialogTest() throws Exception {
-        MainActivity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+        MainActivity activity = controller.get();
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
         item.performClick();
@@ -131,7 +127,7 @@ public class MainActivityTest {
 
     @Test
     public void testLongClick() throws Exception {
-        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+        Activity activity = controller.get();
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
         item.performLongClick();
