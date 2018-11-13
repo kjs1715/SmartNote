@@ -12,4 +12,5 @@
     <string name="save">保存</string>
     <string name="giveup">取消</string>
     <string name="sort">笔记排序</string>
+    <string name="title_activity_tag_edit">TagEditActivity</string>
 </resources>

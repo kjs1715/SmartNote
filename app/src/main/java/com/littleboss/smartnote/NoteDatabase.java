@@ -84,7 +84,7 @@ public class NoteDatabase {
         if (instance == null)
             instance = new NoteDatabase();
         return instance;
-}
+    }
 
     /**
      * 根据笔记标题获取笔记内容。
@@ -111,17 +111,23 @@ public class NoteDatabase {
      * @throws NoteNotExistException         当待修改的笔记题目不为空但在数据库中并不存在会抛出此异常。
      * @throws SameTitleNoteExistedException 新笔记的标题或者待修改笔记的新标题已经存在。
      */
-    public static void saveNoteByTitle(String oldTitle, String newTitle, String content) throws NoteNotExistException, SameTitleNoteExistedException {
+    public static void saveNoteByTitle(String oldTitle, String newTitle, String content, String tagsListString) throws NoteNotExistException, SameTitleNoteExistedException {
         Cursor cursor = null;
         String modify_time = "";
         if (!oldTitle.equals("")) {
             cursor = db.rawQuery("select * from notes where title = ?;", new String[] {oldTitle});
             if (cursor != null && cursor.getCount() > 0) {
                 modify_time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                db.execSQL(
-                        "update notes set modify_time = ?, content = ?, title = ? where title = ?;",
-                        new String[] {modify_time, content, newTitle, oldTitle}
-                );
+                if(tagsListString==null || tagsListString.length()>0)
+                    db.execSQL(
+                            "update notes set catagory_list = ? where title = ?;",
+                            new String[] {tagsListString, oldTitle}
+                    );
+                else
+                    db.execSQL(
+                            "update notes set modify_time = ?, content = ?, title = ? where title = ?;",
+                            new String[] {modify_time, content, newTitle, oldTitle}
+                    );
             }
             else {
                 throw new NoteNotExistException("Note whose title is \"" + oldTitle + "\" doesn't exist!");
@@ -140,8 +146,9 @@ public class NoteDatabase {
         }
         db.execSQL(
                 "insert into notes (title, create_time, modify_time, content, catagory_list) values (?, ?, ?, ?, ?);",
-                new String[] {newTitle, create_time, modify_time, content, ""}
+                new String[] {newTitle, create_time, modify_time, content, tagsListString}
         );
+        //TODO 更新 所有标签 表
     }
 
     /**
@@ -200,10 +207,11 @@ public class NoteDatabase {
             String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
             String create_string = cursor.getString(cursor.getColumnIndexOrThrow("create_time"));
             String modify_string = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
+            String tagListString = cursor.getString(cursor.getColumnIndexOrThrow("catagory_list"));
             Date create = DateUtils.String2Date(create_string);
             Date modify = DateUtils.String2Date(modify_string);
             titleList.add(
-                    new ListData(title, create, modify)
+                    new ListData(title, create, modify,tagListString)
             );
             if (cursor.isLast())
                 break;
@@ -230,6 +238,7 @@ public class NoteDatabase {
             cursor.close();
             db.execSQL("delete from notes where title = ?;", new String[] {deleteTitle});
         }
+        //TODO 更新 所有标签 表
     }
 
     /**
@@ -262,5 +271,11 @@ public class NoteDatabase {
             throw new NoAudiosYetException("No audios yet!");
         cursor.moveToFirst();
         return cursor.getString(cursor.getColumnIndexOrThrow("pos"));
+    }
+
+    public List<Tag> getAllTagsList()
+    {
+        //TODO 获取所有标签
+        return new LinkedList<>();
     }
 }

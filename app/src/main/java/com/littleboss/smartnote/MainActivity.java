@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,18 @@ class ListData {
         this.title = title;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
-        this.tagList=new LinkedList<>();
-        String[]
+        this.tagList=Tag.getTagList(tagListString);
+
+    }
+    String tagListString()
+    {
+        StringBuilder stringBuilder=new StringBuilder("");
+        for(Iterator<Tag> iterator = tagList.iterator();iterator.hasNext();)
+        {
+            stringBuilder.append(iterator.next().name);
+            stringBuilder.append(" ");
+        }
+        return stringBuilder.toString();
     }
 }
 
@@ -248,15 +259,24 @@ public class MainActivity extends AppCompatActivity{
 
     public void enterNoteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final String[] dialogItems = { "预览","编辑"};
+        final String[] dialogItems = { "预览","编辑","修改标签"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
-                intent.putExtra("id", (notesList.get(position)).title);
-                intent.putExtra("newCreatedNote", false);
-                intent.putExtra("canChange", which);
-                startActivity(intent);
+                if(which==0 || which==1)
+                {
+                    Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
+                    intent.putExtra("id", (notesList.get(position)).title);
+                    intent.putExtra("newCreatedNote", false);
+                    intent.putExtra("canChange", which);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent(MainActivity.this, TagEditActivity.class);
+                    intent.putExtra("id", (notesList.get(position)).title);
+                    startActivity(intent);
+                }
             }
         });
         builder.show();
@@ -465,6 +485,7 @@ public class MainActivity extends AppCompatActivity{
                 viewHolder.cb         = convertView.findViewById(R.id.item_check);
                 viewHolder.createDate = convertView.findViewById(R.id.createDate);
                 viewHolder.modifyDate = convertView.findViewById(R.id.modifyDate);
+                viewHolder.tags       = convertView.findViewById(R.id.tagTextView);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -479,8 +500,10 @@ public class MainActivity extends AppCompatActivity{
 
             String modified = DateUtils.display(list.get(position).modifyDate);
             String created = DateUtils.display(list.get(position).createDate);
+            String tags = list.get(position).tagListString();
             viewHolder.modifyDate.setText("上次修改: " + modified);
             viewHolder.createDate.setText("创建时间: " + created);
+            viewHolder.tags.setText(tags);
 
             convertView.setOnLongClickListener(new onMyLongClick(position,list));
             convertView.setOnClickListener(new onMyClick(position,list));
@@ -538,6 +561,7 @@ public class MainActivity extends AppCompatActivity{
             public CheckBox cb;
             public TextView createDate;
             public TextView modifyDate;
+            public TextView tags;
         }
     }
     @Override
