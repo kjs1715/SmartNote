@@ -33,7 +33,7 @@ public class MainActivityTest {
         NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         NoteDatabase.getInstance().saveNoteByTitle("", "test", "test","test");
-//        NoteDatabase.getInstance().saveNoteByTitle("", "test111", "test111");
+        NoteDatabase.getInstance().saveNoteByTitle("test", "test1", "test1","test1");
         database.setTestMod(1);
         controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }
@@ -41,6 +41,15 @@ public class MainActivityTest {
     @After
     public void afterTest() {
         NoteDatabase.getInstance().closeConnection();
+    }
+
+
+    @Test
+    public void buttonTest() throws Exception {
+        Activity activity = controller.get();
+        // buttons tests
+        Button bt_delete = activity.findViewById(R.id.bt_delete);
+        bt_delete.performClick();
     }
 
     @Test
@@ -68,13 +77,11 @@ public class MainActivityTest {
     }
 
     @Test
-    public void buttonTests() throws Exception {
+    public void buttonTest1() throws Exception {
         Activity activity = controller.get();
         // buttons tests
         Button bt_cancel = activity.findViewById(R.id.bt_cancel);
-        Button bt_delete = activity.findViewById(R.id.bt_delete);
         bt_cancel.performClick();
-        bt_delete.performClick();
     }
 
     @Test
