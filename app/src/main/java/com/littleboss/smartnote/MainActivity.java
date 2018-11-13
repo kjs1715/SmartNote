@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity{
         return builder.show();
     }
 
-    public static void enterNoteDialog(int position, List<ListData> notesList, Activity activity) {
+    public static AlertDialog enterNoteDialog(int position, List<ListData> notesList, Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         final String[] dialogItems = { "编辑","预览","修改标签"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
-        builder.show();
+        return builder.show();
     }
 
     protected void showLinearLayout()

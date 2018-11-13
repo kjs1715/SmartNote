@@ -32,11 +32,11 @@ import static org.junit.Assert.*;
 public class SearchActivityTest {
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
+        NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
         // for testing, inserted a data for database, inorder to return notesList
-        NoteDatabase.saveNoteByTitle("", "test", "test");
+        NoteDatabase.getInstance().saveNoteByTitle("", "test", "test",null);
     }
 
     @Test
@@ -55,6 +55,6 @@ public class SearchActivityTest {
 
     @After
     public void afterTest() {
-        NoteDatabase.closeConnection();
+        NoteDatabase.getInstance().closeConnection();
     }
 }

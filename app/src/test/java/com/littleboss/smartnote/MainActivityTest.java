@@ -36,6 +36,7 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowListView;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -47,16 +48,16 @@ import static org.robolectric.shadows.ShadowDialog.getShownDialogs;
 public class MainActivityTest {
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
+        NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
-        NoteDatabase.saveNoteByTitle("", "test", "test");
-//        NoteDatabase.saveNoteByTitle("", "test111", "test111");
+        NoteDatabase.getInstance().saveNoteByTitle("", "test", "test",null);
+//        NoteDatabase.getInstance().saveNoteByTitle("", "test111", "test111");
         database.setTestMod(1);
     }
 
     @After
     public void afterTest() {
-        NoteDatabase.closeConnection();
+        NoteDatabase.getInstance().closeConnection();
     }
 
     @Test
@@ -113,8 +114,8 @@ public class MainActivityTest {
         ActivityController<MainActivity> controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         Activity activity = controller.get();
 
-        NoteDatabase.saveNoteByTitle("", "test1", "test1");
-        NoteDatabase.saveNoteByTitle("", "test2", "test2");
+        NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
+        NoteDatabase.getInstance().saveNoteByTitle("", "test2", "test2",null);
 
 
         // test method for comparing
@@ -127,8 +128,8 @@ public class MainActivityTest {
         controller.get().sortNotesList(1);
         controller.get().sortNotesList(2);
 
-        ListData test1 = new ListData("test11", testDate1, testMDate1);
-        ListData test2 = new ListData("test22", testDate2, testMDate2);
+        ListData test1 = new ListData("test11", testDate1, testMDate1,"");
+        ListData test2 = new ListData("test22", testDate2, testMDate2,"");
 
         controller.get().Compare(0, test1, test2);
         controller.get().Compare(1, test1, test2);
@@ -141,7 +142,7 @@ public class MainActivityTest {
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
         item.performClick();
-        View item1 = activity.enterNoteDialog(0).getListView().getAdapter().getView(0, null, null);
+        View item1 = MainActivity.enterNoteDialog(0,activity.notesList,activity).getListView().getAdapter().getView(0, null, null);
         item1.performClick();
 //        AlertDialog enterDialog = ShadowAlertDialog.getLatestAlertDialog();
 //        assertNotNull(enterDialog);

@@ -26,14 +26,14 @@ import static org.junit.Assert.*;
 public class LBImageActivityTest {
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
+        NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
     }
 
     @After
     public void afterTest() {
-        NoteDatabase.closeConnection();
+        NoteDatabase.getInstance().closeConnection();
     }
     @Test
     public void startTest() throws Exception {

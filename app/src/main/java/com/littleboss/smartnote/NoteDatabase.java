@@ -55,7 +55,7 @@ public class NoteDatabase {
     static String noteDatabasePath = "data/data/com.littleboss.smartnote/app_databases/data.db";
 
     //
-    static public void dropDatabaseIfExist() {
+    public void dropDatabaseIfExist() {
         boolean success = (new File(noteDatabasePath)).delete();
         if (success) {
             System.out.println("Successfully deleted empty directory: " + noteDatabasePath);
@@ -189,7 +189,7 @@ public class NoteDatabase {
     /**
      * Close connection.
      */
-    public static void closeConnection() {
+    public void closeConnection() {
         db.close();
         instance = null;
     }

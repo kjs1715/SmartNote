@@ -34,7 +34,7 @@ public class NoteActivityTest {
 
     @Before
     public void setUp() {
-        NoteDatabase.dropDatabaseIfExist();
+        NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
         controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume().visible();
@@ -42,7 +42,7 @@ public class NoteActivityTest {
 
     @After
     public void afterTest() {
-        NoteDatabase.closeConnection();
+        NoteDatabase.getInstance().closeConnection();
     }
 
     @Test
