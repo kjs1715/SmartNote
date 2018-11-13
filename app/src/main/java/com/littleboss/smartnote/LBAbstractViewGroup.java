@@ -94,24 +94,24 @@ public class LBAbstractViewGroup extends ScrollView {
         }
     }
 
-    public void enableClick()
-    {
-        editable=true;
-        for(int i=0;i<allLayout.getChildCount();i++)
-        {
-            LBAbstractView view=(LBAbstractView)allLayout.getChildAt(i);
-            if(view instanceof LBTextView)
-            {
-                ((LBTextView) view).getEditText().setFocusable(true);
-                ((LBTextView) view).getEditText().setEnabled(true);
-            }
-            else if(view instanceof LBAudioView)
-            {
-                ((LBAudioView)view).content.setFocusable(true);
-                ((LBAudioView)view).content.setEnabled(true);
-            }
-        }
-    }
+//    public void enableClick()
+//    {
+//        editable=true;
+//        for(int i=0;i<allLayout.getChildCount();i++)
+//        {
+//            LBAbstractView view=(LBAbstractView)allLayout.getChildAt(i);
+//            if(view instanceof LBTextView)
+//            {
+//                ((LBTextView) view).getEditText().setFocusable(true);
+//                ((LBTextView) view).getEditText().setEnabled(true);
+//            }
+//            else if(view instanceof LBAudioView)
+//            {
+//                ((LBAudioView)view).content.setFocusable(true);
+//                ((LBAudioView)view).content.setEnabled(true);
+//            }
+//        }
+//    }
 
     public void removeAll() {
         if (allLayout != null) {

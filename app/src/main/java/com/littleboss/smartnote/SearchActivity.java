@@ -1,5 +1,6 @@
 package com.littleboss.smartnote;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,16 +8,21 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.littleboss.smartnote.Utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +35,15 @@ public class SearchActivity extends AppCompatActivity {
 
     private Button button;
     private EditText editText;
-    private LinkedList<ListData> notesTitleList;
+    LinkedList<ListData> notesList;
     private List<Map<String, String>> listitem;
     private ListView listView;
-    private Handler handler;
+    Handler handler;
+    Runnable listGenerate;
     NoteDatabase noteDatabase;
-    Runnable listGenerateRunnable;
+    TextView textView;
+
+    MyAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +54,7 @@ public class SearchActivity extends AppCompatActivity {
         button=findViewById(R.id.searchbutton);
         editText=findViewById(R.id.searcheditview);
         listView=findViewById(R.id.searchlistview);
+        textView=findViewById(R.id.noresultTextView);
 
         handler=new Handler();
 
@@ -53,37 +63,22 @@ public class SearchActivity extends AppCompatActivity {
         final Runnable runnableUi=new  Runnable(){
             @Override
             public void run() {
-                final SimpleAdapter myAdapter = new SimpleAdapter(SearchActivity.super.getApplicationContext(), listitem,
-                        R.layout.item_search, new String[]{"title"},new int[]{R.id.notetitle}){
-                };
-
                 listView.setClickable(true);
-                listView.setAdapter(myAdapter);
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent intent = new Intent(SearchActivity.this, NoteEditActivity.class);
-                        HashMap hashMap=(HashMap) listView.getAdapter().getItem(i);
-                        intent.putExtra("id", (String)(hashMap.get("title")));
-                        intent.putExtra("newCreatedNote", false);
-                        startActivity(intent);
-                    }
-                });
+                adapter = new MyAdapter(notesList,SearchActivity.this);
+                listView.setAdapter(adapter);
             }
         };
 
-        listGenerateRunnable=new Runnable (){
+        listGenerate=new Runnable(){
             @Override
-            public void run() {
+            public void run () {
                 listitem = new ArrayList<>();
-                int len=notesTitleList.size();
+                int len = notesList.size();
                 for (int i = 0; i < len; i++) {
                     HashMap<String, String> showitem = new HashMap<>();
-                    showitem.put("title", notesTitleList.get(i).title);
+                    showitem.put("title", notesList.get(i).title);
                     listitem.add(showitem);
                 }
-
                 handler.post(runnableUi);
             }
         };
@@ -91,47 +86,39 @@ public class SearchActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                new Thread(new Runnable(){
-                    @Override
-                    public void run() {
-                        String[] p = editText.getText().toString().split(" ");
-                        notesTitleList=new LinkedList<>();
-                        LinkedList<ListData> allTitles = NoteDatabase.getNotesTitleList();
-                        for(Iterator<ListData> iterator=allTitles.iterator(); iterator.hasNext(); )
-                        {
-                            ListData item=iterator.next();
-                            if(contains(p, item.title))
-                                notesTitleList.add(item);
-                        }
-                        new Thread(listGenerateRunnable).start();
-                    }
-                }).start();
+                notesList=NoteDatabase.getInstance().getNotesTitleListContainKeywords(editText.getText().toString());
+                if(notesList.size()>0)
+                {
+                    textView.setVisibility(View.GONE);
+                }
+                else
+                {
+                    textView.setVisibility(View.VISIBLE);
+                }
+                new Thread(listGenerate).start();
             }
         });
 
     }
 
+    protected void readListandFlush()
+    {
+        notesList=noteDatabase.getNotesTitleListContainKeywords(editText.getText().toString());
+        if(notesList.size()>0)
+        {
+            textView.setVisibility(View.GONE);
+        }
+        else
+        {
+            textView.setVisibility(View.VISIBLE);
+        }
+        new Thread(listGenerate).start();
+    }
+
     @Override
     protected void onResume()
     {
-        new Thread(new Runnable(){
-            @Override
-            public void run()
-            {
-                notesTitleList = noteDatabase.getNotesTitleList();
-                if(notesTitleList!=null)
-                    new Thread(listGenerateRunnable).start();
-            }
-        }).start();
+        readListandFlush();
         super.onResume();
-    }
-
-    boolean contains(String [] keywords, String str)
-    {
-        for(String s:keywords)
-            if(!str.contains(s))
-                return false;
-        return true;
     }
 }

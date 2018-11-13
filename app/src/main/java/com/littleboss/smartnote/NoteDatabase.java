@@ -2,15 +2,18 @@ package com.littleboss.smartnote;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.littleboss.smartnote.Utils.DateUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 class NoteNotExistException extends Exception {
     public NoteNotExistException(String msg) {
@@ -22,29 +25,29 @@ class SameTitleNoteExistedException extends Exception {
         super(msg);
     }
 }
-class NoAudiosYetException extends Exception {
-    public NoAudiosYetException(String msg) { super(msg); }
-}
+//class NoAudiosYetException extends Exception {
+//    public NoAudiosYetException(String msg) { super(msg); }
+//}
 
-/**
- * 包含有笔记创建日期、修改日期、内容的类，描述笔记信息。
- */
-class NoteInfo {
-    public String create_time, modify_time, content;
-
-    /**
-     * 笔记信息类的构造函数。
-     *
-     * @param _create_time 字符串，笔记的创建日期。
-     * @param _modify_time 字符串，笔记的最近修改日期。
-     * @param _content     字符串，笔记内容。
-     */
-    public NoteInfo(String _create_time, String _modify_time, String _content) {
-        create_time = _create_time;
-        modify_time = _modify_time;
-        content = _content;
-    }
-}
+///**
+// * 包含有笔记创建日期、修改日期、内容的类，描述笔记信息。
+// */
+//class NoteInfo {
+//    public String create_time, modify_time, content;
+//
+//    /**
+//     * 笔记信息类的构造函数。
+//     *
+//     * @param _create_time 字符串，笔记的创建日期。
+//     * @param _modify_time 字符串，笔记的最近修改日期。
+//     * @param _content     字符串，笔记内容。
+//     */
+//    public NoteInfo(String _create_time, String _modify_time, String _content) {
+//        create_time = _create_time;
+//        modify_time = _modify_time;
+//        content = _content;
+//    }
+//}
 
 public class NoteDatabase {
     static NoteDatabase instance = null;
@@ -88,7 +91,7 @@ public class NoteDatabase {
         if (instance == null)
             instance = new NoteDatabase();
         return instance;
-}
+    }
 
     /**
      * 根据笔记标题获取笔记内容。
@@ -96,7 +99,7 @@ public class NoteDatabase {
      * @param title 笔记标题
      * @return 标题恰好与输入字符串相同的笔记内容，若为空笔记或不存在返回空字符串
      */
-    public static String getNotesByTitle(String title) {
+    public String getNotesByTitle(String title) {
         Cursor cursor = db.rawQuery("select * from notes where title = ?;", new String[] {title});
         if (cursor == null || cursor.getCount() == 0) {
             return "";
@@ -115,17 +118,23 @@ public class NoteDatabase {
      * @throws NoteNotExistException         当待修改的笔记题目不为空但在数据库中并不存在会抛出此异常。
      * @throws SameTitleNoteExistedException 新笔记的标题或者待修改笔记的新标题已经存在。
      */
-    public static void saveNoteByTitle(String oldTitle, String newTitle, String content) throws NoteNotExistException, SameTitleNoteExistedException {
+    public void saveNoteByTitle(String oldTitle, String newTitle, String content, String tagsListString) throws NoteNotExistException, SameTitleNoteExistedException {
         Cursor cursor = null;
         String modify_time = "";
-        if (!oldTitle.equals("")) {
+        if (!(oldTitle==null||oldTitle.equals(""))) {
             cursor = db.rawQuery("select * from notes where title = ?;", new String[] {oldTitle});
             if (cursor != null && cursor.getCount() > 0) {
                 modify_time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                db.execSQL(
-                        "update notes set modify_time = ?, content = ?, title = ? where title = ?;",
-                        new String[] {modify_time, content, newTitle, oldTitle}
-                );
+                if(tagsListString!=null)
+                    db.execSQL(
+                            "update notes set catagory_list = ? where title = ?;",
+                            new String[] {tagsListString, oldTitle}
+                    );
+                else
+                    db.execSQL(
+                            "update notes set modify_time = ?, content = ?, title = ? where title = ?;",
+                            new String[] {modify_time, content, newTitle, oldTitle}
+                    );
             }
             else {
                 throw new NoteNotExistException("Note whose title is \"" + oldTitle + "\" doesn't exist!");
@@ -142,9 +151,10 @@ public class NoteDatabase {
         if (cursor != null && cursor.getCount() > 0) {
             throw new SameTitleNoteExistedException("Note whose title is \"" + newTitle + "\" exists!");
         }
+        cursor.close();
         db.execSQL(
                 "insert into notes (title, create_time, modify_time, content, catagory_list) values (?, ?, ?, ?, ?);",
-                new String[] {newTitle, create_time, modify_time, content, ""}
+                new String[] {newTitle, create_time, modify_time, content, tagsListString}
         );
     }
 
@@ -152,7 +162,7 @@ public class NoteDatabase {
      * Sets test mode.
      * level >= 1
      */
-    public static void setTestMod(int level) {
+    public void setTestMod(int level) {
         db.execSQL("create table testMod (mod integer);", new String[] {});
         db.execSQL("insert into testMod (mod) values (?);", new String[] {String.valueOf(level)});
     }
@@ -179,7 +189,7 @@ public class NoteDatabase {
     /**
      * Close connection.
      */
-    public static void closeConnection() {
+    public void closeConnection() {
         db.close();
         instance = null;
     }
@@ -188,7 +198,7 @@ public class NoteDatabase {
      *
      * @return 所有笔记的标题列表。若不存在任何笔记，则返回null。
      */
-    public static LinkedList<ListData> getNotesTitleList() {
+    public LinkedList<ListData> getNotesTitleList() {
         Cursor cursor = db.rawQuery("select * from notes;", null);
         if(cursor == null ) {
             return new LinkedList<>();
@@ -204,13 +214,11 @@ public class NoteDatabase {
             String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
             String create_string = cursor.getString(cursor.getColumnIndexOrThrow("create_time"));
             String modify_string = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
-            Log.i("fuck create : ", create_string);
-            Log.i("mf modify : ", modify_string);
-            Log.i("count = ", String.valueOf(cursor.getCount()));
+            String tagListString = cursor.getString(cursor.getColumnIndexOrThrow("catagory_list"));
             Date create = DateUtils.String2Date(create_string);
             Date modify = DateUtils.String2Date(modify_string);
             titleList.add(
-                    new ListData(title, create, modify)
+                    new ListData(title, create, modify,tagListString)
             );
             if (cursor.isLast())
                 break;
@@ -220,13 +228,91 @@ public class NoteDatabase {
         return titleList;
     }
 
+    public LinkedList<ListData> getNotesTitleListContainTags(Collection<Tag> tags, boolean matchAll) {
+        Cursor cursor = db.rawQuery("select * from notes;", null);
+        if(cursor == null ) {
+            return new LinkedList<>();
+        }
+        if (cursor.getCount() == 0) {
+            cursor.close();
+
+            return new LinkedList<>();
+        }
+        cursor.moveToFirst();
+        LinkedList<ListData> titleList = new LinkedList();
+        while (true) {
+            String tagListString = cursor.getString(cursor.getColumnIndexOrThrow("catagory_list"));
+            int flag;
+            if(matchAll)
+            {
+                flag=1;
+                for(Tag tag:tags)
+                {
+                    if(!tagListString.contains(tag.name))
+                    {
+                        flag=0;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                flag=0;
+                for(Tag tag:tags)
+                {
+                    if(tagListString.contains(tag.name))
+                    {
+                        flag=1;
+                        break;
+                    }
+                }
+            }
+            if(flag==1)
+            {
+                String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+                String create_string = cursor.getString(cursor.getColumnIndexOrThrow("create_time"));
+                String modify_string = cursor.getString(cursor.getColumnIndexOrThrow("modify_time"));
+                Date create = DateUtils.String2Date(create_string);
+                Date modify = DateUtils.String2Date(modify_string);
+                titleList.add(
+                        new ListData(title, create, modify,tagListString)
+                );
+            }
+            if (cursor.isLast())
+                break;
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return titleList;
+    }
+
+    public LinkedList<ListData> getNotesTitleListContainKeywords(String keywords) {
+        String[] p = keywords.split(" ");
+        LinkedList<ListData> resList=new LinkedList<>();
+        LinkedList<ListData> notesList = NoteDatabase.getInstance().getNotesTitleList();
+        for(ListData listData:notesList )
+        {
+            if(contains(p, listData.title))
+                resList.add(listData);
+        }
+        return resList;
+    }
+
+    boolean contains(String [] keywords, String str)
+    {
+        for(String s:keywords)
+            if(!str.contains(s))
+                return false;
+        return true;
+    }
+
     /**
      * 在数据库中删除标题在给出的列表中的所有笔记。
      *
      * @param deleteTitleList 删除笔记的标题列表。
      * @throws NoteNotExistException 当列表中的某条笔记的标题在数据库中并不存在会抛出此异常。
      */
-    public static void deleteNotesTitleList(LinkedList<ListData> deleteTitleList) throws NoteNotExistException {
+    public void deleteNotesTitleList(LinkedList<ListData> deleteTitleList) throws NoteNotExistException {
         Cursor cursor;
         for (ListData deleted: deleteTitleList) {
             String deleteTitle = deleted.title;
@@ -239,35 +325,84 @@ public class NoteDatabase {
         }
     }
 
-    /**
-     * Sets latest audio location.
-     *
-     * @param loc 最近一次录音的存放位置的完整地址。
-     */
-    public static void setLatestAudioLocation(String loc) {
-        Cursor cursor = db.rawQuery("select * from audiopos", null);
-        if (cursor != null && cursor.getCount() > 0) {
-            try {
-                db.execSQL("drop table audiopos");
-                db.execSQL("create table audiopos (pos text);");
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+//    /**
+//     * Sets latest audio location.
+//     *
+//     * @param loc 最近一次录音的存放位置的完整地址。
+//     */
+//    public void setLatestAudioLocation(String loc) {
+//        Cursor cursor = db.rawQuery("select * from audiopos", null);
+//        if (cursor != null && cursor.getCount() > 0) {
+//            try {
+//                db.execSQL("drop table audiopos");
+//                db.execSQL("create table audiopos (pos text);");
+//            }
+//            catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        db.execSQL("insert into audiopos (pos) values (?);", new String[] {loc});
+//    }
+//
+//    /**
+//     * 获取最近一次录音存放的完整地址.
+//     *
+//     * @throws NoAudiosYetException 调用此函数时还未进行任何录音时会抛出此异常。
+//     */
+//    public String getLatestAudioLocation() throws NoAudiosYetException{
+//        Cursor cursor = db.rawQuery("select * from audiopos", null);
+//        if (cursor == null || cursor.getCount() == 0)
+//            throw new NoAudiosYetException("No audios yet!");
+//        cursor.moveToFirst();
+//        return cursor.getString(cursor.getColumnIndexOrThrow("pos"));
+//    }
+
+    public List<Tag> getAllTagsList()
+    {
+        updateCatagoryList();
+        Cursor cursor = db.rawQuery("select * from catagories;", null);
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return new LinkedList<>();
         }
-        db.execSQL("insert into audiopos (pos) values (?);", new String[] {loc});
+        cursor.moveToFirst();
+        String tagString = cursor.getString(1);
+        System.out.println("getAllTagsList"+tagString);
+        return Tag.getTagList(tagString);
     }
 
-    /**
-     * 获取最近一次录音存放的完整地址.
-     *
-     * @throws NoAudiosYetException 调用此函数时还未进行任何录音时会抛出此异常。
-     */
-    public static String getLatestAudioLocation() throws NoAudiosYetException{
-        Cursor cursor = db.rawQuery("select * from audiopos", null);
-        if (cursor == null || cursor.getCount() == 0)
-            throw new NoAudiosYetException("No audios yet!");
+    public void updateCatagoryList()
+    {
+        Cursor cursor = db.rawQuery("select catagory_list from notes;", null);
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return;
+        }
         cursor.moveToFirst();
-        return cursor.getString(cursor.getColumnIndexOrThrow("pos"));
+        Set<Tag> tagsSet = new TreeSet<>();
+        while (true) {
+            String tagString = cursor.getString(0);
+            tagsSet.addAll(Tag.getTagList(tagString));
+            if (cursor.isLast())
+                break;
+            cursor.moveToNext();
+        }
+        System.out.println("tagsSet.size="+tagsSet.size());
+        cursor.close();
+        cursor=db.rawQuery("select * from catagories;", null);
+        if(cursor.getCount()==0)
+        {
+            db.execSQL(
+                    "insert into catagories (catagory) values (?);",
+                    new String[] {Tag.getTagListString(tagsSet)}
+            );
+        }
+        else
+        {
+            db.execSQL(
+                    "update catagories set catagory = ? where _id = 1;",
+                    new String[] {Tag.getTagListString(tagsSet)}
+            );
+        }
     }
 }

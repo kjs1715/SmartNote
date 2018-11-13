@@ -6,7 +6,6 @@
     <uses-feature
         android:name="android.hardware.camera2"
         android:required="true" />
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -51,7 +50,13 @@
             android:name=".NoteEditActivity"
             android:theme="@style/Theme" />
         <activity android:name=".LBVideoActivity" />
-        <activity android:name=".LBImageActivity"/>
+        <activity android:name=".LBImageActivity" />
+        <activity
+            android:name=".TagEditActivity"
+            android:label="@string/title_activity_tag_edit"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".TagSelectActivity" />
+        <activity android:name=".TagSelectResultActivity"></activity>
     </application>
 
 </manifest>

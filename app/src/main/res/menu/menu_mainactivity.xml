@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.jiaminglin.myapplication.MainActivity">
     <item
+        android:id="@+id/sortitem"
+        android:checkable="false"
+        android:checked="false"
+        android:orderInCategory="0"
+        android:title="@string/sort"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/searchitem"
         android:checkable="false"
         android:checked="false"
@@ -10,11 +17,7 @@
         android:title="@string/search"
         app:showAsAction="never" />
     <item
-        android:id="@+id/sortitem"
-        android:checkable="false"
-        android:checked="false"
-        android:orderInCategory="100"
-        android:title="@string/sort"
-        app:showAsAction="never" />
+        android:id="@+id/tagselect"
+        android:title="@string/tag" />
 
 </menu>

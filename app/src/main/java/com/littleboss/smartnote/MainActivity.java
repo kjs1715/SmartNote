@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.Manifest;
 import android.content.DialogInterface;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,14 +42,26 @@ import android.view.View.OnLongClickListener;
 
 import com.littleboss.smartnote.Utils.DateUtils;
 
-
 class ListData {
     String title;
     Date createDate, modifyDate;
-    ListData(String title, Date createDate, Date modifyDate) {
+    List<Tag> tagList;
+    ListData(String title, Date createDate, Date modifyDate, String tagListString) {
         this.title = title;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
+        this.tagList=Tag.getTagList(tagListString);
+
+    }
+    String tagListString()
+    {
+        StringBuilder stringBuilder=new StringBuilder("");
+        for(Iterator<Tag> iterator = tagList.iterator();iterator.hasNext();)
+        {
+            stringBuilder.append(iterator.next().name);
+            stringBuilder.append(" ");
+        }
+        return stringBuilder.toString();
     }
 }
 
@@ -232,20 +246,29 @@ public class MainActivity extends AppCompatActivity{
         return builder.show();
     }
 
-    public AlertDialog enterNoteDialog(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final String[] dialogItems = { "预览","编辑"};
+    public static void enterNoteDialog(int position, List<ListData> notesList, Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final String[] dialogItems = { "编辑","预览","修改标签"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
-                intent.putExtra("id", (notesList.get(position)).title);
-                intent.putExtra("newCreatedNote", false);
-                intent.putExtra("canChange", which);
-                startActivity(intent);
+                if(which==0 || which==1)
+                {
+                    Intent intent = new Intent(activity, NoteEditActivity.class);
+                    intent.putExtra("id", (notesList.get(position)).title);
+                    intent.putExtra("newCreatedNote", false);
+                    intent.putExtra("justsee", which);
+                    activity.startActivity(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent(activity, TagEditActivity.class);
+                    intent.putExtra("id", (notesList.get(position)).title);
+                    activity.startActivity(intent);
+                }
             }
         });
-        return builder.show();
+        builder.show();
     }
 
     protected void showLinearLayout()
@@ -325,6 +348,10 @@ public class MainActivity extends AppCompatActivity{
                 }
                 else if(id == R.id.sortitem) {
                     sortDialog();
+                }
+                else if(id == R.id.tagselect) {
+                    Intent intent = new Intent(MainActivity.this, TagSelectActivity.class);
+                    startActivity(intent);
                 }
             }
         return super.onOptionsItemSelected(item);
@@ -435,7 +462,7 @@ public class MainActivity extends AppCompatActivity{
                 }
                 else
                 {
-                    enterNoteDialog(position);
+                    enterNoteDialog(position,notesList,MainActivity.this);
                 }
             }
         }
@@ -451,6 +478,7 @@ public class MainActivity extends AppCompatActivity{
                 viewHolder.cb         = convertView.findViewById(R.id.item_check);
                 viewHolder.createDate = convertView.findViewById(R.id.createDate);
                 viewHolder.modifyDate = convertView.findViewById(R.id.modifyDate);
+                viewHolder.tags       = convertView.findViewById(R.id.tagTextView);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -465,8 +493,10 @@ public class MainActivity extends AppCompatActivity{
 
             String modified = DateUtils.display(list.get(position).modifyDate);
             String created = DateUtils.display(list.get(position).createDate);
+            String tags = list.get(position).tagListString();
             viewHolder.modifyDate.setText("上次修改: " + modified);
             viewHolder.createDate.setText("创建时间: " + created);
+            viewHolder.tags.setText(tags);
 
             convertView.setOnLongClickListener(new onMyLongClick(position,list));
             convertView.setOnClickListener(new onMyClick(position,list));
@@ -524,6 +554,7 @@ public class MainActivity extends AppCompatActivity{
             public CheckBox cb;
             public TextView createDate;
             public TextView modifyDate;
+            public TextView tags;
         }
     }
     @Override
@@ -552,7 +583,7 @@ public class MainActivity extends AppCompatActivity{
                 return 0;
             }
         } else {
-                return o1.title.compareTo(o2.title);
+            return o1.title.compareTo(o2.title);
         }
     }
 }

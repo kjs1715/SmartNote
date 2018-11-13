@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">SmartNote</string>
+    <string name="app_name">智能会议速记_LittleBoss</string>
     <string name="title">My Description</string>
     <string name="context_menu">Context menu</string>
-    <string name="search">搜索笔记</string>
+    <string name="search">关键词搜索</string>
+    <string name="tag">标签检索</string>
     <string name="searchButtonText">搜索</string>
     <string name="APPID">=5bacbfa8</string>
     <string name="title_activity_lbvideo">LBVideoActivity</string>
@@ -11,5 +12,8 @@
     <string name="keep_ratio">保持纵横比</string>
     <string name="save">保存</string>
     <string name="giveup">取消</string>
-    <string name="sort">笔记排序</string>
+    <string name="sort">排序</string>
+    <string name="NoResultSearch">没有包含全部关键词的笔记，请尝试减少关键词个数</string>
+    <string name="NoResultTagSelect">没有包含全部所选标签的笔记，请尝试减少标签个数或者“模糊搜索”</string>
+    <string name="title_activity_tag_edit">TagEditActivity</string>
 </resources>
