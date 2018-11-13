@@ -2,46 +2,27 @@ package com.littleboss.smartnote;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import com.bumptech.glide.util.ExceptionCatchingInputStream;
-import com.littleboss.smartnote.Utils.ImageUtils;
-
-import org.apache.tools.ant.Main;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.shadow.api.Shadow;
-import org.robolectric.shadows.ImageUtil;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.ShadowListView;
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.ShadowDialog.getShownDialogs;
 
 
 @RunWith(RobolectricTestRunner.class)
