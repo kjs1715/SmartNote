@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.Manifest;
 import android.content.DialogInterface;
@@ -257,25 +258,25 @@ public class MainActivity extends AppCompatActivity{
         builder.show();
     }
 
-    public void enterNoteDialog(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final String[] dialogItems = { "预览","编辑","修改标签"};
+    public static void enterNoteDialog(int position, List<ListData> notesList, Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final String[] dialogItems = { "编辑","预览","修改标签"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(which==0 || which==1)
                 {
-                    Intent intent = new Intent(MainActivity.this, NoteEditActivity.class);
+                    Intent intent = new Intent(activity, NoteEditActivity.class);
                     intent.putExtra("id", (notesList.get(position)).title);
                     intent.putExtra("newCreatedNote", false);
-                    intent.putExtra("canChange", which);
-                    startActivity(intent);
+                    intent.putExtra("justsee", which);
+                    activity.startActivity(intent);
                 }
                 else
                 {
-                    Intent intent = new Intent(MainActivity.this, TagEditActivity.class);
+                    Intent intent = new Intent(activity, TagEditActivity.class);
                     intent.putExtra("id", (notesList.get(position)).title);
-                    startActivity(intent);
+                    activity.startActivity(intent);
                 }
             }
         });
@@ -359,6 +360,10 @@ public class MainActivity extends AppCompatActivity{
                 }
                 else if(id == R.id.sortitem) {
                     sortDialog();
+                }
+                else if(id == R.id.tagselect) {
+                    Intent intent = new Intent(MainActivity.this, TagSelectActivity.class);
+                    startActivity(intent);
                 }
             }
         return super.onOptionsItemSelected(item);
@@ -469,7 +474,7 @@ public class MainActivity extends AppCompatActivity{
                 }
                 else
                 {
-                    enterNoteDialog(position);
+                    enterNoteDialog(position,notesList,MainActivity.this);
                 }
             }
         }

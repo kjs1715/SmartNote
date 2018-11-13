@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".TagEditActivity"
-    tools:showIn="@layout/activity_tag_edit">
+    tools:context=".TagSelectActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +32,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="本笔记标签："
+                    android:text="检索标签："
                     android:textColor="@android:color/black"
                     android:textSize="15dp" />
 
@@ -42,19 +40,33 @@
                     android:id="@+id/upperGrid"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="8"/>
+                    android:layout_weight="8" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/sbutton"
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="5dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/button_background"
-                android:text="保存"
-                android:textColor="@color/button_text"
-                android:textSize="30px" />
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/sbutton"
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:background="@color/button_background"
+                    android:text="搜索"
+                    android:textColor="@color/button_text"
+                    android:textSize="30px" />
+
+                <CheckBox
+                    android:id="@+id/notsure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="模糊搜索" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -83,4 +95,5 @@
                 android:layout_weight="8" />
         </LinearLayout>
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

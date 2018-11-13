@@ -111,7 +111,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
         _title = getIntent().getStringExtra("id");
         newCreatedFlag = getIntent().getBooleanExtra("newCreatedNote", true);
-        editable = (getIntent().getIntExtra("canChange", 1)==1);
+        editable = (getIntent().getIntExtra("justsee", 0)==0);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -768,13 +768,13 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
                 if(newCreatedFlag) {
                     try {
-                        noteDatabase.saveNoteByTitle("", title, content,"");
+                        noteDatabase.saveNoteByTitle(null, title, content,null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
-                        noteDatabase.saveNoteByTitle(_title, title, content,"");
+                        noteDatabase.saveNoteByTitle(_title, title, content,null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

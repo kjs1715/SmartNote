@@ -54,7 +54,9 @@
         <activity
             android:name=".TagEditActivity"
             android:label="@string/title_activity_tag_edit"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".TagSelectActivity" />
+        <activity android:name=".TagSelectResultActivity"></activity>
     </application>
 
 </manifest>

@@ -1,13 +1,26 @@
 package com.littleboss.smartnote;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TagEditActivity extends AppCompatActivity {
@@ -17,6 +30,9 @@ public class TagEditActivity extends AppCompatActivity {
     NoteDatabase noteDatabase;
     List<Tag> thisTagList;
     List<Tag> allTagList;
+    FlowLayout upperFlowLayout;
+    FlowLayout lowerFlowLayout;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,29 +41,137 @@ public class TagEditActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        setTitle("标签编辑");
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addTagFab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AddTagDialog();
+            }
+        });
+
+        upperFlowLayout=findViewById(R.id.upperGrid);
+        lowerFlowLayout=findViewById(R.id.lowerGrid);
+        button=findViewById(R.id.sbutton);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinkedList<Tag> linkedList=new LinkedList<>();
+                int count=upperFlowLayout.getChildCount();
+                for(int i=0;i<count;i++)
+                {
+                    linkedList.add(new Tag(((TextView)((ConstraintLayout)((ConstraintLayout)upperFlowLayout.getChildAt(i)).getChildAt(0)).getChildAt(0)).getText().toString()));
+                }
+                try {
+                    noteDatabase.saveNoteByTitle(title,null,null,Tag.getTagListString(linkedList));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(TagEditActivity.this,"标签保存成功",Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
         title = getIntent().getStringExtra("id");
         noteDatabase = NoteDatabase.getInstance();
         List<ListData> listData = noteDatabase.getNotesTitleList();
-        for(Iterator<ListData> iterator=listData.iterator();iterator.hasNext();)
+        for(ListData listData1:listData)
         {
-            ListData listData1=iterator.next();
             if(listData1.title.equals(title))
             {
                 tagsListString=listData1.tagListString();
-                return;
+                break;
             }
         }
         thisTagList=Tag.getTagList(tagsListString);
-        allTagList=noteDatabase.
+        thisTagList=Tag.removeDuplicate(thisTagList);
+        for(Tag tag:thisTagList)
+        {
+            View view=Tag.getTextView(TagEditActivity.this,tag);
+            addViewToUpper(upperFlowLayout,lowerFlowLayout,view);
+        }
+        allTagList=noteDatabase.getAllTagsList();
+        System.out.println("allTagList.size="+allTagList.size());
+        for(Tag tag:allTagList)
+        {
+            if(thisTagList.contains(tag))
+            {
+                continue;
+            }
+            View view=Tag.getTextView(TagEditActivity.this,tag);
+            addViewToLower(upperFlowLayout,lowerFlowLayout,view);
+        }
     }
 
+    public void addViewToUpper(ViewGroup upper, ViewGroup lower , View view)
+    {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                upper.removeView(view);
+                addViewToLower(upper,lower,view);
+            }
+        });
+        upper.addView(view);
+    }
+    public void addViewToLower(ViewGroup upper, ViewGroup lower , View view)
+    {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lower.removeView(view);
+                addViewToUpper(upper,lower,view);
+            }
+        });
+        lower.addView(view);
+    }
+
+    public void AddTagDialog() {
+
+        class AddTagDialog extends FrameLayout {
+
+            private EditText tagname;
+            public AddTagDialog(@NonNull Context context) {
+                super(context);
+
+                // 渲染xml
+                LayoutInflater inflater = LayoutInflater.from(context);
+                inflater.inflate(R.layout.addtag_dialog, this);
+
+                // 绑定View对象
+                tagname = findViewById(R.id.tagname);
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(TagEditActivity.this);
+        builder.setTitle("添加新标签");
+
+        AddTagDialog addtag_dialog = new AddTagDialog(TagEditActivity.this);
+        builder.setView(addtag_dialog);
+
+        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                String string=addtag_dialog.tagname.getText().toString().trim().replace(" ","_");
+                if(string.length()==0)
+                    return;
+                if(thisTagList.contains(new Tag(string)))
+                {
+                    Toast.makeText(TagEditActivity.this,"该笔记已有同名标签",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(allTagList.contains(new Tag(string)))
+                {
+                    Toast.makeText(TagEditActivity.this,"所有标签中已有同名标签",Toast.LENGTH_SHORT).show();
+                    addViewToUpper(upperFlowLayout,lowerFlowLayout,Tag.getTextView(TagEditActivity.this, new Tag(string)));
+                    return;
+                }
+                Tag tag=new Tag(string);
+                addViewToUpper(upperFlowLayout,lowerFlowLayout,Tag.getTextView(TagEditActivity.this, tag));
+            }
+        });
+        builder.show();
+    }
 }
