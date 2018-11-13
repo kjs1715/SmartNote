@@ -51,10 +51,14 @@ public class NoteDatabase {
     static SQLiteDatabase db;
     static String noteDatabasePath = "data/data/com.littleboss.smartnote/app_databases/data.db";
 
+    //
     static public void dropDatabaseIfExist() {
-        File database = new File(noteDatabasePath);
-        if (database.exists())
-            database.delete();
+        boolean success = (new File(noteDatabasePath)).delete();
+        if (success) {
+            System.out.println("Successfully deleted empty directory: " + noteDatabasePath);
+        } else {
+            System.out.println("Failed to delete empty directory: " + noteDatabasePath);
+        }
     }
 
     private NoteDatabase() {

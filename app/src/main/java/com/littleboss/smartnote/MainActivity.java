@@ -194,13 +194,7 @@ public class MainActivity extends AppCompatActivity{
                 Collections.sort(notesList, new Comparator<ListData>() {
                     @Override
                     public int compare(ListData o1, ListData o2) {
-                        if(o1.createDate.before(o2.createDate)) {
-                            return 1;
-                        } else if (o2.createDate.before(o1.createDate)) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+                        return Compare(0, o1, o2);
                     }
                 });
                 break ;
@@ -208,13 +202,7 @@ public class MainActivity extends AppCompatActivity{
                 Collections.sort(notesList, new Comparator<ListData>() {
                     @Override
                     public int compare(ListData o1, ListData o2) {
-                        if(o1.modifyDate.before(o2.modifyDate)) {
-                            return 1;
-                        } else if (o2.modifyDate.before(o1.modifyDate)) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+                        return Compare(1, o1, o2);
                     }
                 });
                 break ;
@@ -222,7 +210,7 @@ public class MainActivity extends AppCompatActivity{
                 Collections.sort(notesList, new Comparator<ListData>() {
                     @Override
                     public int compare(ListData o1, ListData o2) {
-                        return o1.title.compareTo(o2.title);
+                        return Compare(2, o1, o2);
                     }
                 });
                 break;
@@ -232,7 +220,7 @@ public class MainActivity extends AppCompatActivity{
         flushList();
     }
 
-    public void sortDialog() {
+    public AlertDialog sortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] dialogItems = { "按创建时间排序","按修改时间排序", "按名称排序" };
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
@@ -241,10 +229,10 @@ public class MainActivity extends AppCompatActivity{
                 sortNotesList(which);
             }
         });
-        builder.show();
+        return builder.show();
     }
 
-    public void enterNoteDialog(int position) {
+    public AlertDialog enterNoteDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] dialogItems = { "预览","编辑"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
@@ -257,7 +245,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
-        builder.show();
+        return builder.show();
     }
 
     protected void showLinearLayout()
@@ -543,6 +531,28 @@ public class MainActivity extends AppCompatActivity{
         if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
             System.exit(0);
 
+        }
+    }
+
+    public int Compare(int type, ListData o1, ListData o2) {
+        if(type == 0) {
+            if(o1.createDate.before(o2.createDate)) {
+                return 1;
+            } else if (o2.createDate.before(o1.createDate)) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else if(type == 1) {
+            if(o1.modifyDate.before(o2.modifyDate)) {
+                return 1;
+            } else if (o2.modifyDate.before(o1.modifyDate)) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else {
+                return o1.title.compareTo(o2.title);
         }
     }
 }
