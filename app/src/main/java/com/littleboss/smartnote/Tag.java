@@ -25,6 +25,7 @@ public class Tag implements Comparable<Tag> {
     public static List<Tag> getTagList(String tagsListString)
     {
         LinkedList<Tag> linkedList=new LinkedList<>();
+//        System.out.println(tagsListString);
         String[] tags=tagsListString.split(" ");
         for (String tag:tags)
         {

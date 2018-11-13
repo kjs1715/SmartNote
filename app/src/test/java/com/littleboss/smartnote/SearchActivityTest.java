@@ -36,7 +36,7 @@ public class SearchActivityTest {
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
         // for testing, inserted a data for database, inorder to return notesList
-        NoteDatabase.getInstance().saveNoteByTitle("", "test", "test",null);
+        NoteDatabase.getInstance().saveNoteByTitle("", "test", "test","test");
     }
 
     @Test
