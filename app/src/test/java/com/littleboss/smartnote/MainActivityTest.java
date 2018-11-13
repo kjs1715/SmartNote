@@ -50,7 +50,7 @@ public class MainActivityTest {
         NoteDatabase.dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         NoteDatabase.saveNoteByTitle("", "test", "test");
-        NoteDatabase.saveNoteByTitle("", "test111", "test111");
+//        NoteDatabase.saveNoteByTitle("", "test111", "test111");
 
         database.setTestMod(1);
     }
