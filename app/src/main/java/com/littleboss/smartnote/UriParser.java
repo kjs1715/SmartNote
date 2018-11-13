@@ -54,59 +54,61 @@ public class UriParser {
      */
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
+        // FIXME: 2018/11/13 Added if condition for test
+        if (uri != null) {
+            final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+            String pathHead = "";
+            // 1. DocumentProvider
+            if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+                // 1.1 ExternalStorageProvider
+                if (isExternalStorageDocument(uri)) {
+                    final String docId = DocumentsContract.getDocumentId(uri);
+                    final String[] split = docId.split(":");
+                    final String type = split[0];
+                    if ("primary".equalsIgnoreCase(type)) {
+                        return pathHead + Environment.getExternalStorageDirectory() + "/" + split[1];
+                    }
+                }
+                // 1.2 DownloadsProvider
+                else if (isDownloadsDocument(uri)) {
+                    final String id = DocumentsContract.getDocumentId(uri);
+                    return id.substring(4);
+                }
+                // 1.3 MediaProvider
+                else if (isMediaDocument(uri)) {
+                    final String docId = DocumentsContract.getDocumentId(uri);
+                    final String[] split = docId.split(":");
+                    final String type = split[0];
 
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-        String pathHead = "";
-        // 1. DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // 1.1 ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-                if ("primary".equalsIgnoreCase(type)) {
-                    return pathHead + Environment.getExternalStorageDirectory() + "/" + split[1];
+                    Uri contentUri = null;
+                    if ("image".equals(type)) {
+                        contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("video".equals(type)) {
+                        contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("audio".equals(type)) {
+                        contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    }
+
+                    final String selection = "_id=?";
+                    final String[] selectionArgs = new String[]{split[1]};
+
+                    return pathHead + getDataColumn(context, contentUri, selection, selectionArgs);
                 }
             }
-            // 1.2 DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-                final String id = DocumentsContract.getDocumentId(uri);
-                return id.substring(4);
-            }
-            // 1.3 MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            // 2. MediaStore (and general)
+            else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                if (isGooglePhotosUri(uri)) {//判断是否是google相册图片
+                    return uri.getLastPathSegment();
+                } else if (isGooglePlayPhotosUri(uri)) {//判断是否是Google相册图片
+                    return getImageUrlWithAuthority(context, uri);
+                } else {//其他类似于media这样的图片，和android4.4以下获取图片path方法类似
+                    return getFilePath_below19(context, uri);
                 }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{split[1]};
-
-                return pathHead + getDataColumn(context, contentUri, selection, selectionArgs);
             }
-        }
-        // 2. MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            if (isGooglePhotosUri(uri)) {//判断是否是google相册图片
-                return uri.getLastPathSegment();
-            } else if (isGooglePlayPhotosUri(uri)) {//判断是否是Google相册图片
-                return getImageUrlWithAuthority(context, uri);
-            } else {//其他类似于media这样的图片，和android4.4以下获取图片path方法类似
-                return getFilePath_below19(context, uri);
+            // 3. 判断是否是文件形式 File
+            else if ("file".equalsIgnoreCase(uri.getScheme())) {
+                return pathHead + uri.getPath();
             }
-        }
-        // 3. 判断是否是文件形式 File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return pathHead + uri.getPath();
         }
         return null;
     }
