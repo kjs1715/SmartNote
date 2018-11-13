@@ -51,7 +51,6 @@ public class MainActivityTest {
         NoteDatabase database = NoteDatabase.getInstance();
         NoteDatabase.saveNoteByTitle("", "test", "test");
 //        NoteDatabase.saveNoteByTitle("", "test111", "test111");
-
         database.setTestMod(1);
     }
 
@@ -157,10 +156,10 @@ public class MainActivityTest {
         item.performClick();
     }
 
-    @Test
-    public void testRequestPermission() throws Exception {
-        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
-        String[] permissions = {"Camera"};
-        activity.requestPermissions(permissions,0);
-    }
+//    @Test
+//    public void testRequestPermission() throws Exception {
+//        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+//        String[] permissions = {"Camera"};
+//        activity.requestPermissions(permissions,0);
+//    }
 }
