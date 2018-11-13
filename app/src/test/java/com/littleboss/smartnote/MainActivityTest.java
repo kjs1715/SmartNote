@@ -134,10 +134,11 @@ public class MainActivityTest {
 
     @Test
     public void testLongClick() throws Exception {
-        Activity activity = controller.get();
+        MainActivity activity = controller.get();
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
-        item.performLongClick();
+//        item.performLongClick();
+        activity.isMultiselected();
         item.performClick();
     }
 

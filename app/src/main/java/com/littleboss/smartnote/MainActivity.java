@@ -586,4 +586,8 @@ public class MainActivity extends AppCompatActivity{
             return o1.title.compareTo(o2.title);
         }
     }
+
+    public void isMultiselected() {
+        this.isMultiSelect = true;
+    }
 }
