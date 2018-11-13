@@ -189,7 +189,7 @@ public class NoteDatabase {
     /**
      * Close connection.
      */
-    public void closeConnection() {
+    public static void closeConnection() {
         db.close();
         instance = null;
     }
