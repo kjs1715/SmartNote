@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -144,8 +145,16 @@ public class NoteDatabase {
      * level >= 1
      */
     public void setTestMod(int level) {
-        db.execSQL("create table testMod (mod integer);", new String[] {});
-        db.execSQL("insert into testMod (mod) values (?);", new String[] {String.valueOf(level)});
+        db.execSQL("create table testMod (_id integer primary key autoincrement, mod integer);");
+        Cursor cursor = null;
+        cursor = db.rawQuery("select * from testMod", new String[]{});
+        if (cursor == null || cursor.getCount() == 0)
+            db.execSQL("insert into testMod (mod) values (?);", new String[] {String.valueOf(level)});
+        else
+            db.execSQL(
+                    "update testMod set mod = ? where _id=1;", new String[] {String.valueOf(level)}
+            );
+
     }
 
     /**

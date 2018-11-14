@@ -43,7 +43,7 @@ public class MainActivityTest {
 
     @Test
     public void buttonTest() throws Exception {
-        Activity activity = controller.get();
+        MainActivity activity = controller.get();
         // buttons tests
         Button bt_delete = activity.findViewById(R.id.bt_delete);
         bt_delete.performClick();
@@ -51,14 +51,14 @@ public class MainActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        Activity activity = controller.get();
+        MainActivity activity = controller.get();
         ShadowActivity shadowActivity = shadowOf(activity);
         assertNotNull(shadowActivity);
     }
 
     @Test
     public void uiTests() throws Exception {
-        Activity activity = controller.get();
+        MainActivity activity = controller.get();
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
     }
