@@ -37,7 +37,7 @@ public class NoteActivityTest {
         NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
-        controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume().visible();
+        controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
     }
 
     @After
