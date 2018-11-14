@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,9 +40,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.littleboss.smartnote.Utils.DateUtils;
 
 class ListData {
@@ -76,10 +86,10 @@ public class MainActivity extends AppCompatActivity{
     NoteDatabase noteDatabase;
 
 
-    private Button bt_cancel, bt_delete;
+    private Button bt_cancel, longclick_menu;
     private TextView tv_sum;
     private LinearLayout linearLayout;
-    private LinkedList<ListData> list_delete = new LinkedList();// 需要删除的数据
+    private LinkedList<ListData> list_selected = new LinkedList();// 需要删除的数据
     private boolean isMultiSelect = false;// 是否处于多选状态
     FloatingActionButton fab;
     MyAdapter adapter;
@@ -87,6 +97,107 @@ public class MainActivity extends AppCompatActivity{
     private final int WRITE_EXTERNAL_STORAGE_ID = 0;
     private final int RECORD_AUDIO_ID = 1;
     private final int CAMERA_ID = 2;
+
+    /**
+     * 删除笔记功能
+     * */
+    private void deleteNotesSelected() {
+        try {
+            noteDatabase.deleteNotesTitleList(list_selected);
+        } catch (NoteNotExistException e) {
+            e.printStackTrace();
+        }
+        hideLinearLayout();
+        readListandFlush();
+        isMultiSelect = false;
+    }
+
+    Pattern r = Pattern.compile("<([a-zA-Z]+)>([^\\[\\]]+)</[a-zA-Z]+>");
+
+    private void shareNotesSelected() {
+        //share notes
+        // to pdf files
+        ArrayList<File> pdf_files = new ArrayList();
+        for (ListData ld : this.notesList) {
+            try {
+                /*
+                获得所有pdf的路径
+                此处pdfdir是File对象，toString()后末尾无分隔符separator，需要加上File.separator
+                */
+                File pdf = new File(this.getExternalFilesDir(null).toString() + File.separator + ld.title + ".pdf");
+                pdf_files.add(pdf);
+
+                /* pdf创建 */
+                Document document = new Document(PageSize.A4, 500, 150, 50, 50);
+                document.setMargins(20, 20, 40, 40);
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf));
+                document.open();
+                Log.d("MainActivity pdf dir: ", pdf.toString());
+
+                String contents = "<title>" + ld.title + "</title>" + NoteDatabase.getInstance().getNotesByTitle(ld.title);
+                Log.d("MainActivity sharing: ", contents);
+
+                Matcher m = r.matcher(contents);
+                while(m.find()) {
+                    ////
+                    continue;
+                }
+
+                document.newPage();
+                document.add(new Paragraph(contents));
+                writer.setPageEmpty(true);
+
+                document.close();
+
+                /* 通报用户 */
+                Toast.makeText(this, "convert " + ld.title + " to pdf succeed", Toast.LENGTH_LONG);
+            }
+            catch (Exception e) {
+                /* 跳过创建pdf失败的笔记 */
+                e.printStackTrace();
+                Toast.makeText(this, "convert " + ld.title + " to pdf failed", Toast.LENGTH_LONG);
+                continue;
+            }
+        }
+
+        File shared = null;
+        if(pdf_files.size() == 0) {
+            return;
+        } else if (pdf_files.size() > 1) {
+            // zip them
+            // shared = zipped
+        } else {
+            shared = pdf_files.get(0);
+        }
+
+        // Use the CloudStorageAccount object to connect to your storage account
+
+    }
+
+    private void hiddenDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("选择操作");
+        String[] items = {"删除", "分享"};
+        dialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        deleteNotesSelected();
+                        break;
+                    case 1:
+                        shareNotesSelected();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,9 +285,10 @@ public class MainActivity extends AppCompatActivity{
         }).start();
 
         bt_cancel = (Button) findViewById(R.id.bt_cancel);
-        bt_delete = (Button) findViewById(R.id.bt_delete);
+//        bt_delete = (Button) findViewById(R.id.bt_delete);
+        longclick_menu = findViewById(R.id.longclick_menu);
         tv_sum = (TextView) findViewById(R.id.tv_sum);
-        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        linearLayout = (LinearLayout) findViewById(R.id.hidden_layout);
 
         bt_cancel.setOnClickListener(new OnClickListener() {
             @Override
@@ -186,18 +298,12 @@ public class MainActivity extends AppCompatActivity{
                 isMultiSelect = false;
             }
         });
-        bt_delete.setOnClickListener(new OnClickListener() {
+
+        longclick_menu.setOnLongClickListener(new OnLongClickListener() {
             @Override
-            public void onClick(View view) {
-                System.out.println("bt_delete clicked");
-                try {
-                    noteDatabase.deleteNotesTitleList(list_delete);
-                } catch (NoteNotExistException e) {
-                    e.printStackTrace();
-                }
-                hideLinearLayout();
-                readListandFlush();
-                isMultiSelect = false;
+            public boolean onLongClick(View v) {
+                hiddenDialog();
+                return true;
             }
         });
     }
@@ -274,7 +380,7 @@ public class MainActivity extends AppCompatActivity{
     protected void showLinearLayout()
     {
         linearLayout.setVisibility(View.VISIBLE);
-        tv_sum.setText("共选择了" + list_delete.size() + "项");
+        tv_sum.setText("共选择了" + list_selected.size() + "项");
         adapter.showAllItems();
         adapter.notifyDataSetChanged();
         fab.setVisibility(View.GONE);
@@ -422,8 +528,8 @@ public class MainActivity extends AppCompatActivity{
                 }
                 else {
                     isMultiSelect = true;
-                    list_delete.clear();
-                    list_delete.add(notesList.get(position));
+                    list_selected.clear();
+                    list_selected.add(notesList.get(position));
                     adapter.setOneHot(position);
                     adapter.showAllItems();
                     adapter.notifyDataSetChanged();
@@ -450,15 +556,15 @@ public class MainActivity extends AppCompatActivity{
                 {
                     if(adapter.isChecked(position))
                     {
-                        list_delete.remove(adapter.getNotesTitle(position));
+                        list_selected.remove(adapter.getNotesTitle(position));
                     }
                     else
                     {
-                        list_delete.add(adapter.getNotesTitle(position));
+                        list_selected.add(adapter.getNotesTitle(position));
                     }
                     adapter.switchIsChecked(position);
                     adapter.notifyDataSetChanged();
-                    tv_sum.setText("共选择了" + list_delete.size() + "项");
+                    tv_sum.setText("共选择了" + list_selected.size() + "项");
                 }
                 else
                 {

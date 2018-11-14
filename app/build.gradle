@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
+//apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 28
@@ -57,8 +57,8 @@ dependencies {
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
 
     // test dependencies
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:4.0'
+//    testImplementation 'junit:junit:4.12'
+//    testImplementation 'org.robolectric:robolectric:4.0'
 }
 
 repositories {
@@ -75,38 +75,38 @@ repositories {
     maven { url 'https://csspeechstorage.blob.core.windows.net/maven/' }
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
 }
-
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
-    group = "Reporting"
-
-    reports {
-        xml.enabled = true
-        html.enabled = false
-    }
-
-
-    def fileFilter = ['**/R.class',
-                      '**/R$*.class',
-                      '**/BuildConfig.*',
-                      '**/*$ViewInjector*.*',
-                      '**/*$ViewBinder*.*',
-                      '**/*$MembersInjector*.*',
-                      '**/Manifest*.*',
-                      '**/*Test*.*',
-                      'android/**/*.*']
-
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: project.buildDir, includes: [
-            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
-    ])
-
-
-}
+//
+//tasks.withType(Test) {
+//    jacoco.includeNoLocationClasses = true
+//}
+//
+//task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+//    group = "Reporting"
+//
+//    reports {
+//        xml.enabled = true
+//        html.enabled = false
+//    }
+//
+//
+//    def fileFilter = ['**/R.class',
+//                      '**/R$*.class',
+//                      '**/BuildConfig.*',
+//                      '**/*$ViewInjector*.*',
+//                      '**/*$ViewBinder*.*',
+//                      '**/*$MembersInjector*.*',
+//                      '**/Manifest*.*',
+//                      '**/*Test*.*',
+//                      'android/**/*.*']
+//
+//    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+//    def mainSrc = "${project.projectDir}/src/main/java"
+//
+//    sourceDirectories = files([mainSrc])
+//    classDirectories = files([debugTree])
+//    executionData = fileTree(dir: project.buildDir, includes: [
+//            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
+//    ])
+//
+//
+//}

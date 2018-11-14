@@ -33,7 +33,7 @@
         </ListView>
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/hidden_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="bottom|center_horizontal"
@@ -59,12 +59,12 @@
                 android:textColor="@android:color/background_dark" />
 
             <Button
-                android:id="@+id/bt_delete"
+                android:id="@+id/longclick_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/button_background"
-                android:text="删除"
-                android:textColor="@color/button_text" />
+                android:layout_weight="1"
+                android:text="Button" />
+
         </LinearLayout>
     </LinearLayout>
 
