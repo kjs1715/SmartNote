@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +49,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -72,6 +77,32 @@ class ListData {
             stringBuilder.append(" ");
         }
         return stringBuilder.toString();
+    }
+}
+
+class ImageInfo {
+    final String loc;
+    final int width;
+    final int height;
+    private static final String image_regex = "([^\\+]+\\.[a-z]+)\\+([0-9]+)\\+([0-9]+)";
+    private static final Pattern p = Pattern.compile(image_regex);
+
+    private ImageInfo(String loc, int width, int height) {
+        this.loc = loc;
+        this.width = width;
+        this.height = height;
+    }
+
+    public static ImageInfo parse_image_string(String image_string) {
+        Matcher m = p.matcher(image_string);
+        if(!m.find()) {
+            return null;
+        }
+        return new ImageInfo(
+                m.group(1),
+                Integer.parseInt(m.group(2)),
+                Integer.parseInt(m.group(3))
+        );
     }
 }
 
@@ -112,7 +143,7 @@ public class MainActivity extends AppCompatActivity{
         isMultiSelect = false;
     }
 
-    Pattern r = Pattern.compile("<([a-zA-Z]+)>([^\\[\\]]+)</[a-zA-Z]+>");
+    Pattern r = Pattern.compile("<([a-zA-Z]+)>([^<>]*)</[a-zA-Z]+>");
 
     private void shareNotesSelected() {
         //share notes
@@ -124,8 +155,15 @@ public class MainActivity extends AppCompatActivity{
                 获得所有pdf的路径
                 此处pdfdir是File对象，toString()后末尾无分隔符separator，需要加上File.separator
                 */
-                File pdf = new File(this.getExternalFilesDir(null).toString() + File.separator + ld.title + ".pdf");
-                pdf_files.add(pdf);
+                /*
+                 * 特殊处理：
+                 * 如果标题含有'/'，即String ld.title中含有'/'，
+                 * 则需要将其替换
+                 * 暂定为字符'_'
+                 * */
+                String pdf_title = ld.title;
+                pdf_title.replace('/','_');
+                File pdf = new File(this.getExternalFilesDir(null).toString() + File.separator + pdf_title + ".pdf");
 
                 /* pdf创建 */
                 Document document = new Document(PageSize.A4, 500, 150, 50, 50);
@@ -134,28 +172,57 @@ public class MainActivity extends AppCompatActivity{
                 document.open();
                 Log.d("MainActivity pdf dir: ", pdf.toString());
 
+                /*
+                * 内容为各个控件提供的content_string，
+                * 即软件内部通信用的标准化字符串
+                * 此处并上标题<title></title>
+                * 由于此字符串是标签串，可以通过正则表达式进行解析
+                * */
                 String contents = "<title>" + ld.title + "</title>" + NoteDatabase.getInstance().getNotesByTitle(ld.title);
                 Log.d("MainActivity sharing: ", contents);
 
+                /*
+                * 通过正则式进行解析
+                * */
                 Matcher m = r.matcher(contents);
+                document.newPage();
                 while(m.find()) {
-                    ////
-                    continue;
+                    String tag = m.group(1);
+                    String thing = m.group(2);
+                    switch (tag) {
+                        case "text": {
+                            document.add(new Paragraph(thing));
+                            break;
+                        }
+                        case "title": {
+                            Paragraph title = new Paragraph(thing);
+                            title.setFont(new Font(Font.FontFamily.COURIER, 24, Font.BOLD));
+                            title.setAlignment(Element.ALIGN_CENTER);
+                            document.add(title);
+                            break;
+                        }
+                        case "image": {
+                            ImageInfo image_info = ImageInfo.parse_image_string(thing);
+                            Image image = Image.getInstance(image_info.loc);
+                            image.scaleAbsolute(image_info.width, image_info.height);
+                            document.add(image);
+                            break;
+                        }
+                    }
                 }
 
-                document.newPage();
-                document.add(new Paragraph(contents));
                 writer.setPageEmpty(true);
-
                 document.close();
 
+                pdf_files.add(pdf);
+
                 /* 通报用户 */
-                Toast.makeText(this, "convert " + ld.title + " to pdf succeed", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), "convert " + ld.title + " to pdf succeed", Toast.LENGTH_LONG);
             }
             catch (Exception e) {
                 /* 跳过创建pdf失败的笔记 */
                 e.printStackTrace();
-                Toast.makeText(this, "convert " + ld.title + " to pdf failed", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), "convert " + ld.title + " to pdf failed", Toast.LENGTH_LONG);
                 continue;
             }
         }
@@ -166,12 +233,17 @@ public class MainActivity extends AppCompatActivity{
         } else if (pdf_files.size() > 1) {
             // zip them
             // shared = zipped
+            for(File pdf_file : pdf_files) {
+                ZIPUtil.compress(
+                        pdf_file.toString(),
+                        pdf_file.toString() + ".zip"
+                );
+            }
         } else {
             shared = pdf_files.get(0);
         }
 
-        // Use the CloudStorageAccount object to connect to your storage account
-
+        
     }
 
     private void hiddenDialog() {
