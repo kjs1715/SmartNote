@@ -30,13 +30,16 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 public class SearchActivityTest {
+    private NoteDatabase database = null;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.getInstance().dropDatabaseIfExist();
-        NoteDatabase database = NoteDatabase.getInstance();
+        NoteDatabase.dropDatabaseIfExist();
+        database = NoteDatabase.getInstance();
+        database.saveNoteByTitle("", "test", "test","test");
         database.setTestMod(1);
+
         // for testing, inserted a data for database, inorder to return notesList
-        NoteDatabase.getInstance().saveNoteByTitle("", "test", "test","test");
+        database.saveNoteByTitle("", "test", "test","test");
     }
 
     @Test
@@ -55,6 +58,6 @@ public class SearchActivityTest {
 
     @After
     public void afterTest() {
-        NoteDatabase.getInstance().closeConnection();
+        database.closeConnection();
     }
 }

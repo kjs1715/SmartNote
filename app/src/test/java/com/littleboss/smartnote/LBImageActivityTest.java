@@ -24,16 +24,18 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 public class LBImageActivityTest {
+    private NoteDatabase database;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.getInstance().dropDatabaseIfExist();
-        NoteDatabase database = NoteDatabase.getInstance();
+        NoteDatabase.dropDatabaseIfExist();
+        database = NoteDatabase.getInstance();
+
         database.setTestMod(1);
     }
 
     @After
     public void afterTest() {
-        NoteDatabase.getInstance().closeConnection();
+        database.closeConnection();
     }
     @Test
     public void startTest() throws Exception {
