@@ -1,20 +1,16 @@
 package com.littleboss.smartnote;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class Tag implements Comparable<Tag> {
     String name;
@@ -24,6 +20,10 @@ public class Tag implements Comparable<Tag> {
     }
     public static List<Tag> getTagList(String tagsListString)
     {
+        if(tagsListString==null||tagsListString.length()==0)
+        {
+            return new LinkedList<>();
+        }
         LinkedList<Tag> linkedList=new LinkedList<>();
 //        System.out.println(tagsListString);
         String[] tags=tagsListString.split(" ");
@@ -36,6 +36,8 @@ public class Tag implements Comparable<Tag> {
     }
     public static String getTagListString(Collection<Tag> collection)
     {
+        if(collection==null || collection.size()==0)
+            return "";
         StringBuilder res=new StringBuilder("");
         for (Tag tag:collection)
         {
@@ -55,7 +57,7 @@ public class Tag implements Comparable<Tag> {
     }
 
     @Override
-    public int compareTo(Tag other)
+    public int compareTo(@NonNull Tag other)
     {
         return this.name.compareTo(other.name);
     }

@@ -754,7 +754,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
                 if(newCreatedFlag) {
                     try {
-                        noteDatabase.saveNoteByTitle(null, title, content,null);
+                        noteDatabase.saveNoteByTitle("", title, content,null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
