@@ -133,6 +133,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void startDeamonRecording()
     {
+        Log.i("startDeamonRecording...", "");
         if (noteDatabase.getTestMod() != -1)
             return;
         if(isDeamonRecording)
@@ -494,6 +495,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 NoteEditActivity.this,
                 null
         ));
+        //stopDeamonRecording();
         startDeamonRecording();
     }
 
@@ -666,18 +668,21 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         System.out.println(data==null);
         if(resultCode==RESULT_OK)
         {
             if(requestCode == photoFromGalleryCode) {
                 Uri originalUri = data.getData();
-                String img_path = UriParser.getPath(
-                        NoteEditActivity.this,
-                        originalUri
-                );
-                LBImageView added = new LBImageView(img_path, NoteEditActivity.this);
-                this.myViewGroup.addViewtoCursor(added);
+                // FIXME: 2018/11/13 Added if condition for testing, I m not sure it would or not effect on App
+                if(originalUri != null) {
+                    String img_path = UriParser.getPath(
+                            NoteEditActivity.this,
+                            originalUri
+                    );
+                    LBImageView added = new LBImageView(img_path, NoteEditActivity.this);
+                    this.myViewGroup.addViewtoCursor(added);
+                }
             }
             else if(requestCode == photoFromCameraCode) {
                 this.myViewGroup.addViewtoCursor(new LBImageView(latestCameraResultPath ,NoteEditActivity.this));

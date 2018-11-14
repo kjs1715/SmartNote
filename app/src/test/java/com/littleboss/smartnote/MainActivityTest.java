@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,30 +28,31 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
     ActivityController<MainActivity> controller;
+    private NoteDatabase database = null;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.getInstance().dropDatabaseIfExist();
-        NoteDatabase database = NoteDatabase.getInstance();
-        NoteDatabase.getInstance().saveNoteByTitle("", "test", "test","test");
-        NoteDatabase.getInstance().saveNoteByTitle("test", "test1", "test1","test1");
+        NoteDatabase.dropDatabaseIfExist();
+        database = NoteDatabase.getInstance();
+        database.saveNoteByTitle("", "test", "test","test");
+        database.saveNoteByTitle("test", "test1", "test1","test1");
         database.setTestMod(1);
         controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }
 
     @After
     public void afterTest() {
-        NoteDatabase.getInstance().closeConnection();
+        database.closeConnection();
     }
 
 //      todo: uncomment and fix the NullPointerException
 
-//    @Test
-//    public void buttonTest() throws Exception {
-//        MainActivity activity = controller.get();
-//        // buttons tests
-//        Button bt_delete = activity.findViewById(R.id.bt_delete);
-//        bt_delete.performClick();
-//    }
+    @Test
+    public void buttonTest() throws Exception {
+        MainActivity activity = controller.get();
+        // buttons tests
+        Button bt_delete = activity.findViewById(R.id.bt_delete);
+        bt_delete.performClick();
+    }
 
     @Test
     public void startTest() throws Exception {
@@ -73,16 +77,16 @@ public class MainActivityTest {
         activity.onOptionsItemSelected(menuItem);
         activity.sortDialog();
     }
-//      todo: uncomment and fix the NullPointerException
-//    @Test
-//    public void buttonTest1() throws Exception {
-//        Activity activity = controller.get();
-//        // buttons tests
-//        Button bt_cancel = activity.findViewById(R.id.bt_cancel);
-//        bt_cancel.performClick();
-//    }
 
-//      todo: uncomment and fix the IndexOutOfBoundsException
+    @Test
+    public void buttonTest1() throws Exception {
+        Activity activity = controller.get();
+        // buttons tests
+        Button bt_cancel = activity.findViewById(R.id.bt_cancel);
+        bt_cancel.performClick();
+    }
+
+////      todo: uncomment and fix the IndexOutOfBoundsException
 //    @Test
 //    public void mainListTest() throws Exception {
 //        Activity activity = controller.get();
@@ -94,33 +98,33 @@ public class MainActivityTest {
 //    }
 
 //      todo: uncomment and fix the IllegalStateException
-//    @Test
-//    public void testSorting() throws Exception {
-//        Activity activity = controller.get();
-//
-//        NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
-//        NoteDatabase.getInstance().saveNoteByTitle("", "test2", "test2",null);
-//
-//
-//        // test method for comparing
-//        Date testDate1 = new Date(2018,5,1);
-//        Date testDate2 = new Date(2018,5,2);
-//        Date testMDate1 = new Date(2018,6,1);
-//        Date testMDate2 = new Date(2018,6,2);
-//
-//        controller.get().sortNotesList(0);
-//        controller.get().sortNotesList(1);
-//        controller.get().sortNotesList(2);
-//
-//        ListData test1 = new ListData("test11", testDate1, testMDate1,"");
-//        ListData test2 = new ListData("test22", testDate2, testMDate2,"");
-//
-//        controller.get().Compare(0, test1, test2);
-//        controller.get().Compare(1, test1, test2);
-//        controller.get().Compare(2, test1, test2);
-//    }
+    @Test
+    public void testSorting() throws Exception {
+        Activity activity = controller.get();
 
-//      todo: uncomment and fix the IndexOutOfBoundsException
+        NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
+        NoteDatabase.getInstance().saveNoteByTitle("", "test2", "test2",null);
+
+
+        // test method for comparing
+        Date testDate1 = new Date(2018,5,1);
+        Date testDate2 = new Date(2018,5,2);
+        Date testMDate1 = new Date(2018,6,1);
+        Date testMDate2 = new Date(2018,6,2);
+
+        controller.get().sortNotesList(0);
+        controller.get().sortNotesList(1);
+        controller.get().sortNotesList(2);
+
+        ListData test1 = new ListData("test11", testDate1, testMDate1,"");
+        ListData test2 = new ListData("test22", testDate2, testMDate2,"");
+
+        controller.get().Compare(0, test1, test2);
+        controller.get().Compare(1, test1, test2);
+        controller.get().Compare(2, test1, test2);
+    }
+
+//    //  todo: uncomment and fix the IndexOutOfBoundsException
 //    @Test
 //    public void enterDialogTest() throws Exception {
 //        MainActivity activity = controller.get();
@@ -133,7 +137,7 @@ public class MainActivityTest {
 ////        assertNotNull(enterDialog);
 //    }
 
-//      todo: uncomment and fix the IndexOutOfBoundsException
+////      todo: uncomment and fix the IndexOutOfBoundsException
 //    @Test
 //    public void testLongClick() throws Exception {
 //        MainActivity activity = controller.get();
@@ -144,10 +148,10 @@ public class MainActivityTest {
 //        item.performClick();
 //    }
 
-//    @Test
-//    public void testRequestPermission() throws Exception {
-//        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
-//        String[] permissions = {"Camera"};
-//        activity.requestPermissions(permissions,0);
-//    }
+    @Test
+    public void testRequestPermission() throws Exception {
+        Activity activity = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible().get();
+        String[] permissions = {"Camera"};
+        activity.requestPermissions(permissions,0);
+    }
 }

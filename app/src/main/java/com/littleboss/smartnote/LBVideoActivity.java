@@ -25,7 +25,11 @@ public class LBVideoActivity extends AppCompatActivity {
         try {
             video = findViewById(R.id.video);
             String path = getIntent().getStringExtra("filepath");//获取视频路径
-            Uri uri = Uri.parse(path);//将路径转换成uri
+            Uri uri;
+            if (path == null)
+                uri = null;
+            else
+                uri = Uri.parse(path);//将路径转换成uri
             if (uri == null)
                 return;
             video.setVideoURI(uri);//为视频播放器设置视频路径

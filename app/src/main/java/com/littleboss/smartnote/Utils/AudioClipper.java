@@ -88,31 +88,45 @@ public class AudioClipper {
         mWavHeader = new WavHeader();
         byte[] buffer = new byte[4];
         byte[] shortBuffer = new byte[2];
-        assert(mDataInputStream.read(buffer) == 4);
+        int size;
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mRitfWaveChunkID = new String(buffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mRitfWaveChunkSize = byteArray2Int(buffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mWaveFormat = new String(buffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mFmtChunk1ID = new String(buffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mFmtChunkSize = byteArray2Int(buffer);
-        assert(mDataInputStream.read(shortBuffer) == 2);
+        size = mDataInputStream.read(shortBuffer);
+        assert(size == 2);
         mWavHeader.mAudioFormat = byteArray2Short(shortBuffer);
-        assert(mDataInputStream.read(shortBuffer) == 2);
+        size = mDataInputStream.read(shortBuffer);
+        assert(size == 2);
         mWavHeader.mNumChannel = byteArray2Short(shortBuffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mSampleRate = byteArray2Int(buffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mByteRate = byteArray2Int(buffer);
-        assert(mDataInputStream.read(shortBuffer) == 2);
+        size = mDataInputStream.read(shortBuffer);
+        assert(size == 2);
         mWavHeader.mBlockAlign = byteArray2Short(shortBuffer);
-        assert(mDataInputStream.read(shortBuffer) == 2);
+        size = mDataInputStream.read(shortBuffer);
+        assert(size == 2);
         mWavHeader.mBitsPerSample = byteArray2Short(shortBuffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mDataChunkID = new String(buffer);
-        assert(mDataInputStream.read(buffer) == 4);
+        size = mDataInputStream.read(buffer);
+        assert(size == 4);
         mWavHeader.mDataChunkSize = byteArray2Int(buffer);
     }
     private void writeHeader() throws IOException {
@@ -133,6 +147,7 @@ public class AudioClipper {
     }
     public int getSkipBytes(long suffixLengthMs) throws IOException {
         double duration = mWavHeader.mDataChunkSize * 1.0 / mWavHeader.mSampleRate / mWavHeader.mBlockAlign;
+        Log.i("duration = ", String.valueOf(duration));
         int suffixBytes = (int) ((suffixLengthMs / 1000.0 / duration) * mWavHeader.mDataChunkSize);
         if (suffixBytes >= mDataInputStream.available())
             return 0;
