@@ -85,10 +85,14 @@ public class AudioFetcher {
         }
 
 
+        //return audioFile.getAbsolutePath();
+
+
         String result = "";
         if (saveMillis != 0) {
-//            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            clippedAudioFile = new File(audioPath + "/last" +saveMillis + "MillisOf_" + audioFile.getName());
+            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            //clippedAudioFile = new File(audioPath + "/last" +saveMillis + "MillisOf_" + audioFile.getName());
+            clippedAudioFile = new File(audioPath + "/" + curTime + ".wav");
             new AudioClipper().audioClip(
                     audioFile.getAbsolutePath(),
                     clippedAudioFile.getAbsolutePath(),
@@ -103,6 +107,7 @@ public class AudioFetcher {
         audioFile.delete();
         isRecording = false;
         return result;
+
     }
 
     static void stopAndDiscard(){

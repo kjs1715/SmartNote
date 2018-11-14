@@ -133,6 +133,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void startDeamonRecording()
     {
+        Log.i("startDeamonRecording...", "");
         if (noteDatabase.getTestMod() != -1)
             return;
         if(isDeamonRecording)
@@ -494,6 +495,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 NoteEditActivity.this,
                 null
         ));
+        //stopDeamonRecording();
         startDeamonRecording();
     }
 
