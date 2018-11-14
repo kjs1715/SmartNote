@@ -19,7 +19,6 @@ android {
         debug {
             testCoverageEnabled true
         }
-
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -28,7 +27,6 @@ android {
     testOptions {
         unitTests {
             includeAndroidResources = true
-
         }
     }
     buildToolsVersion '27.0.3'
@@ -56,6 +54,9 @@ dependencies {
     implementation 'com.microsoft.cognitiveservices.speech:client-sdk:1.0.1'
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
 
+//    implementation ('com.github.fymod:zshare:v1.0.0') {
+//        exclude group: 'com.android.support'
+//    }
     // test dependencies
 //    testImplementation 'junit:junit:4.12'
 //    testImplementation 'org.robolectric:robolectric:4.0'

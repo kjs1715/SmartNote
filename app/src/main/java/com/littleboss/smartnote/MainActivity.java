@@ -2,6 +2,7 @@ package com.littleboss.smartnote;
 
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.Manifest;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -257,17 +260,19 @@ public class MainActivity extends AppCompatActivity{
             );
             File shared = new File(zip_file);
             return;
-        } else {
+        }
+        else {
             File shared = pdf_files.get(0);
 
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
 
-            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shared));
-            sendIntent.setType("application/pdf");
+            Uri uri= FileProvider.getUriForFile(this,  "com.littleboss.smartnote.fileprovider", shared);
 
-            sendIntent = Intent.createChooser(sendIntent, "Share to ...");
-            startActivity(sendIntent);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, uri); //sendIntent.putExtra(Intent.EXTRA_TEXT, "???");
+            sendIntent.setType("application/pdf");
+            sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(Intent.createChooser(sendIntent, getTitle()));
             return;
         }
     }
