@@ -37,6 +37,7 @@ public class NoteActivityTest {
         NoteDatabase.getInstance().dropDatabaseIfExist();
         NoteDatabase database = NoteDatabase.getInstance();
         database.setTestMod(1);
+        //todo add visible
         controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
     }
 
