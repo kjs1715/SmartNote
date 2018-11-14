@@ -141,11 +141,15 @@ public class AudioClipper {
     }
     private void writeDataSize(String dst, int sizeCount) throws IOException {
         final RandomAccessFile wavFile = new RandomAccessFile(dst, "rw");
-        wavFile.seek(4);
-        wavFile.write(int2ByteArray((int)(sizeCount + 44 - 8)), 0, 4);
-        wavFile.seek(40);
-        wavFile.write(int2ByteArray((int)sizeCount), 0, 4);
-        wavFile.close();
+        try {
+            wavFile.seek(4);
+            wavFile.write(int2ByteArray((int) (sizeCount + 44 - 8)), 0, 4);
+            wavFile.seek(40);
+            wavFile.write(int2ByteArray((int) sizeCount), 0, 4);
+        }
+        finally {
+            wavFile.close();
+        }
     }
     public boolean audioClip(String src, String dst, long suffixLengthSeconds) {
         try {
