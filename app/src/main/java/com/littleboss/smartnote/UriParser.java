@@ -163,8 +163,9 @@ public class UriParser {
                 e.printStackTrace();
             }finally {
                 try {
-                    is.close();
-                } catch (Exception e) {
+                    if(is!=null)
+                        is.close();
+                }catch (IOException e){
                     e.printStackTrace();
                 }
             }

@@ -76,4 +76,10 @@ public class Tag implements Comparable<Tag> {
     {
         return other instanceof Tag && ((Tag)other).name.equals(this.name);
     }
+
+    @Override
+    public int hashCode()
+    {
+        return this.name.hashCode();
+    }
 }

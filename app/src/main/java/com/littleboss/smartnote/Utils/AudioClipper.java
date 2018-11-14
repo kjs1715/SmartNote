@@ -140,7 +140,7 @@ public class AudioClipper {
 
     }
     private void writeDataSize(String dst, int sizeCount) throws IOException {
-        RandomAccessFile wavFile = new RandomAccessFile(dst, "rw");
+        final RandomAccessFile wavFile = new RandomAccessFile(dst, "rw");
         wavFile.seek(4);
         wavFile.write(int2ByteArray((int)(sizeCount + 44 - 8)), 0, 4);
         wavFile.seek(40);
