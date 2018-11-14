@@ -186,12 +186,15 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
          * @Description: for parse the size of source image
          *
          */
-        String[] buf = str.split("\\+");
-        this.filePath = buf[0];
-        if(buf.length > 1) {
-            this.width = Integer.parseInt(buf[1]);
-            this.height = Integer.parseInt(buf[2]);
-            this.isFirst = false;
+        // FIXME: 2018/11/13 Added if condition for test
+        if(str != null) {
+            String[] buf = str.split("\\+");
+            this.filePath = buf[0];
+            if (buf.length > 1) {
+                this.width = Integer.parseInt(buf[1]);
+                this.height = Integer.parseInt(buf[2]);
+                this.isFirst = false;
+            }
         }
     }
 

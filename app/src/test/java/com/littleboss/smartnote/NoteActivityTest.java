@@ -1,14 +1,21 @@
 package com.littleboss.smartnote;
 
+import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -25,6 +32,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
 
+import static android.app.Activity.RESULT_OK;
 import static org.junit.Assert.*;
 
 
@@ -32,6 +40,10 @@ import static org.junit.Assert.*;
 public class NoteActivityTest {
     ActivityController<NoteEditActivity> controller;
     private NoteDatabase database = null;
+    private static final int photoFromGalleryCode = 0x101;
+    private static final int photoFromCameraCode = 0x102;
+    private static final int videoFromGalleryCode = 0x201;
+    private static final int videoFromCameraCode = 0x202;
     @Before
     public void setUp() {
         NoteDatabase.dropDatabaseIfExist();
@@ -87,5 +99,38 @@ public class NoteActivityTest {
     public void testMethods() throws Exception {
         controller.get().onPhotoButtonClicked();
         controller.get().onVideoButtonClicked();
+    }
+//    @Test
+//    public void backButtonPressedTest() throws Exception {
+//        Activity activity = controller.get();
+//        ActionBar toolbar = activity.getActionBar();
+//        toolbar.getDisplayOptions();
+//    }
+
+    @Test
+    public void audioDialog() throws Exception {
+        NoteEditActivity activity = controller.get();
+        activity.AudioDialog();
+    }
+
+    @Test
+    public void onActivityResultTest() throws Exception {
+        Intent intent = new Intent();
+        NoteEditActivity activity = controller.get();
+        activity.onActivityResult(photoFromGalleryCode,RESULT_OK, intent);
+        activity.onActivityResult(photoFromCameraCode,RESULT_OK, intent);
+        activity.onActivityResult(videoFromGalleryCode,RESULT_OK, intent);
+        activity.onActivityResult(videoFromCameraCode,RESULT_OK, intent);
+    }
+
+    @Test
+    public void onRequestPermissionTest() throws Exception {
+        int[] grant = {PackageManager.PERMISSION_GRANTED};
+        int[] empty  = {};
+        String[] permissions = { Manifest.permission.CAMERA};
+        NoteEditActivity activity = controller.get();
+        activity.onRequestPermissionsResult(1, permissions, grant);
+        activity.onRequestPermissionsResult(1, permissions, empty);
+        activity.onRequestPermissionsResult(0, permissions, empty);
     }
 }
