@@ -6,6 +6,7 @@ import android.content.Context;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,8 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,6 +44,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -149,7 +153,17 @@ public class MainActivity extends AppCompatActivity{
         //share notes
         // to pdf files
         ArrayList<File> pdf_files = new ArrayList();
-        for (ListData ld : this.notesList) {
+        String temp_dir = "";
+        String dateTime = DateUtils.Date2String(new Date());
+        if(list_selected.size() > 0) {
+            temp_dir = File.separator + dateTime;
+            new File(
+                    this.getExternalFilesDir(null).toString()
+                            + temp_dir
+            ).mkdir();
+        }
+
+        for (ListData ld : list_selected) {
             try {
                 /*
                 获得所有pdf的路径
@@ -163,14 +177,17 @@ public class MainActivity extends AppCompatActivity{
                  * */
                 String pdf_title = ld.title;
                 pdf_title.replace('/','_');
-                File pdf = new File(this.getExternalFilesDir(null).toString() + File.separator + pdf_title + ".pdf");
+                File pdf = new File(
+                        this.getExternalFilesDir(null).toString()
+                                + temp_dir
+                                + File.separator + pdf_title + ".pdf"
+                );
 
                 /* pdf创建 */
                 Document document = new Document(PageSize.A4, 500, 150, 50, 50);
                 document.setMargins(20, 20, 40, 40);
                 PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf));
                 document.open();
-                Log.d("MainActivity pdf dir: ", pdf.toString());
 
                 /*
                 * 内容为各个控件提供的content_string，
@@ -179,7 +196,6 @@ public class MainActivity extends AppCompatActivity{
                 * 由于此字符串是标签串，可以通过正则表达式进行解析
                 * */
                 String contents = "<title>" + ld.title + "</title>" + NoteDatabase.getInstance().getNotesByTitle(ld.title);
-                Log.d("MainActivity sharing: ", contents);
 
                 /*
                 * 通过正则式进行解析
@@ -227,23 +243,33 @@ public class MainActivity extends AppCompatActivity{
             }
         }
 
-        File shared = null;
         if(pdf_files.size() == 0) {
             return;
-        } else if (pdf_files.size() > 1) {
+        }
+        else if (pdf_files.size() > 1) {
             // zip them
             // shared = zipped
-            for(File pdf_file : pdf_files) {
-                ZIPUtil.compress(
-                        pdf_file.toString(),
-                        pdf_file.toString() + ".zip"
-                );
-            }
+            String pdfs_dir = this.getExternalFilesDir(null).toString() + File.separator + dateTime;
+            String zip_file = this.getExternalFilesDir(null).toString() + File.separator + dateTime + ".zip";
+            ZIPUtil.compress(
+                    pdfs_dir,
+                    zip_file
+            );
+            File shared = new File(zip_file);
+            return;
         } else {
-            shared = pdf_files.get(0);
-        }
+            File shared = pdf_files.get(0);
 
-        
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shared));
+            sendIntent.setType("application/pdf");
+
+            sendIntent = Intent.createChooser(sendIntent, "Share to ...");
+            startActivity(sendIntent);
+            return;
+        }
     }
 
     private void hiddenDialog() {
