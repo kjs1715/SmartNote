@@ -73,6 +73,7 @@ public class AudioFetcher {
      */
 
     static String stopRecording(long saveMillis){
+        System.out.println("record length:="+saveMillis);
 
         if (!isRecording)
             return null;
@@ -92,7 +93,7 @@ public class AudioFetcher {
         if (saveMillis != 0) {
             String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             //clippedAudioFile = new File(audioPath + "/last" +saveMillis + "MillisOf_" + audioFile.getName());
-            clippedAudioFile = new File(audioPath + "/" + curTime + ".wav");
+            clippedAudioFile = new File(audioPath + "/" + curTime +"_cut"+ ".wav");
             new AudioClipper().audioClip(
                     audioFile.getAbsolutePath(),
                     clippedAudioFile.getAbsolutePath(),

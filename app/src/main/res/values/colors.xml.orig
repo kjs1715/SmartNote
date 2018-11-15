@@ -17,8 +17,11 @@
     <color name="blue">#00C1E1</color>
     <color name="button_background">#303f9f</color>
     <color name="button_text">#ffffff</color>
+<<<<<<< HEAD
     <color name="colorBackground">#e9e5ce</color>
 
+=======
     <color name="tag_color">#7722ff</color>
+>>>>>>> 9e9cc44a9d27439e567b6065a8b562be8b7f77fc
 
 </resources>
