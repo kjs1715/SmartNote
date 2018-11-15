@@ -90,6 +90,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private int recordStartSecondsAgo;
     private boolean editable=true;
 
+    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm:ss");
+
     public void show(Dialog dialog) {
         dialog.show();
     }
@@ -487,6 +489,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     public void stopRecording()
     {
         recordEndTime=System.currentTimeMillis();
+        System.out.println("recordEndTime="+simpleDateFormat.format(new Date(recordEndTime)));
         String latestAudioLocation=AudioFetcher.stopRecording(recordEndTime-recordStartTime);
         Toast.makeText(NoteEditActivity.this, String.format("已保存录音，时长%d秒，开始转换为文字，请耐心等待",(recordEndTime-recordStartTime)/1000), Toast.LENGTH_SHORT).show();
         isRecording=false;
@@ -547,7 +550,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             default:
                 Toast.makeText(NoteEditActivity.this, String.format("已从%d秒前开始录音",recordStartSecondsAgo), Toast.LENGTH_SHORT).show();
         }
-        AudioFetcher.startRecording();
+        System.out.println("recordStartTime="+simpleDateFormat.format(new Date(recordStartTime)));
+        System.out.println("deamonRecordStartTime="+simpleDateFormat.format(new Date(deamonRecordStartTime)));
         isRecording=true;
     }
 
