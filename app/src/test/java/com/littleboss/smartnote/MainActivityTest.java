@@ -87,42 +87,42 @@ public class MainActivityTest {
 //    }
 
 ////      todo: uncomment and fix the IndexOutOfBoundsException
-//    @Test
-//    public void mainListTest() throws Exception {
-//        Activity activity = controller.get();
-//        // mainlist test
-//        ListView listView = activity.findViewById(R.id.mainlist);
-//        View item = listView.getAdapter().getView(0, null, null);
-//        item.performClick();
-//        item.performLongClick();
-//    }
+    @Test
+    public void mainListTest() throws Exception {
+        Activity activity = controller.get();
+        // mainlist test
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+        item.performClick();
+        item.performLongClick();
+    }
 
 //      todo: uncomment and fix the IllegalStateException
-//    @Test
-//    public void testSorting() throws Exception {
-//        Activity activity = controller.get();
-//
-//        NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
-//        NoteDatabase.getInstance().saveNoteByTitle("", "test2", "test2",null);
-//
-//
-//        // test method for comparing
-//        Date testDate1 = new Date(2018,5,1);
-//        Date testDate2 = new Date(2018,5,2);
-//        Date testMDate1 = new Date(2018,6,1);
-//        Date testMDate2 = new Date(2018,6,2);
-//
-//        controller.get().sortNotesList(0);
-//        controller.get().sortNotesList(1);
-//        controller.get().sortNotesList(2);
-//
-//        ListData test1 = new ListData("test11", testDate1, testMDate1,"");
-//        ListData test2 = new ListData("test22", testDate2, testMDate2,"");
-//
-//        controller.get().Compare(0, test1, test2);
-//        controller.get().Compare(1, test1, test2);
-//        controller.get().Compare(2, test1, test2);
-//    }
+    @Test
+    public void testSorting() throws Exception {
+        Activity activity = controller.get();
+
+        NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
+        NoteDatabase.getInstance().saveNoteByTitle("", "test2", "test2",null);
+
+
+        // test method for comparing
+        Date testDate1 = new Date(2018,5,1);
+        Date testDate2 = new Date(2018,5,2);
+        Date testMDate1 = new Date(2018,6,1);
+        Date testMDate2 = new Date(2018,6,2);
+
+        controller.get().sortNotesList(0);
+        controller.get().sortNotesList(1);
+        controller.get().sortNotesList(2);
+
+        ListData test1 = new ListData("test11", testDate1, testMDate1,"");
+        ListData test2 = new ListData("test22", testDate2, testMDate2,"");
+
+        controller.get().Compare(0, test1, test2);
+        controller.get().Compare(1, test1, test2);
+        controller.get().Compare(2, test1, test2);
+    }
 
 //    //  todo: uncomment and fix the IndexOutOfBoundsException
 //    @Test
