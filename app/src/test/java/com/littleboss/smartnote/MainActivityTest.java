@@ -34,7 +34,7 @@ public class MainActivityTest {
         NoteDatabase.dropDatabaseIfExist();
         database = NoteDatabase.getInstance();
         database.saveNoteByTitle("", "test", "test","test");
-        database.saveNoteByTitle("test", "test1", "test1","test1");
+        database.saveNoteByTitle("", "test1", "test1","test1");
         database.setTestMod(1);
         controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }

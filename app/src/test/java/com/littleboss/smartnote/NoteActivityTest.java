@@ -1,21 +1,28 @@
 package com.littleboss.smartnote;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.ContactsContract;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity.*;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -30,6 +37,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 
 
 import static android.app.Activity.RESULT_OK;
@@ -100,17 +108,27 @@ public class NoteActivityTest {
         controller.get().onPhotoButtonClicked();
         controller.get().onVideoButtonClicked();
     }
-//    @Test
-//    public void backButtonPressedTest() throws Exception {
-//        Activity activity = controller.get();
-//        ActionBar toolbar = activity.getActionBar();
-//        toolbar.getDisplayOptions();
-//    }
+
+    @Test
+    public void backButtonPressedTest() throws Exception {
+        NoteEditActivity activity = controller.get();
+        activity.setOldTitle("");
+        activity.performbackbuttonclick();
+        AlertDialog dialog = activity.backPressedDialog();
+        int[] buttonlist = { -1, -2, -3};
+        for(int i = 0; i < 3; i++) {
+            dialog.show();
+            Button b = dialog.getButton(buttonlist[i]);
+            b.performClick();
+        }
+//        dialog.getButton(1);
+//        dialog.getButton(2);
+    }
 
     @Test
     public void audioDialog() throws Exception {
         NoteEditActivity activity = controller.get();
-        activity.AudioDialog();
+        activity.AudioDialog().show();
     }
 
     @Test
@@ -132,5 +150,17 @@ public class NoteActivityTest {
         activity.onRequestPermissionsResult(1, permissions, grant);
         activity.onRequestPermissionsResult(1, permissions, empty);
         activity.onRequestPermissionsResult(0, permissions, empty);
+    }
+
+    @Test
+    public void saveNoteTest() throws Exception {
+        NoteEditActivity activity = controller.get();
+        activity.setNewCreatedFlag(false);
+        activity.saveNote();
+    }
+    @Test
+    public void takeVideoTest() throws Exception {
+        NoteEditActivity activity = controller.get();
+        activity.takeVideo();
     }
 }

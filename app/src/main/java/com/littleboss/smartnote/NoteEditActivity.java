@@ -2,6 +2,7 @@ package com.littleboss.smartnote;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +24,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -285,46 +285,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             finish();
             return ;
         }
-        final AlertDialog alertdialog = new AlertDialog.Builder(this)
-                .setTitle("警告")
-                .setMessage("是否保存修改的内容？")
-        .setPositiveButton("保存",
-        new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                saveNote();
-                if(!isRecording)
-                    stopDeamonRecording();
-                else
-                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        })
-        .setNeutralButton("取消",
-        new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        })
-        .setNegativeButton("放弃",
-        new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(!isRecording)
-                    stopDeamonRecording();
-                else
-                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).create();
-        alertdialog.show();
+        AlertDialog dialog = backPressedDialog();
+        dialog.show();
     }
 
     public boolean noteModified() {
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
-//        EditText et_content = (EditText) findViewById(R.id.et_new_content);
         String t = et_title.getText().toString();
 //        String c = et_content.getText().toString();
         String c = this.myViewGroup.toDataString();
@@ -481,7 +447,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void tryStartRecording()
     {
-        AudioDialog();
+        AudioDialog().show();
     }
 
     public void stopRecording()
@@ -499,8 +465,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         startDeamonRecording();
     }
 
-    public void AudioDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(NoteEditActivity.this);
+    public AlertDialog.Builder AudioDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(NoteEditActivity.this);
         builder.setTitle("开始录音时间");
         final String[] dialogItems = {"现在", "15秒之前","30秒之前","60秒之前"};
         builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
@@ -526,7 +492,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 AudioDialogChoosed();
             }
         });
-        builder.show();
+        return builder;
     }
 
     public void AudioDialogChoosed()
@@ -630,7 +596,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         alb.show();
     }
 
-    protected void takeVideo()
+    public void takeVideo()
     {
         if(!isRecording)
             stopDeamonRecording();
@@ -772,5 +738,58 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 }
             }
         }).start();
+    }
+
+    public void performbackbuttonclick() {
+        onBackPressed();
+    }
+
+    public void setOldTitle(String title) {
+        this.old_title = title;
+    }
+
+    public AlertDialog backPressedDialog() {
+        final AlertDialog alertdialog = new AlertDialog.Builder(this)
+                .setTitle("警告")
+                .setMessage("是否保存修改的内容？")
+                .setPositiveButton("保存",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                saveNote();
+                                if (!isRecording)
+                                    stopDeamonRecording();
+                                else
+                                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        })
+                .setNeutralButton("取消",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                .setNegativeButton("放弃",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (!isRecording)
+                                    stopDeamonRecording();
+                                else
+                                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }).create();
+        return alertdialog;
+    }
+
+    public void setNewCreatedFlag(boolean set) {
+        this.newCreatedFlag = set;
+    }
+
+    public void setIsRecording(boolean set) {
+        this.isRecording = set;
     }
 }
