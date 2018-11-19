@@ -135,8 +135,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void startDeamonRecording()
     {
-        Log.i("startDeamonRecording...", "");
-        if (noteDatabase.getTestMod() != -1)
+        int __ = noteDatabase.getTestMod();
+        if (__ != -1)
             return;
         if(isDeamonRecording)
             return;
@@ -493,12 +493,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         String latestAudioLocation=AudioFetcher.stopRecording(recordEndTime-recordStartTime);
         Toast.makeText(NoteEditActivity.this, String.format("已保存录音，时长%d秒，开始转换为文字，请耐心等待",(recordEndTime-recordStartTime)/1000), Toast.LENGTH_SHORT).show();
         isRecording=false;
+        isDeamonRecording=false;
         myViewGroup.addViewtoCursor(new LBAudioView(
                 latestAudioLocation,
                 NoteEditActivity.this,
                 null
         ));
-        //stopDeamonRecording();
         startDeamonRecording();
     }
 
@@ -765,13 +765,15 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                     try {
                         noteDatabase.saveNoteByTitle("", title, content,null);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        Log.i("err saveNote() : ", e.toString());
                     }
                 } else {
                     try {
                         noteDatabase.saveNoteByTitle(_title, title, content,null);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        Log.i("err saveNote() : ", e.toString());
                     }
                 }
             }

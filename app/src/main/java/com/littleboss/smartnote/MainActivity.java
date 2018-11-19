@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,7 +194,8 @@ public class MainActivity extends AppCompatActivity{
                 try {
                     noteDatabase.deleteNotesTitleList(list_delete);
                 } catch (NoteNotExistException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    Log.i("err bt_delete.onClick()", e.toString());
                 }
                 hideLinearLayout();
                 readListandFlush();

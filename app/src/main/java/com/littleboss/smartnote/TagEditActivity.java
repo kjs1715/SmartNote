@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,8 @@ public class TagEditActivity extends AppCompatActivity {
                 try {
                     noteDatabase.saveNoteByTitle(title,null,null,Tag.getTagListString(linkedList));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    Log.i("err button.onClick() : ", e.toString());
                 }
                 Toast.makeText(TagEditActivity.this,"标签保存成功",Toast.LENGTH_SHORT).show();
                 finish();

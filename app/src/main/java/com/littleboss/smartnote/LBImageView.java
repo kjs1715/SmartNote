@@ -146,7 +146,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
             System.out.println(filePath);
             this.image = BitmapFactory.decodeFile(this.filePath);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("error getImage() : ", e.toString());
         }
     }
 

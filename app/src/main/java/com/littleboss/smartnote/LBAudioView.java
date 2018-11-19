@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewManager;
@@ -57,7 +58,8 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                         System.out.println("audioFilePath set successfully");
                     }
                     catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        Log.i("error addPlayIconCli...", e.toString());
                     }
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
@@ -116,7 +118,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         addPlayIconClickListener();
         initGeneralListener();
 
-        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
+        //new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
 
     }
 

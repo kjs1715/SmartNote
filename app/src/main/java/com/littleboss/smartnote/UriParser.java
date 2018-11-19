@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -162,13 +163,15 @@ public class UriParser {
                 Bitmap bmp = BitmapFactory.decodeStream(is);
                 return writeToTempImageAndGetPathUri(context, bmp).toString();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                Log.i("err getImageUrl...() : ", e.toString());
             }finally {
                 try {
                     if(is!=null)
                         is.close();
                 }catch (IOException e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    Log.i("err getImageUrl...() : ", e.toString());
                 }
             }
         }

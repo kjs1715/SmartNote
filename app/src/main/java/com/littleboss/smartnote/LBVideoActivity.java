@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
@@ -52,7 +53,8 @@ public class LBVideoActivity extends AppCompatActivity {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 }

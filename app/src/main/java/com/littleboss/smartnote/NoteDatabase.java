@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.littleboss.smartnote.Utils.DateUtils;
 
@@ -47,12 +48,12 @@ public class NoteDatabase {
         new File(noteDatabasePath).getParentFile().mkdirs();
         db = SQLiteDatabase.openOrCreateDatabase(noteDatabasePath, null);
         try {
-            db.execSQL("create table audiopos (pos text);");
             db.execSQL("create table catagories (_id integer primary key autoincrement, catagory text);");
             db.execSQL("create table notes (_id integer primary key autoincrement, title text, create_time text, modify_time text, content text, catagory_list text);");
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err NoteDatabase() : ", e.toString());
         }
     }
 
@@ -168,7 +169,8 @@ public class NoteDatabase {
             cursor = db.rawQuery("select * from testMod", new String[]{});
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err getTestMod() : ", e.toString());
         }
         if (cursor == null || cursor.getCount() == 0)
             return -1;

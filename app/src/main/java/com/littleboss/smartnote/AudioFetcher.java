@@ -3,6 +3,7 @@ package com.littleboss.smartnote;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
+import android.util.Log;
 
 import com.littleboss.smartnote.Utils.AudioClipper;
 
@@ -48,9 +49,10 @@ public class AudioFetcher {
 
         isRecording = true;
 
-        String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_" + String.valueOf(System.currentTimeMillis());
         audioFile = new File(audioPath + "/" + curTime + ".wav");
         audioFile.getParentFile().mkdirs();
+        Log.i("startRec path = ", audioFile.getAbsolutePath());
         recorder = OmRecorder.wav(
                 new PullTransport.Default(
                         mic(),
@@ -82,7 +84,8 @@ public class AudioFetcher {
             recorder.stopRecording();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.i("error stopRecording", e.toString());
+            //e.printStackTrace();
         }
 
 
@@ -91,9 +94,9 @@ public class AudioFetcher {
 
         String result = "";
         if (saveMillis != 0) {
-            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_" + String.valueOf(System.currentTimeMillis());
             //clippedAudioFile = new File(audioPath + "/last" +saveMillis + "MillisOf_" + audioFile.getName());
-            clippedAudioFile = new File(audioPath + "/" + curTime +"_cut"+ ".wav");
+            clippedAudioFile = new File(audioPath + "/" + curTime + "_cut" + ".wav");
             new AudioClipper().audioClip(
                     audioFile.getAbsolutePath(),
                     clippedAudioFile.getAbsolutePath(),
@@ -105,7 +108,7 @@ public class AudioFetcher {
             result = clippedAudioFile.getAbsolutePath();
         }
         // remove audioFile
-        audioFile.delete();
+        boolean __ = audioFile.delete();
         isRecording = false;
         return result;
 
