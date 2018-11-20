@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -37,11 +36,6 @@ public class NoteDatabase {
     //
     public static void dropDatabaseIfExist() {
         boolean success = (new File(noteDatabasePath)).delete();
-        if (success) {
-            System.out.println("Successfully deleted empty directory: " + noteDatabasePath);
-        } else {
-            System.out.println("Failed to delete empty directory: " + noteDatabasePath);
-        }
     }
 
     private NoteDatabase() {
@@ -327,7 +321,6 @@ public class NoteDatabase {
         }
         cursor.moveToFirst();
         String tagString = cursor.getString(1);
-        System.out.println("getAllTagsList"+tagString);
         return Tag.getTagList(tagString);
     }
 
@@ -347,7 +340,6 @@ public class NoteDatabase {
                 break;
             cursor.moveToNext();
         }
-        System.out.println("tagsSet.size="+tagsSet.size());
         cursor.close();
         cursor=db.rawQuery("select * from catagories;", null);
         if(cursor.getCount()==0)

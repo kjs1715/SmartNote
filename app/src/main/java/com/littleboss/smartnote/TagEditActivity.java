@@ -3,7 +3,6 @@ package com.littleboss.smartnote;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -20,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -95,7 +93,6 @@ public class TagEditActivity extends AppCompatActivity {
             addViewToUpper(upperFlowLayout,lowerFlowLayout,view);
         }
         allTagList=noteDatabase.getAllTagsList();
-        System.out.println("allTagList.size="+allTagList.size());
         for(Tag tag:allTagList)
         {
             if(thisTagList.contains(tag))

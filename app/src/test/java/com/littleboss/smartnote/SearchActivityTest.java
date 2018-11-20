@@ -1,17 +1,8 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import com.littleboss.smartnote.Utils.ImageUtils;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,8 +12,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ImageUtil;
 import org.robolectric.shadows.ShadowListView;
 
 import static org.junit.Assert.*;
