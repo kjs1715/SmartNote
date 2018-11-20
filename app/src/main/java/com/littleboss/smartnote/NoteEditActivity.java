@@ -2,7 +2,7 @@ package com.littleboss.smartnote;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -394,29 +394,14 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     public AlertDialog AudioDialog() {
-        final String[] dialogItems = {"现在", "15秒之前","30秒之前","60秒之前"};
+        final String[] dialogItems = {"from", "15秒之前","30秒之前","60秒之前"};
         AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle("开始录音时间")
         .setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
-                    case 0:
-                        recordStartSecondsAgo=0;
-                        break;
-                    case 1:
-                        recordStartSecondsAgo=15;
-                        break;
-                    case 2:
-                        recordStartSecondsAgo=30;
-                        break;
-                    case 3:
-                        recordStartSecondsAgo=60;
-                        break;
-                    default:
-                        recordStartSecondsAgo=-1;
-                        break;
-                }
+                    case 0: recordStartSecondsAgo=0; break; case 1: recordStartSecondsAgo=15;break;case 2: recordStartSecondsAgo=30;break;case 3: recordStartSecondsAgo=60;break;default: recordStartSecondsAgo=-1;break; }
                 AudioDialogChoosed();
             }
         }).create();

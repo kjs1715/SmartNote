@@ -2,7 +2,6 @@ package com.littleboss.smartnote;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +13,8 @@ import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,9 +43,16 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadow.api.Shadow;
+import org.robolectric.shadows.ShadowAdapterView;
 import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowBaseAdapter;
+import org.robolectric.shadows.ShadowDialog;
+import static org.robolectric.Shadows.shadowOf;
 
 
+
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -141,6 +149,19 @@ public class NoteActivityTest {
         activity.AudioDialog().show();
         activity.setTest(true);
         activity.AudioDialogChoosed();
+        Field field = android.support.v7.app.AlertDialog.class.getDeclaredField("mAlert");
+        field.setAccessible(true);
+        Object alertController = field.get(activity.AudioDialog());
+        field = alertController.getClass().getDeclaredField("mAdapter");
+        field.setAccessible(true);
+        Adapter alertAdapter = (Adapter) field.get(alertController);
+        ShadowDialog shadowAlertDialog = shadowOf(activity.AudioDialog());
+//        for(int i = 0; i < 4; i++) {
+//            shadowAlertDialog.clickOn(i);
+//            shadowAlertDialog.clickOnText("from");
+//        }
+//        ShadowAdapterView adapterView = ShadowBaseAdapter.class.
+
     }
     @Test
     public void onActivityResultTest() throws Exception {
@@ -150,6 +171,7 @@ public class NoteActivityTest {
         activity.onActivityResult(photoFromCameraCode,RESULT_OK, intent);
         activity.onActivityResult(videoFromGalleryCode,RESULT_OK, intent);
         activity.onActivityResult(videoFromCameraCode,RESULT_OK, intent);
+
     }
 
     @Test
