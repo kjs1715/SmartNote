@@ -110,7 +110,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         this.setContent(content);
     }
 
-    public LBAudioView(String audioFilePath,Context context,@Nullable Object dumb) {
+    public LBAudioView(String audioFilePath,Context context,@Nullable Object dumb, boolean STT) {
         this(context);
         this.audioFilePath=audioFilePath;
         this.activity=(Activity)context;
@@ -118,7 +118,8 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         addPlayIconClickListener();
         initGeneralListener();
 
-        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
+        if (STT)
+            new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
 
     }
 

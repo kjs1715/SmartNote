@@ -32,6 +32,11 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import static android.app.Activity.RESULT_OK;
 import static org.junit.Assert.*;
 
@@ -44,6 +49,8 @@ public class NoteActivityTest {
     private static final int photoFromCameraCode = 0x102;
     private static final int videoFromGalleryCode = 0x201;
     private static final int videoFromCameraCode = 0x202;
+    File srcFile;
+
     @Before
     public void setUp() {
         NoteDatabase.dropDatabaseIfExist();
@@ -51,6 +58,7 @@ public class NoteActivityTest {
         database.setTestMod(1);
         //todo add visible
         controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
+
     }
 
     @After
@@ -58,6 +66,37 @@ public class NoteActivityTest {
         database.closeConnection();
     }
 
+    @Test
+    public void LBAudioViewTest() throws Exception {
+        NoteEditActivity activity = controller.get();
+        InputStream sourceStream = activity.getResources().openRawResource(R.raw.test);
+        final int bytesPerRead = 1024;
+        byte[] buffer = new byte[bytesPerRead];
+        srcFile = new File("data/src.wav");
+        srcFile.getParentFile().mkdirs();
+        DataOutputStream destStream = new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
+        int size = -1, sizeCount = 0;
+        while (true) {
+            size = sourceStream.read(buffer,0, bytesPerRead);
+            //System.out.println("size = " + String.valueOf(size));
+            if (size < 0) {
+                sourceStream.close();
+                destStream.close();
+                break;
+            }
+            destStream.write(buffer, 0, size);
+            sizeCount += size;
+        }
+        activity.getMyViewGroup().addViewtoCursor(
+                new LBAudioView(
+                        srcFile.getAbsolutePath(),
+                        activity,
+                        null,
+                        false
+                )
+        );
+
+    }
     @Test
     public void startTest() throws Exception {
         Activity activity = controller.get();

@@ -497,7 +497,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         myViewGroup.addViewtoCursor(new LBAudioView(
                 latestAudioLocation,
                 NoteEditActivity.this,
-                null
+                null,
+                true
         ));
         startDeamonRecording();
     }

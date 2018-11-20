@@ -146,6 +146,7 @@ public class AudioClipper {
         size = mDataInputStream.read(shortBuffer);
         assert(size == 2);
         mWavHeader.setBitsPerSample(byteArray2Short(shortBuffer));
+
         size = mDataInputStream.read(buffer);
         assert(size == 4);
         mWavHeader.setDataChunkID(new String(buffer));
@@ -172,6 +173,7 @@ public class AudioClipper {
     public int getSkipBytes(long suffixLengthMs) throws IOException {
         double duration = mWavHeader.getDataChunkSize() * 1.0 / mWavHeader.getSampleRate() / mWavHeader.getBlockAlign();
         Log.i("duration = ", String.valueOf(duration));
+
         int suffixBytes = (int) ((suffixLengthMs / 1000.0 / duration) * mWavHeader.getDataChunkSize());
         if (suffixBytes >= mDataInputStream.available())
             return 0;
@@ -194,6 +196,7 @@ public class AudioClipper {
         try {
             mDataInputStream = new DataInputStream(new FileInputStream(src));
             readHeader();
+
             byte[] buffer = new byte[BYTES_PER_READ];
             mDataOutputStream = new DataOutputStream(new FileOutputStream(dst));
             writeHeader();
