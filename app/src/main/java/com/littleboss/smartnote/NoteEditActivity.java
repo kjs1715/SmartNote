@@ -27,6 +27,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,7 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NoteEditActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
+public class NoteEditActivity extends AppCompatActivity {
 
     private Bitmap bitmap;
 
@@ -65,6 +66,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
     private String old_content;
 
     private boolean newCreatedFlag;
+    private boolean test;
 
     private NoteDatabase noteDatabase;
 
@@ -115,8 +117,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
         fragmentManager = getSupportFragmentManager();
 
+        test = false;
+
         initToolbar();
-        initMenuFragment();
         initBottombar();
         initScrollButton();
         initEditText();
@@ -128,6 +131,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         {
             this.myViewGroup.disableClick();
             et_title.setFocusable(false);
+            bottomNavigationBar.hide();
         }
     }
 
@@ -187,81 +191,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
      * Refered from library of Toolbar
      *
      * **/
-    public void initMenuFragment() {
-        MenuParams menuParams = new MenuParams();
-        menuParams.setActionBarSize((int) getResources().getDimension(R.dimen.tool_bar_height));
-        menuParams.setMenuObjects(getMenuObjects());
-        menuParams.setClosableOutside(false);
-        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams);
-        mMenuDialogFragment.setItemClickListener(this);
-        mMenuDialogFragment.setItemLongClickListener(this);
-    }
-
-    public List<MenuObject> getMenuObjects() {
-        // You can use any [resource, bitmap, drawable, color] as image:
-        // item.setResource(...)
-        // item.setBitmap(...)
-        // item.setDrawable(...)
-        // item.setColor(...)
-        // You can set image ScaleType:
-        // item.setScaleType(ScaleType.FIT_XY)
-        // You can use any [resource, drawable, color] as background:
-        // item.setBgResource(...)
-        // item.setBgDrawable(...)
-        // item.setBgColor(...)
-        // You can use any [color] as text color:
-        // item.setTextColor(...)
-        // You can set any [color] as divider color:
-        // item.setDividerColor(...)
-
-        List<MenuObject> menuObjects = new ArrayList<>();
-
-        MenuObject close = new MenuObject();
-        close.setResource(R.drawable.icn_close);
-
-        MenuObject send = new MenuObject("Share to");
-        send.setResource(R.drawable.icn_1);
-
-        MenuObject like = new MenuObject("Like profile");
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.icn_2);
-        like.setBitmap(b);
-
-        MenuObject addFr = new MenuObject("Add to friends");
-        BitmapDrawable bd = new BitmapDrawable(getResources(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.icn_3));
-        addFr.setDrawable(bd);
-
-        MenuObject addFav = new MenuObject("Add to favorites");
-        addFav.setResource(R.drawable.icn_4);
 
 
-        menuObjects.add(close);
-        menuObjects.add(send);
-        menuObjects.add(like);
-        menuObjects.add(addFr);
-        menuObjects.add(addFav);
-
-        return menuObjects;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.context_menu:
-                if (fragmentManager.findFragmentByTag(ContextMenuDialogFragment.TAG) == null) {
-                    mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG);
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void finish()
@@ -306,17 +237,6 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         // fix for unittest
     }
 
-    @Override
-    public void onMenuItemClick(View clickedView, int position) {
-        Toast.makeText(this, "Clicked on position: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onMenuItemLongClick(View clickedView, int position) {
-        Toast.makeText(this, "Long clicked on position: " + position, Toast.LENGTH_SHORT).show();
-    }
-
-
     public void initToolbar() {
         /**
          * @Author: Buzz Kim
@@ -327,6 +247,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
          */
         Toolbar mToolbar = findViewById(R.id.toolbar);
         TextView mToolBarTextView = findViewById(R.id.text_view_toolbar_title);
+        mToolBarTextView.setGravity(Gravity.START);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -341,10 +262,12 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 onBackPressed();
             }
         });
-        if(editable)
+        if (editable) {
             mToolBarTextView.setText("编辑笔记");
-        else
+        }
+        else{
             mToolBarTextView.setText("预览笔记");
+        }
         mToolBarTextView.setTextColor(getResources().getColor(R.color.white));
 
     }
@@ -397,6 +320,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                     bottomNavigationBar.show();
                 }
             }
+
         });
     }
 
@@ -441,7 +365,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         }
         else
         {
-            stopRecording();
+            try {
+                stopRecording();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -465,11 +393,11 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
         startDeamonRecording();
     }
 
-    public AlertDialog.Builder AudioDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(NoteEditActivity.this);
-        builder.setTitle("开始录音时间");
+    public AlertDialog AudioDialog() {
         final String[] dialogItems = {"现在", "15秒之前","30秒之前","60秒之前"};
-        builder.setItems(dialogItems, new DialogInterface.OnClickListener() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+        .setTitle("开始录音时间")
+        .setItems(dialogItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
@@ -491,8 +419,8 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
                 }
                 AudioDialogChoosed();
             }
-        });
-        return builder;
+        }).create();
+        return dialog;
     }
 
     public void AudioDialogChoosed()
@@ -513,7 +441,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
             default:
                 Toast.makeText(NoteEditActivity.this, String.format("已从%d秒前开始录音",recordStartSecondsAgo), Toast.LENGTH_SHORT).show();
         }
-        AudioFetcher.startRecording();
+        if(!test) {
+            AudioFetcher.startRecording();
+        }
         isRecording=true;
     }
 
@@ -746,6 +676,7 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void setOldTitle(String title) {
         this.old_title = title;
+        this._title = title;
     }
 
     public AlertDialog backPressedDialog() {
@@ -791,5 +722,9 @@ public class NoteEditActivity extends AppCompatActivity implements OnMenuItemCli
 
     public void setIsRecording(boolean set) {
         this.isRecording = set;
+    }
+
+    public void setTest(boolean set) {
+        this.test = set;
     }
 }

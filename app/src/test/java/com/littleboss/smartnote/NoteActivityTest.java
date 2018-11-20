@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,9 +19,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity.*;
@@ -40,6 +45,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 
 
+import java.util.List;
+
 import static android.app.Activity.RESULT_OK;
 import static org.junit.Assert.*;
 
@@ -56,6 +63,11 @@ public class NoteActivityTest {
     public void setUp() {
         NoteDatabase.dropDatabaseIfExist();
         database = NoteDatabase.getInstance();
+//        try {
+//            database.saveNoteByTitle("", "test", "test", "test");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         database.setTestMod(1);
         //todo add visible
         controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
@@ -90,11 +102,9 @@ public class NoteActivityTest {
     public void testChooseTab() throws Exception {
         // TODO: 06/11/2018 AudioPart could not pass
         NoteEditActivity activity = controller.get();
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < 5; i++) {
             activity.chooseTab(i);
         }
-        activity.chooseTab(3);
-        activity.chooseTab(4);
     }
 
     @Test
@@ -129,8 +139,9 @@ public class NoteActivityTest {
     public void audioDialog() throws Exception {
         NoteEditActivity activity = controller.get();
         activity.AudioDialog().show();
+        activity.setTest(true);
+        activity.AudioDialogChoosed();
     }
-
     @Test
     public void onActivityResultTest() throws Exception {
         Intent intent = new Intent();
@@ -162,5 +173,24 @@ public class NoteActivityTest {
     public void takeVideoTest() throws Exception {
         NoteEditActivity activity = controller.get();
         activity.takeVideo();
+    }
+
+    @Test
+    public void fabButtonTest() throws Exception {
+        Activity activity = controller.get();
+        FloatingActionButton fab = activity.findViewById(R.id.goToTop);
+        fab.performClick();
+    }
+
+    @Test
+    public void keyboarHideAndShowTest() throws Exception {
+        Activity activity = controller.get();
+
+        InputMethodManager imm1 = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        EditText editText = activity.findViewById(R.id.et_new_title);
+        imm1.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }
