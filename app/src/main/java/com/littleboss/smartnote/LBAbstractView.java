@@ -2,8 +2,6 @@ package com.littleboss.smartnote;
 
 import android.view.View;
 
-import java.io.Serializable;
-
 public interface LBAbstractView {
     String toDataString();
     /**

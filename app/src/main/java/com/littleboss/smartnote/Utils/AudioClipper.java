@@ -5,7 +5,6 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -14,33 +13,57 @@ public class AudioClipper {
     public class WavHeader {
 
         //RITF标志
-        public String mRitfWaveChunkID;
+        private String mRitfWaveChunkID;
+        public void setRitfWaveChunkID(String __) { mRitfWaveChunkID = __; }
+        public String getRitfWaveChunkID() { return mRitfWaveChunkID; }
         //wav文件大小（总大小-8）
-        public int mRitfWaveChunkSize;
+        private int mRitfWaveChunkSize;
+        public void setRitfWaveChunkSize(int __) { mRitfWaveChunkSize = __; }
+        public int getRitfWaveChunkSize() { return mRitfWaveChunkSize; }
         //wav格式
-        public String mWaveFormat;
-
+        private String mWaveFormat;
+        public void setWaveFormat(String __) { mWaveFormat = __; }
+        public String getWaveFormat() { return mWaveFormat; }
         //格式数据块ID：值为"fmt "(注意后面有个空格)
-        public String mFmtChunk1ID;
+        private String mFmtChunk1ID;
+        public void setFmtChunk1ID(String __) { mFmtChunk1ID = __; }
+        public String getFmtChunk1ID() { return mFmtChunk1ID; }
         //格式数据块大小，一般为16
-        public int mFmtChunkSize;
+        private int mFmtChunkSize;
+        public void setFmtChunkSize(int __) { mFmtChunkSize = __; }
+        public int getFmtChunkSize() { return mFmtChunkSize; }
         //数据格式，一般为1，表示音频是pcm编码
-        public short mAudioFormat;
+        private short mAudioFormat;
+        public void setAudioFormat(short __) { mAudioFormat = __; }
+        public short getAudioFormat() { return mAudioFormat; }
         //声道数
-        public short mNumChannel;
+        private short mNumChannel;
+        public void setNumChannel(short __) { mNumChannel = __; }
+        public short getNumChannel() { return mNumChannel; }
         //采样率
-        public int mSampleRate;
+        private int mSampleRate;
+        public void setSampleRate(int __) { mSampleRate = __; }
+        public int getSampleRate() { return mSampleRate; }
         //每秒字节数
-        public int mByteRate;
+        private int mByteRate;
+        public void setByteRate(int __) { mByteRate = __; }
+        public int getByteRate() { return mByteRate; }
         //数据块对齐单位
-        public short mBlockAlign;
+        private short mBlockAlign;
+        public void setBlockAlign(short __) { mBlockAlign = __; }
+        public short getBlockAlign() { return mBlockAlign; }
         //采样位数
-        public short mBitsPerSample;
-
+        private short mBitsPerSample;
+        public void setBitsPerSample(short __) { mBitsPerSample = __; }
+        public short getBitsPerSample() { return mBitsPerSample; }
         //data块，音频的真正数据块
-        public String mDataChunkID;
+        private String mDataChunkID;
+        public void setDataChunkID(String __) { mDataChunkID = __; }
+        public String getDataChunkID() { return mDataChunkID; }
         //音频实际数据大小
-        public int mDataChunkSize;
+        private int mDataChunkSize;
+        public void setDataChunkSize(int __) { mDataChunkSize = __; }
+        public int getDataChunkSize() { return mDataChunkSize; }
     }
 
     private DataInputStream mDataInputStream;
@@ -91,64 +114,66 @@ public class AudioClipper {
         int size;
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mRitfWaveChunkID = new String(buffer);
+        mWavHeader.setRitfWaveChunkID(new String(buffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mRitfWaveChunkSize = byteArray2Int(buffer);
+        mWavHeader.setRitfWaveChunkSize(byteArray2Int(buffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mWaveFormat = new String(buffer);
+        mWavHeader.setWaveFormat(new String(buffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mFmtChunk1ID = new String(buffer);
+        mWavHeader.setFmtChunk1ID(new String(buffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mFmtChunkSize = byteArray2Int(buffer);
+        mWavHeader.setFmtChunkSize(byteArray2Int(buffer));
         size = mDataInputStream.read(shortBuffer);
         assert(size == 2);
-        mWavHeader.mAudioFormat = byteArray2Short(shortBuffer);
+        mWavHeader.setAudioFormat(byteArray2Short(shortBuffer));
         size = mDataInputStream.read(shortBuffer);
         assert(size == 2);
-        mWavHeader.mNumChannel = byteArray2Short(shortBuffer);
+        mWavHeader.setNumChannel(byteArray2Short(shortBuffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mSampleRate = byteArray2Int(buffer);
+        mWavHeader.setSampleRate(byteArray2Int(buffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mByteRate = byteArray2Int(buffer);
+        mWavHeader.setByteRate(byteArray2Int(buffer));
         size = mDataInputStream.read(shortBuffer);
         assert(size == 2);
-        mWavHeader.mBlockAlign = byteArray2Short(shortBuffer);
+        mWavHeader.setBlockAlign(byteArray2Short(shortBuffer));
         size = mDataInputStream.read(shortBuffer);
         assert(size == 2);
-        mWavHeader.mBitsPerSample = byteArray2Short(shortBuffer);
+        mWavHeader.setBitsPerSample(byteArray2Short(shortBuffer));
+
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mDataChunkID = new String(buffer);
+        mWavHeader.setDataChunkID(new String(buffer));
         size = mDataInputStream.read(buffer);
         assert(size == 4);
-        mWavHeader.mDataChunkSize = byteArray2Int(buffer);
+        mWavHeader.setDataChunkSize(byteArray2Int(buffer));
     }
     private void writeHeader() throws IOException {
-        mDataOutputStream.writeBytes(mWavHeader.mRitfWaveChunkID);
-        mDataOutputStream.write(int2ByteArray((int) mWavHeader.mRitfWaveChunkSize), 0, 4);
-        mDataOutputStream.writeBytes(mWavHeader.mWaveFormat);
-        mDataOutputStream.writeBytes(mWavHeader.mFmtChunk1ID);
-        mDataOutputStream.write(int2ByteArray((int) mWavHeader.mFmtChunkSize), 0, 4);
-        mDataOutputStream.write(short2ByteArray((short) mWavHeader.mAudioFormat), 0, 2);
-        mDataOutputStream.write(short2ByteArray((short) mWavHeader.mNumChannel), 0, 2);
-        mDataOutputStream.write(int2ByteArray((int) mWavHeader.mSampleRate), 0, 4);
-        mDataOutputStream.write(int2ByteArray((int) mWavHeader.mByteRate), 0, 4);
-        mDataOutputStream.write(short2ByteArray((short) mWavHeader.mBlockAlign), 0, 2);
-        mDataOutputStream.write(short2ByteArray((short) mWavHeader.mBitsPerSample), 0, 2);
-        mDataOutputStream.writeBytes(mWavHeader.mDataChunkID);
-        mDataOutputStream.write(int2ByteArray((int) mWavHeader.mDataChunkSize), 0, 4);
+        mDataOutputStream.writeBytes(mWavHeader.getRitfWaveChunkID());
+        mDataOutputStream.write(int2ByteArray((int) mWavHeader.getRitfWaveChunkSize()), 0, 4);
+        mDataOutputStream.writeBytes(mWavHeader.getWaveFormat());
+        mDataOutputStream.writeBytes(mWavHeader.getFmtChunk1ID());
+        mDataOutputStream.write(int2ByteArray((int) mWavHeader.getFmtChunkSize()), 0, 4);
+        mDataOutputStream.write(short2ByteArray((short) mWavHeader.getAudioFormat()), 0, 2);
+        mDataOutputStream.write(short2ByteArray((short) mWavHeader.getNumChannel()), 0, 2);
+        mDataOutputStream.write(int2ByteArray((int) mWavHeader.getSampleRate()), 0, 4);
+        mDataOutputStream.write(int2ByteArray((int) mWavHeader.getByteRate()), 0, 4);
+        mDataOutputStream.write(short2ByteArray((short) mWavHeader.getBlockAlign()), 0, 2);
+        mDataOutputStream.write(short2ByteArray((short) mWavHeader.getBitsPerSample()), 0, 2);
+        mDataOutputStream.writeBytes(mWavHeader.getDataChunkID());
+        mDataOutputStream.write(int2ByteArray((int) mWavHeader.getDataChunkSize()), 0, 4);
 
     }
     public int getSkipBytes(long suffixLengthMs) throws IOException {
-        double duration = mWavHeader.mDataChunkSize * 1.0 / mWavHeader.mSampleRate / mWavHeader.mBlockAlign;
+        double duration = mWavHeader.getDataChunkSize() * 1.0 / mWavHeader.getSampleRate() / mWavHeader.getBlockAlign();
         Log.i("duration = ", String.valueOf(duration));
-        int suffixBytes = (int) ((suffixLengthMs / 1000.0 / duration) * mWavHeader.mDataChunkSize);
+
+        int suffixBytes = (int) ((suffixLengthMs / 1000.0 / duration) * mWavHeader.getDataChunkSize());
         if (suffixBytes >= mDataInputStream.available())
             return 0;
         return mDataInputStream.available() - suffixBytes;
@@ -170,6 +195,7 @@ public class AudioClipper {
         try {
             mDataInputStream = new DataInputStream(new FileInputStream(src));
             readHeader();
+
             byte[] buffer = new byte[BYTES_PER_READ];
             mDataOutputStream = new DataOutputStream(new FileOutputStream(dst));
             writeHeader();

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.littleboss.smartnote.Utils.DateUtils;
 
@@ -13,7 +14,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,23 +36,18 @@ public class NoteDatabase {
     //
     public static void dropDatabaseIfExist() {
         boolean success = (new File(noteDatabasePath)).delete();
-        if (success) {
-            System.out.println("Successfully deleted empty directory: " + noteDatabasePath);
-        } else {
-            System.out.println("Failed to delete empty directory: " + noteDatabasePath);
-        }
     }
 
     private NoteDatabase() {
         new File(noteDatabasePath).getParentFile().mkdirs();
         db = SQLiteDatabase.openOrCreateDatabase(noteDatabasePath, null);
         try {
-            db.execSQL("create table audiopos (pos text);");
             db.execSQL("create table catagories (_id integer primary key autoincrement, catagory text);");
             db.execSQL("create table notes (_id integer primary key autoincrement, title text, create_time text, modify_time text, content text, catagory_list text);");
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err NoteDatabase() : ", e.toString());
         }
     }
 
@@ -168,7 +163,8 @@ public class NoteDatabase {
             cursor = db.rawQuery("select * from testMod", new String[]{});
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err getTestMod() : ", e.toString());
         }
         if (cursor == null || cursor.getCount() == 0)
             return -1;
@@ -325,7 +321,6 @@ public class NoteDatabase {
         }
         cursor.moveToFirst();
         String tagString = cursor.getString(1);
-        System.out.println("getAllTagsList"+tagString);
         return Tag.getTagList(tagString);
     }
 
@@ -345,7 +340,6 @@ public class NoteDatabase {
                 break;
             cursor.moveToNext();
         }
-        System.out.println("tagsSet.size="+tagsSet.size());
         cursor.close();
         cursor=db.rawQuery("select * from catagories;", null);
         if(cursor.getCount()==0)

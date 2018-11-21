@@ -15,6 +15,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+<<<<<<< HEAD
+import android.util.Pair;
+=======
+>>>>>>> d145c21af61b3115a44f32ae8039d072a34e3832
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -402,9 +406,22 @@ public class MainActivity extends AppCompatActivity{
 
         longclick_menu.setOnLongClickListener(new OnLongClickListener() {
             @Override
+<<<<<<< HEAD
             public boolean onLongClick(View v) {
                 hiddenDialog();
                 return true;
+=======
+            public void onClick(View view) {
+                try {
+                    noteDatabase.deleteNotesTitleList(list_delete);
+                } catch (NoteNotExistException e) {
+                    //e.printStackTrace();
+                    Log.i("err bt_delete.onClick()", e.toString());
+                }
+                hideLinearLayout();
+                readListandFlush();
+                isMultiSelect = false;
+>>>>>>> d145c21af61b3115a44f32ae8039d072a34e3832
             }
         });
     }

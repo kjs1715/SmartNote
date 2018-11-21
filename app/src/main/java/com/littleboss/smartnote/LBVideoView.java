@@ -1,13 +1,13 @@
 package com.littleboss.smartnote;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.littleboss.smartnote.Utils.ImageUtils;
 
@@ -55,11 +55,10 @@ public class LBVideoView extends LBImageView {
     @Override
     public void getImage() {
         try {
-            System.out.println(filePath);
             this.image = getVideoThumbnail(this.filePath);
-            System.out.println("Successfully decode");
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err getImage() : ", e.toString());
         }
     }
 
@@ -71,17 +70,21 @@ public class LBVideoView extends LBImageView {
             bitmap = retriever.getFrameAtTime();
         }
         catch(IllegalArgumentException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err getVideoThumbnail:", e.toString());
         }
         catch (RuntimeException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.i("err getVideoThumbnail:", e.toString());
+
         }
         finally {
             try {
                 retriever.release();
             }
             catch (RuntimeException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                Log.i("err getVideoThumbnail:", e.toString());
             }
         }
 

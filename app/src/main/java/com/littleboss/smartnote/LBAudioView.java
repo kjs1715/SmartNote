@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewManager;
@@ -17,7 +18,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,21 +52,18 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     try {
-                        System.out.println("audioFilePath:"+audioFilePath);
                         mediaPlayer.setDataSource(audioFilePath);
-                        System.out.println("audioFilePath set successfully");
                     }
                     catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        Log.i("error addPlayIconCli...", e.toString());
                     }
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mediaPlayer) {
-                            System.out.println("Prepared.");
                             mediaPlayer.start();
                         }
                     });
-                    System.out.println("Start preparing.");
                     mediaPlayer.prepareAsync();
                 }
                 else {
@@ -108,7 +105,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         this.setContent(content);
     }
 
-    public LBAudioView(String audioFilePath,Context context,@Nullable Object dumb) {
+    public LBAudioView(String audioFilePath,Context context,@Nullable Object dumb, boolean STT) {
         this(context);
         this.audioFilePath=audioFilePath;
         this.activity=(Activity)context;
@@ -116,7 +113,8 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         addPlayIconClickListener();
         initGeneralListener();
 
-        new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
+        if (STT)
+            new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
 
     }
 
