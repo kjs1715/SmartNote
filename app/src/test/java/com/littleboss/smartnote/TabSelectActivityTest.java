@@ -50,6 +50,25 @@ public class TabSelectActivityTest {
         controller = Robolectric.buildActivity(TagSelectActivity.class).create().start().resume().visible();
     }
 
+    @After
+    public void afterTest() {
+        database.closeConnection();
+    }
+
     @Test
-    public void startTest throws Exception
+    public void testMethods() throws Exception {
+        TagSelectActivity activity = controller.get();
+        View view = activity.getTestView();
+        view.performClick();
+        view.performClick();
+    }
+
+
+    @Test
+    public void startTest() throws Exception {
+        TagSelectActivity activity = controller.get();
+        Button button = activity.findViewById(R.id.sbutton);
+        activity.setTitlE(" ");
+        button.performClick();
+    }
 }
