@@ -275,7 +275,7 @@ public class NoteDatabase {
     public LinkedList<ListData> getNotesTitleListContainKeywords(String keywords) {
         String[] p = keywords.split(" ");
         LinkedList<ListData> resList=new LinkedList<>();
-        LinkedList<ListData> notesList = NoteDatabase.getInstance().getNotesTitleList();
+        LinkedList<ListData> notesList = getNotesTitleList();
         for(ListData listData:notesList )
         {
             if(contains(p, listData.title))
