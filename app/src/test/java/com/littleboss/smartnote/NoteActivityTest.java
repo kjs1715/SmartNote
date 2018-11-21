@@ -79,24 +79,27 @@ public class NoteActivityTest {
         byte[] buffer = new byte[bytesPerRead];
         srcFile = new File("data/src.wav");
         srcFile.getParentFile().mkdirs();
-        DataOutputStream destStream = new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
-        int size = -1, sizeCount = 0;
-        while (true) {
-            size = sourceStream.read(buffer, 0, bytesPerRead);
-            //System.out.println("size = " + String.valueOf(size));
-            if (size < 0) {
-                sourceStream.close();
-                destStream.close();
-                break;
+        DataOutputStream destStream = null;
+        try {
+            new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
+            int size = -1, sizeCount = 0;
+            while (true) {
+                size = sourceStream.read(buffer, 0, bytesPerRead);
+                //System.out.println("size = " + String.valueOf(size));
+                if (size < 0) {
+                    sourceStream.close();
+                    destStream.close();
+                    break;
+                }
+                activity.getMyViewGroup().addViewtoCursor(
+                        new LBAudioView(
+                                srcFile.getAbsolutePath(),
+                                activity,
+                                null,
+                                false
+                        )
+                );
             }
-            activity.getMyViewGroup().addViewtoCursor(
-                    new LBAudioView(
-                            srcFile.getAbsolutePath(),
-                            activity,
-                            null,
-                            false
-                    )
-            );
         }
         finally {
             if (destStream!=null)
