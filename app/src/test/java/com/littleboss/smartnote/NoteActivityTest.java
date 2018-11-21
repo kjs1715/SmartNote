@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -87,15 +88,20 @@ public class NoteActivityTest {
             destStream.write(buffer, 0, size);
             sizeCount += size;
         }
-        activity.getMyViewGroup().addViewtoCursor(
-                new LBAudioView(
-                        srcFile.getAbsolutePath(),
-                        activity,
-                        null,
-                        false
-                )
+        LBAudioView view = new LBAudioView(
+                srcFile.getAbsolutePath(),
+                activity,
+                null,
+                false
         );
-
+        activity.getMyViewGroup().addViewtoCursor(view);
+        view.setRecognizedText("smf!");
+        view.setContent("666");
+        String dataString = view.toDataString();
+        String filePath = view.getFilePath();
+        View getView = view.getView();
+        view.audioDialog();
+        view.deleteDialog();
     }
     @Test
     public void startTest() throws Exception {

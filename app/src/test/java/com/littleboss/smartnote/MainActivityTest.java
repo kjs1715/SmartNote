@@ -33,8 +33,8 @@ public class MainActivityTest {
     public void setUp() throws Exception {
         NoteDatabase.dropDatabaseIfExist();
         database = NoteDatabase.getInstance();
-        database.saveNoteByTitle("", "test", "test","test");
-        database.saveNoteByTitle("test", "test1", "test1","test1");
+        database.saveNoteByTitle("", "test", "test",null);
+        database.saveNoteByTitle("test", "test1", "test1",null);
         database.setTestMod(1);
         controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }
@@ -46,13 +46,13 @@ public class MainActivityTest {
 
 //      todo: uncomment and fix the NullPointerException
 
-//    @Test
-//    public void buttonTest() throws Exception {
-//        MainActivity activity = controller.get();
-//        // buttons tests
-//        Button bt_delete = activity.findViewById(R.id.bt_delete);
-//        bt_delete.performClick();
-//    }
+    @Test
+    public void buttonTest() throws Exception {
+        MainActivity activity = controller.get();
+        // buttons tests
+        Button bt_delete = activity.findViewById(R.id.bt_delete);
+        bt_delete.performClick();
+    }
 
     @Test
     public void startTest() throws Exception {
@@ -78,24 +78,24 @@ public class MainActivityTest {
         activity.sortDialog();
     }
 
-//    @Test
-//    public void buttonTest1() throws Exception {
-//        Activity activity = controller.get();
-//        // buttons tests
-//        Button bt_cancel = activity.findViewById(R.id.bt_cancel);
-//        bt_cancel.performClick();
-//    }
+    @Test
+    public void buttonTest1() throws Exception {
+        Activity activity = controller.get();
+        // buttons tests
+        Button bt_cancel = activity.findViewById(R.id.bt_cancel);
+        bt_cancel.performClick();
+    }
 
 ////      todo: uncomment and fix the IndexOutOfBoundsException
-//    @Test
-//    public void mainListTest() throws Exception {
-//        Activity activity = controller.get();
-//        // mainlist test
-//        ListView listView = activity.findViewById(R.id.mainlist);
-//        View item = listView.getAdapter().getView(0, null, null);
-//        item.performClick();
-//        item.performLongClick();
-//    }
+    @Test
+    public void mainListTest() throws Exception {
+        Activity activity = controller.get();
+        // mainlist test
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+        item.performClick();
+        item.performLongClick();
+    }
 
 //      todo: uncomment and fix the IllegalStateException
     @Test
@@ -126,27 +126,27 @@ public class MainActivityTest {
 
 //    //  todo: uncomment and fix the IndexOutOfBoundsException
 //    @Test
-//    public void enterDialogTest() throws Exception {
-//        MainActivity activity = controller.get();
-//        ListView listView = activity.findViewById(R.id.mainlist);
-//        View item = listView.getAdapter().getView(0, null, null);
-//        item.performClick();
-//        View item1 = MainActivity.enterNoteDialog(0,activity.notesList,activity).getListView().getAdapter().getView(0, null, null);
-//        item1.performClick();
-////        AlertDialog enterDialog = ShadowAlertDialog.getLatestAlertDialog();
-////        assertNotNull(enterDialog);
-//    }
+    public void enterDialogTest() throws Exception {
+        MainActivity activity = controller.get();
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+        item.performClick();
+        View item1 = MainActivity.enterNoteDialog(0,activity.notesList,activity).getListView().getAdapter().getView(0, null, null);
+        item1.performClick();
+//        AlertDialog enterDialog = ShadowAlertDialog.getLatestAlertDialog();
+//        assertNotNull(enterDialog);
+    }
 
 ////      todo: uncomment and fix the IndexOutOfBoundsException
-//    @Test
-//    public void testLongClick() throws Exception {
-//        MainActivity activity = controller.get();
-//        ListView listView = activity.findViewById(R.id.mainlist);
-//        View item = listView.getAdapter().getView(0, null, null);
-////        item.performLongClick();
-//        activity.isMultiselected();
-//        item.performClick();
-//    }
+    @Test
+    public void testLongClick() throws Exception {
+        MainActivity activity = controller.get();
+        ListView listView = activity.findViewById(R.id.mainlist);
+        View item = listView.getAdapter().getView(0, null, null);
+//        item.performLongClick();
+        activity.isMultiselected();
+        item.performClick();
+    }
 
     @Test
     public void testRequestPermission() throws Exception {
