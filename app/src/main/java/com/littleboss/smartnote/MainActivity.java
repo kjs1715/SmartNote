@@ -7,6 +7,7 @@ import android.content.Context;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -32,8 +33,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -53,13 +57,16 @@ import java.util.regex.Pattern;
 
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.widget.VideoView;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.littleboss.smartnote.Utils.DateUtils;
 
@@ -90,7 +97,7 @@ class ImageInfo {
     final String loc;
     final int width;
     final int height;
-    private static final String image_regex = "([^\\+]+\\.[a-z]+)\\+([0-9]+)\\+([0-9]+)";
+    private static final String image_regex = "([^\\+]+\\.[a-z0-9]+)\\+([0-9]+)\\+([0-9]+)";
     private static final Pattern p = Pattern.compile(image_regex);
 
     private ImageInfo(String loc, int width, int height) {
@@ -112,7 +119,7 @@ class ImageInfo {
     }
 }
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private static final int NOSELECT_STATE = -1;// 表示未选中任何CheckBox
     LinkedList<ListData> notesList;
@@ -151,48 +158,114 @@ public class MainActivity extends AppCompatActivity{
 
     Pattern r = Pattern.compile("<([a-zA-Z]+)>([^<>]*)</[a-zA-Z]+>");
 
+    final private String temps_dir = "lb_temps_dir";
+    final private String get_temps_dir() {
+        File temps_file = new File(this.getExternalFilesDir(null).toString() + File.separator + temps_dir);
+        if(!temps_file.exists()) temps_file.mkdir();
+        return this.getExternalFilesDir(null).toString() + File.separator + temps_dir;
+    }
+
+    /* 递归删除代码 */
+    private void delete(File f) throws IOException {
+        if (f.isDirectory()) {
+            for (File c : f.listFiles())
+                delete(c);
+        }
+        if (!f.delete())
+            throw new FileNotFoundException("Failed to delete file: " + f);
+    }
+
+    /* 清除用于分享的，临时创建的文件 */
+    private void remove_temps() throws IOException {
+        File temps_dir = new File(get_temps_dir());
+        for(File file: temps_dir.listFiles()) {
+            if (!file.isDirectory()) {
+                file.delete();
+            } else {
+                delete(temps_dir);
+            }
+        }
+    }
+
+    /* 用于从<audio>的content中parse出replace */
+    final private String replace_regex = "src=.+content=(.+)";
+    private String parse_replace(String content) {
+        Pattern pattern = Pattern.compile(replace_regex);
+        Matcher matcher = pattern.matcher(content);
+        try {
+            matcher.find();
+            String replace = matcher.group(1);
+            return replace;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private BaseFont bfChinese = null;
+    private Font FontChinese = null;
+
     private void shareNotesSelected() {
         //share notes
-        // to pdf files
-        ArrayList<File> pdf_files = new ArrayList();
-        String temp_dir = "";
-        String dateTime = DateUtils.Date2String(new Date());
-        if(list_selected.size() > 0) {
-            temp_dir = File.separator + dateTime;
-            new File(
-                    this.getExternalFilesDir(null).toString()
-                            + temp_dir
-            ).mkdir();
+        if(list_selected.size() == 0) {
+            return;
         }
 
+        /* 通报用户 */
+        Toast.makeText(getApplicationContext(), "converting notes to pdf succeed", Toast.LENGTH_LONG);
+
+        //[1] to pdf files
+        ArrayList<File> pdf_files = new ArrayList();
+
+        //[1.1] prepare directory for zipping if necessary:
+        // 期望的文件格局：
+        // a) temps_dir '/' xxx.pdf
+        // b) temps_dir '/' dateTime '/' {xxx.pdf, yyy.pdf, ...}
+        String dateTime = "";
+        if(list_selected.size() > 1) {
+            dateTime = DateUtils.Date2String(new Date());
+            new File(get_temps_dir() + File.separator + dateTime).mkdir();
+        }
+
+        /*
+         * 在current_prepare_dir下，
+         * 获得所有pdf文件
+         */
+        // a)
+        String current_prepare_dir = "";
+        if(list_selected.size() == 1) {
+            current_prepare_dir = get_temps_dir();
+        } else {
+            current_prepare_dir = get_temps_dir() + File.separator + dateTime;
+        }
+        // b)
         for (ListData ld : list_selected) {
             try {
                 /*
-                获得所有pdf的路径
-                此处pdfdir是File对象，toString()后末尾无分隔符separator，需要加上File.separator
-                */
-                /*
-                 * 特殊处理：
+                 * 对笔记标题的特殊处理：
                  * 如果标题含有'/'，即String ld.title中含有'/'，
                  * 则需要将其替换
                  * 暂定为字符'_'
                  * */
                 String pdf_title = ld.title;
                 pdf_title.replace('/','_');
+
+                /*
+                * 创建pdf文件对象
+                * */
                 File pdf = new File(
-                        this.getExternalFilesDir(null).toString()
-                                + temp_dir
-                                + File.separator + pdf_title + ".pdf"
+                        current_prepare_dir + File.separator
+                                + pdf_title + ".pdf"
                 );
 
-                /* pdf创建 */
+                /* Document创建 */
                 Document document = new Document(PageSize.A4, 500, 150, 50, 50);
                 document.setMargins(20, 20, 40, 40);
                 PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf));
                 document.open();
 
                 /*
-                * 内容为各个控件提供的content_string，
+                * contents为各个控件提供的content_string，
                 * 即软件内部通信用的标准化字符串
                 * 此处并上标题<title></title>
                 * 由于此字符串是标签串，可以通过正则表达式进行解析
@@ -200,7 +273,7 @@ public class MainActivity extends AppCompatActivity{
                 String contents = "<title>" + ld.title + "</title>" + NoteDatabase.getInstance().getNotesByTitle(ld.title);
 
                 /*
-                * 通过正则式进行解析
+                * 通过正则式进行解析[tag, thing]元组
                 * */
                 Matcher m = r.matcher(contents);
                 document.newPage();
@@ -209,11 +282,30 @@ public class MainActivity extends AppCompatActivity{
                     String thing = m.group(2);
                     switch (tag) {
                         case "text": {
-                            document.add(new Paragraph(thing));
+                            if(FontChinese!=null && bfChinese!=null) {
+                                document.add(new Paragraph(thing, FontChinese));
+                            } else {
+                                document.add(new Paragraph(thing));
+                            }
+                            break;
+                        }
+                        case "audio": {
+                            String replace = parse_replace(thing);
+                            if(FontChinese!=null && bfChinese!=null) {
+                                document.add(new Paragraph(replace, FontChinese));
+                            } else {
+                                document.add(new Paragraph(replace));
+                            }
                             break;
                         }
                         case "title": {
-                            Paragraph title = new Paragraph(thing);
+                            Paragraph title = null;
+                            if(FontChinese!=null && bfChinese!=null) {
+                                title = new Paragraph(thing, FontChinese);
+                            }
+                            else {
+                                title = new Paragraph(thing);
+                            }
                             title.setFont(new Font(Font.FontFamily.COURIER, 24, Font.BOLD));
                             title.setAlignment(Element.ALIGN_CENTER);
                             document.add(title);
@@ -222,8 +314,54 @@ public class MainActivity extends AppCompatActivity{
                         case "image": {
                             ImageInfo image_info = ImageInfo.parse_image_string(thing);
                             Image image = Image.getInstance(image_info.loc);
-                            image.scaleAbsolute(image_info.width, image_info.height);
+
+                            // resize
+                            float scaler_by_w = (
+                                    (document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin())
+                                            / image.getWidth()
+                            ) * 100;
+
+                            float scaler_by_h = (
+                                    (document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin())
+                                            / image.getHeight()
+                            ) * 100;
+
+                            float scaler_if_size_exceeds = Math.min(scaler_by_h, scaler_by_w);
+                            if(scaler_if_size_exceeds > 1) {
+                                image.scalePercent(scaler_if_size_exceeds);
+                            }
+
                             document.add(image);
+                            break;
+                        }
+                        case "video": {
+                            // 从content string获取视频thumbnail，保存为文件thumbnailName
+                            ImageInfo image_info = ImageInfo.parse_image_string(thing);
+                            Bitmap thumbnail = LBVideoView.getVideoThumbnailNoPlayer(image_info.loc);
+
+                            // 通过thumbnailName文件获取Image对象
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            thumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            Image image = Image.getInstance(stream.toByteArray());
+
+                            // resize
+                            float scaler_by_w = (
+                                    (document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin())
+                                            / image.getWidth()
+                                    ) * 100;
+
+                            float scaler_by_h = (
+                                    (document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin())
+                                            / image.getHeight()
+                                ) * 100;
+
+                            float scaler_if_size_exceeds = Math.min(scaler_by_h, scaler_by_w);
+                            if(scaler_if_size_exceeds > 1) {
+                                image.scalePercent(scaler_if_size_exceeds);
+                            }
+
+                            document.add(image);
+
                             break;
                         }
                     }
@@ -233,17 +371,17 @@ public class MainActivity extends AppCompatActivity{
                 document.close();
 
                 pdf_files.add(pdf);
-
-                /* 通报用户 */
-                Toast.makeText(getApplicationContext(), "convert " + ld.title + " to pdf succeed", Toast.LENGTH_LONG);
             }
             catch (Exception e) {
                 /* 跳过创建pdf失败的笔记 */
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "convert " + ld.title + " to pdf failed", Toast.LENGTH_LONG);
                 continue;
             }
         }
+
+        File temps_dir = new File(get_temps_dir());
+        boolean exists = temps_dir.exists();
+        String[] files = temps_dir.list();
 
         if(pdf_files.size() == 0) {
             return;
@@ -266,7 +404,7 @@ public class MainActivity extends AppCompatActivity{
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
 
-            Uri uri= FileProvider.getUriForFile(this,  "com.littleboss.smartnote.fileprovider", shared);
+            Uri uri = FileProvider.getUriForFile(this,  "com.littleboss.smartnote.fileprovider", shared);
 
             sendIntent.putExtra(Intent.EXTRA_STREAM, uri); //sendIntent.putExtra(Intent.EXTRA_TEXT, "???");
             sendIntent.setType("application/pdf");
@@ -298,6 +436,16 @@ public class MainActivity extends AppCompatActivity{
         });
 
         dialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            remove_temps();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -400,13 +548,21 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        longclick_menu.setOnLongClickListener(new OnLongClickListener() {
+        longclick_menu.setOnClickListener(new OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 hiddenDialog();
-                return true;
             }
         });
+
+        try {
+            bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+            FontChinese = new Font(bfChinese, 12, Font.NORMAL);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sortNotesList(int type) {

@@ -62,8 +62,10 @@
                 android:id="@+id/longclick_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
+                android:background="@color/button_background"
+                android:text="选择"
+                android:textColor="@color/button_text"
+                android:textSize="18sp" />
 
         </LinearLayout>
     </LinearLayout>
