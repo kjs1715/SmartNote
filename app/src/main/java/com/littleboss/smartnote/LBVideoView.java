@@ -63,7 +63,7 @@ public class LBVideoView extends LBImageView {
         }
     }
 
-    public Bitmap getVideoThumbnail(String filePath) {
+    public static Bitmap getVideoThumbnailNoPlayer(String filePath) {
         Bitmap bitmap = null;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -84,10 +84,19 @@ public class LBVideoView extends LBImageView {
                 e.printStackTrace();
             }
         }
+        return bitmap;
+    }
 
+    private Bitmap getVideoThumbnail(String filePath) {
+        /**
+         * 被迫改的。。。
+         * 必须要一种static方法通过filePath获得bitmap，但是这个函数是non-static的
+         * 所以把可以当做static方法的部分提出来，叫做getVideoThumbnailNoPlayer(String filePath)
+         * 这里也就直接用getVideoThumbnailNoPlayer的接口，不重复代码了
+         * */
+        Bitmap bitmap = getVideoThumbnailNoPlayer(filePath);
 
-
-        Bitmap playerbmp = BitmapFactory.decodeResource(getResources(),R.drawable.play);
+        Bitmap playerbmp = BitmapFactory.decodeResource(getResources(), R.drawable.play);
 
         return mergeBitmap(bitmap,playerbmp);
     }
