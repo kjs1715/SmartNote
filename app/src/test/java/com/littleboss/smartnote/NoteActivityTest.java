@@ -96,12 +96,13 @@ public class NoteActivityTest {
         );
         activity.getMyViewGroup().addViewtoCursor(view);
         view.setRecognizedText("smf!");
-        view.setContent("666");
+        view.setContent("src=(.666)content=(.777)");
         String dataString = view.toDataString();
         String filePath = view.getFilePath();
         View getView = view.getView();
         view.audioDialog();
         view.deleteDialog();
+
     }
     @Test
     public void startTest() throws Exception {
@@ -159,25 +160,25 @@ public class NoteActivityTest {
     }
 
 
-//    @Test
-//    public void onActivityResultTest() throws Exception {
-//        Intent intent = new Intent();
-//        NoteEditActivity activity = controller.get();
-//        activity.onActivityResult(photoFromGalleryCode,RESULT_OK, intent);
-//        activity.onActivityResult(photoFromCameraCode,RESULT_OK, intent);
-//        activity.onActivityResult(videoFromGalleryCode,RESULT_OK, intent);
-//        activity.onActivityResult(videoFromCameraCode,RESULT_OK, intent);
-//    }
-//
-//    @Test
-//    public void onRequestPermissionTest() throws Exception {
-//        int[] grant = {PackageManager.PERMISSION_GRANTED};
-//        int[] empty  = {};
-//        String[] permissions = { Manifest.permission.CAMERA};
-//        NoteEditActivity activity = controller.get();
-//        activity.onRequestPermissionsResult(1, permissions, grant);
-//        activity.onRequestPermissionsResult(1, permissions, empty);
-//        activity.onRequestPermissionsResult(0, permissions, empty);
-//    }
+    @Test
+    public void onActivityResultTest() throws Exception {
+        Intent intent = new Intent();
+        NoteEditActivity activity = controller.get();
+        activity.onActivityResult(photoFromGalleryCode,RESULT_OK, intent);
+        activity.onActivityResult(photoFromCameraCode,RESULT_OK, intent);
+        activity.onActivityResult(videoFromGalleryCode,RESULT_OK, intent);
+        activity.onActivityResult(videoFromCameraCode,RESULT_OK, intent);
+    }
+
+    @Test
+    public void onRequestPermissionTest() throws Exception {
+        int[] grant = {PackageManager.PERMISSION_GRANTED};
+        int[] empty  = {};
+        String[] permissions = { Manifest.permission.CAMERA};
+        NoteEditActivity activity = controller.get();
+        activity.onRequestPermissionsResult(1, permissions, grant);
+        activity.onRequestPermissionsResult(1, permissions, empty);
+        activity.onRequestPermissionsResult(0, permissions, empty);
+    }
 
 }

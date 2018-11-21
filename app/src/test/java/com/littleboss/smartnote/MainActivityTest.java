@@ -33,8 +33,8 @@ public class MainActivityTest {
     public void setUp() throws Exception {
         NoteDatabase.dropDatabaseIfExist();
         database = NoteDatabase.getInstance();
-        database.saveNoteByTitle("", "test", "test",null);
-        database.saveNoteByTitle("test", "test1", "test1",null);
+        database.saveNoteByTitle("", "test1", "test1",null);
+        database.saveNoteByTitle("", "test2", "test2",null);
         database.setTestMod(1);
         controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
     }
@@ -102,8 +102,8 @@ public class MainActivityTest {
     public void testSorting() throws Exception {
         Activity activity = controller.get();
 
-        NoteDatabase.getInstance().saveNoteByTitle("", "test1", "test1",null);
-        NoteDatabase.getInstance().saveNoteByTitle("", "test2", "test2",null);
+        database.saveNoteByTitle("", "test3", "test3",null);
+        database.saveNoteByTitle("", "test4", "test4",null);
 
 
         // test method for comparing
