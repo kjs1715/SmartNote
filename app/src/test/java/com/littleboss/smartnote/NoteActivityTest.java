@@ -2,21 +2,33 @@ package com.littleboss.smartnote;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AlertDialog;
 
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity.*;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -28,7 +40,13 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadow.api.Shadow;
+import org.robolectric.shadows.ShadowAdapterView;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowBaseAdapter;
 import org.robolectric.shadows.ShadowDialog;
+import static org.robolectric.Shadows.shadowOf;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -81,25 +99,25 @@ public class NoteActivityTest {
         srcFile.getParentFile().mkdirs();
         DataOutputStream destStream = null;
         try {
-            new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
-            int size = -1, sizeCount = 0;
+            destStream = new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
+
+            int size = -1;
             while (true) {
                 size = sourceStream.read(buffer, 0, bytesPerRead);
-                //System.out.println("size = " + String.valueOf(size));
                 if (size < 0) {
                     sourceStream.close();
                     destStream.close();
                     break;
                 }
-                activity.getMyViewGroup().addViewtoCursor(
-                        new LBAudioView(
-                                srcFile.getAbsolutePath(),
-                                activity,
-                                null,
-                                false
-                        )
-                );
             }
+            activity.getMyViewGroup().addViewtoCursor(
+                    new LBAudioView(
+                            srcFile.getAbsolutePath(),
+                            activity,
+                            null,
+                            false
+                    )
+            );
         }
         finally {
             if (destStream!=null)
