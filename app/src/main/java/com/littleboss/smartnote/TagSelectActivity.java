@@ -23,6 +23,8 @@ public class TagSelectActivity extends AppCompatActivity {
     CheckBox notsure;
     private Button button;
 
+    View testView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +62,7 @@ public class TagSelectActivity extends AppCompatActivity {
         {
             View view=Tag.getTextView(TagSelectActivity.this,tag);
             addViewToLower(upperFlowLayout,lowerFlowLayout,view);
+            testView = view;
         }
     }
 
@@ -84,5 +87,13 @@ public class TagSelectActivity extends AppCompatActivity {
             }
         });
         lower.addView(view);
+    }
+
+    public void setTitlE(String title) {
+        this.title = title;
+    }
+
+    public View getTestView() {
+        return this.testView;
     }
 }
