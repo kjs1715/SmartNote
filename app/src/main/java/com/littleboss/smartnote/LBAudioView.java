@@ -36,11 +36,9 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
     private View blankView;
     private LayoutInflater inflater;
     private LBClickListener clickListener;
-    private LinearLayout audioView;
     private void createPlayIconAndText() {
         playIcon = findViewById(R.id.playicon);
         content = findViewById(R.id.textFromAudio);
-        audioView=findViewById(R.id.audioView);
         blankView = findViewById(R.id.blank_view);
     }
 
@@ -55,7 +53,6 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                         mediaPlayer.setDataSource(audioFilePath);
                     }
                     catch (Exception e) {
-                        //e.printStackTrace();
                         Log.i("error addPlayIconCli...", e.toString());
                     }
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -80,11 +77,8 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
      * @param text the text
      */
     public void setRecognizedText(final String text) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        activity.runOnUiThread(()->{
                 content.setText(text);
-            }
         });
     }
 
@@ -105,7 +99,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         this.setContent(content);
     }
 
-    public LBAudioView(String audioFilePath,Context context,@Nullable Object dumb, boolean STT) {
+    public LBAudioView(String audioFilePath,Context context,@Nullable Object dumb, boolean sTT) {
         this(context);
         this.audioFilePath=audioFilePath;
         this.activity=(Activity)context;
@@ -113,36 +107,25 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         addPlayIconClickListener();
         initGeneralListener();
 
-        if (STT)
+        if (sTT)
             new MSSpeechRecognizer().getRecognizedText(audioFilePath, this);
 
     }
 
     public void initGeneralListener()
     {
-        playIcon.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if(clickListener != null)
-                    clickListener.onContentLongClick(view, LBAudioView.this);
-                return false;
-            }
-        });
-        blankView.setOnClickListener( new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(clickListener != null)
-                    clickListener.onBlankViewClick(view, LBAudioView.this);
-            }
-        });
-        blankView.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if(clickListener != null)
-                    clickListener.onContentLongClick(view, LBAudioView.this);
-                return true;
-            }
-        });
+        OnClickListener onBlankClickListener=(View view)->{
+            if(clickListener != null)
+                clickListener.onBlankViewClick(view, LBAudioView.this);
+        };
+        OnLongClickListener onLongClickListener=(View view)->{
+            if(clickListener != null)
+                clickListener.onContentLongClick(view, LBAudioView.this);
+            return false;
+        };
+        playIcon.setOnLongClickListener(onLongClickListener);
+        blankView.setOnClickListener( onBlankClickListener);
+        blankView.setOnLongClickListener(onLongClickListener);
     }
 
     public void audioDialog() {
@@ -186,6 +169,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.i("onClick 取消","");
             }
         });
 

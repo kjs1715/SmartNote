@@ -8,11 +8,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DataStringParser {
+    DataStringParser(){}
     static LBAbstractView parseLabel(String label, Context context)
     {
         Pattern pattern=Pattern.compile("<([^<>]+)>([\\s\\S]*?)</([^<>]+)>");
         Matcher matcher=pattern.matcher(label);
-        String type="",content="";
+        String type="";
+        String content="";
         if(matcher.find())
         {
             type=matcher.group(1);
@@ -20,23 +22,19 @@ public class DataStringParser {
         }
         if(type.equals("text"))
         {
-            LBTextView lbTextView=new LBTextView(content,context);
-            return lbTextView;
+            return new LBTextView(content,context);
         }
         else if(type.equals("image"))
         {
-            LBImageView view=new LBImageView(content,context);
-            return view;
+            return new LBImageView(content,context);
         }
         else if(type.equals("video"))
         {
-            LBVideoView view=new LBVideoView(content,context);
-            return view;
+            return new LBVideoView(content,context);
         }
         else if(type.equals("audio"))
         {
-            LBAudioView view=new LBAudioView(content,context);
-            return view;
+            return new LBAudioView(content,context);
         }
         else
         {

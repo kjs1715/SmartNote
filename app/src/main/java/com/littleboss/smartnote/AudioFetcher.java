@@ -18,18 +18,20 @@ import omrecorder.PullableSource;
 import omrecorder.Recorder;
 
 public class AudioFetcher {
-    static private String audioPath = "data/data/com.littleboss.smartnote/resources/audios";
-    static MediaRecorder mediaRecorder;
+    private static  String audioPath = "data/data/com.littleboss.smartnote/resources/audios";
     static File audioFile, clippedAudioFile;
     static boolean isRecording = false;
-    static private Recorder recorder;
+    private static  Recorder recorder;
+    public static String sep="/";
     /**
      * 开始录音，无参数.
      * 若当前已经在录音则会直接返回。
      * 在调用之前确认录音权限：ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
      */
 
-    static private PullableSource mic() {
+    AudioFetcher(){}
+
+    private static PullableSource mic() {
         return new PullableSource.Default(
                 new AudioRecordConfig.Default(
                         MediaRecorder.AudioSource.VOICE_RECOGNITION,
@@ -56,7 +58,7 @@ public class AudioFetcher {
                         new PullTransport.OnAudioChunkPulledListener() {
                             @Override
                             public void onAudioChunkPulled(AudioChunk audioChunk) {
-
+                                Log.i("onAudioChunkPulled","");
                             }
                         }
                 ),
@@ -81,18 +83,13 @@ public class AudioFetcher {
         }
         catch (Exception e) {
             Log.i("error stopRecording", e.toString());
-            //e.printStackTrace();
         }
-
-
-        //return audioFile.getAbsolutePath();
-
 
         String result = "";
         if (saveMillis != 0) {
-            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_" + String.valueOf(System.currentTimeMillis());
+            String curTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_" + System.currentTimeMillis();
             //clippedAudioFile = new File(audioPath + "/last" +saveMillis + "MillisOf_" + audioFile.getName());
-            clippedAudioFile = new File(audioPath + "/" + curTime + "_cut" + ".wav");
+            clippedAudioFile = new File(audioPath + sep + curTime + "_cut" + ".wav");
             new AudioClipper().audioClip(
                     audioFile.getAbsolutePath(),
                     clippedAudioFile.getAbsolutePath(),
@@ -102,6 +99,10 @@ public class AudioFetcher {
         }
         // remove audioFile
         boolean __ = audioFile.delete();
+        if(__)
+            Log.i("del suc","delete old audioFile successfully");
+        else
+            Log.e("del fail","delete old audioFile failed");
         isRecording = false;
         return result;
 

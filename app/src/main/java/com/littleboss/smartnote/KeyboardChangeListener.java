@@ -9,7 +9,6 @@ import android.view.ViewTreeObserver;
  */
 
 public class KeyboardChangeListener implements ViewTreeObserver.OnGlobalLayoutListener {
-    private static final String TAG = "ListenerHandler";
     private View mContentView;
     private int mOriginHeight;
     private int mPreHeight;

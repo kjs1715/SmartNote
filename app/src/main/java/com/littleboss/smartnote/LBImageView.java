@@ -33,8 +33,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
     protected ImageView imageView;
     protected View blankView;
     protected String filePath;
-    protected int SCREEN_WIDTH;
-    protected int SCREEN_HEIGHT;
+    protected int screenWidth;
+    protected int screenHeight;
     protected Bitmap image;
     protected LBClickListener clickListener;
     protected int width;
@@ -55,8 +55,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         this.inflater.inflate(R.layout.item_imageview, this);
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
-        SCREEN_WIDTH = dm.widthPixels;
-        SCREEN_HEIGHT = dm.heightPixels;
+        screenWidth = dm.widthPixels;
+        screenHeight = dm.heightPixels;
         init();
     }
 
@@ -71,37 +71,26 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         this.imageView = findViewById(R.id.imageView);
         this.blankView = findViewById(R.id.blank_view);
 
-        this.imageView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(clickListener != null)
-                    clickListener.onContentClick(view, LBImageView.this);
-            }
-        });
-        this.imageView.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if(clickListener != null)
-                    clickListener.onContentLongClick(view, LBImageView.this);
-                return false;
-            }
-        });
 
-        this.blankView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(clickListener != null)
-                    clickListener.onBlankViewClick(view, LBImageView.this);
-            }
-        });
-        this.blankView.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if(clickListener != null)
-                    clickListener.onContentLongClick(view, LBImageView.this);
-                return false;
-            }
-        });
+        OnClickListener onContentClickListener=(View view)->{
+            if(clickListener != null)
+                clickListener.onContentClick(view, LBImageView.this);
+        };
+        OnClickListener onBlankClickListener=(View view)->{
+            if(clickListener != null)
+                clickListener.onBlankViewClick(view, LBImageView.this);
+        };
+        OnLongClickListener onLongClickListener=(View view)->{
+            if(clickListener != null)
+                clickListener.onContentLongClick(view, LBImageView.this);
+            return false;
+        };
+
+        this.imageView.setOnClickListener(onContentClickListener);
+        this.imageView.setOnLongClickListener(onLongClickListener);
+
+        this.blankView.setOnClickListener(onBlankClickListener);
+        this.blankView.setOnLongClickListener(onLongClickListener);
     }
 
     public void setContent(String filePath) {
@@ -145,7 +134,6 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         try {
             this.image = BitmapFactory.decodeFile(this.filePath);
         } catch (Exception e) {
-            //e.printStackTrace();
             Log.i("error getImage() : ", e.toString());
         }
     }
@@ -157,19 +145,19 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         }
 
         // 确保进来的图片一开始就不超宽度
-        if(mImage.getWidth() >= SCREEN_WIDTH) {
+        if(mImage.getWidth() >= screenWidth) {
             // 原始大小
-            int old_width = mImage.getWidth();
-            int old_height = mImage.getHeight();
+            int oldWidth = mImage.getWidth();
+            int oldHeight = mImage.getHeight();
 
             // 超出比例
-            double width_exceed_rate = (double) (old_width) / SCREEN_WIDTH;
+            double widthExceedRate = (double) (oldWidth) / screenWidth;
 
             // 确保超出比例更大的缩小到屏幕范围内（严格小于屏幕长宽）
             // 同时保证图片比例不失真
             // 所以同时除以宽度的超出比例
-            int newWidth = (int)(old_width / width_exceed_rate) - 1;
-            int newHeight = (int)(old_height / width_exceed_rate) - 1;
+            int newWidth = (int)(oldWidth / widthExceedRate) - 1;
+            int newHeight = (int)(oldHeight / widthExceedRate) - 1;
             mImage = ImageUtils.resizeImage(mImage, newWidth, newHeight);
         }
 
@@ -186,7 +174,6 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
          * @Description: for parse the size of source image
          *
          */
-        // FIXME: 2018/11/13 Added if condition for test
         if(str != null) {
             String[] buf = str.split("\\+");
             this.filePath = buf[0];
@@ -230,24 +217,25 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
         class ResizeDialog extends FrameLayout {
 
-            final private EditText nWidth, nHeight;
+            final private EditText nWidth;
+            final private EditText nHeight;
             private CheckBox keepratio;
             private TextView note;
-            final private double original_ratio;
+            final private double originalRatio;
 
             /* magic number:
                 last_edit==0 => last edit on width
                 last_edit==1 => last edit on height
             */
-            int last_edit;
+            int lastEdit;
 
             /*
             * 更改输入框可能是由于勾选checkbox导致
             * 此时text watcher应当忽略此更改
             * 设定此更改锁，达到互锁的目的
             * */
-            boolean adjustment_clear;
-            boolean text_has_changed_when_unchecked;
+            boolean adjustmentClear;
+            boolean textHasChangedWhenUnchecked;
 
             /**
              * 根据keepratio, by_width, by_height,
@@ -255,9 +243,9 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
              * 并确保它们符合数据范围约定：width<=SCREEN_WIDTH, height<=SCREEN_HEIGHT
              * */
             private Pair<Integer, Integer> getNewShape() {
-                int new_width = Integer.parseInt(nWidth.getText().toString());
-                int new_height = Integer.parseInt(nHeight.getText().toString());
-                return new Pair<Integer, Integer>(new_width, new_height);
+                int newWidth = Integer.parseInt(nWidth.getText().toString());
+                int newHeight = Integer.parseInt(nHeight.getText().toString());
+                return new Pair<>(newWidth, newHeight);
             }
 
             /**
@@ -267,30 +255,30 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
              * 除了渲染xml以外，还需要绑定View对象，
              * 并设定监听器，
              * */
-            public ResizeDialog(@NonNull Context context, int original_width, int original_height) {
+            public ResizeDialog(@NonNull Context context, int originalWidth, int originalHeight) {
                 super(context);
 
                 // 渲染xml
-                LayoutInflater inflater = LayoutInflater.from(context);
-                inflater.inflate(R.layout.resize_dialog, this);
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                layoutInflater.inflate(R.layout.resize_dialog, this);
 
                 // 绑定View对象
                 nWidth = findViewById(R.id.nWidth_input);
                 nHeight = findViewById(R.id.nHeight_input);
                 keepratio = findViewById(R.id.keep_ratio_checkbox);
                 note = findViewById(R.id.notify_limit);
-                String limit_notify = "max width = " + Integer.toString(SCREEN_WIDTH) + ", max height " + Integer.toString(SCREEN_HEIGHT);
-                note.setText(limit_notify);
+                String limitNotify = "max width = " + Integer.toString(screenWidth) + ", max height " + Integer.toString(screenHeight);
+                note.setText(limitNotify);
 
                 // 浅状态初始化：与初态相同；设最新更改项为width
-                nWidth.setText(Integer.toString(original_width));
-                nHeight.setText(Integer.toString(original_height));
-                original_ratio = (double)(original_width)/original_height;
+                nWidth.setText(Integer.toString(originalWidth));
+                nHeight.setText(Integer.toString(originalHeight));
+                originalRatio = (double)(originalWidth)/originalHeight;
 
-                last_edit = 0;
+                lastEdit = 0;
                 keepratio.setChecked(true);
-                adjustment_clear = true;
-                text_has_changed_when_unchecked = false;
+                adjustmentClear = true;
+                textHasChangedWhenUnchecked = false;
 
                 // 浅状态维护：在用户动作中保持nWidth
                 // 1. 最后更改对话框
@@ -299,28 +287,30 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                 // [1]
                 nWidth.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        // nothing to do
+                    }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        last_edit = 0;
-                        if(keepratio.isChecked()==true && adjustment_clear==true) {
-                            adjustment_clear = false;
+                        lastEdit = 0;
+                        if(keepratio.isChecked() && adjustmentClear) {
+                            adjustmentClear = false;
                             // do adjustment
                             // 用户将输入框更改为合法数字
                             try {
-                                int new_width = Integer.parseInt(nWidth.getText().toString());
-                                int new_height = (int)(new_width / original_ratio);
-                                nHeight.setText(Integer.toString(new_height));
+                                int newWidth = Integer.parseInt(nWidth.getText().toString());
+                                int newHeight = (int)(newWidth / originalRatio);
+                                nHeight.setText(Integer.toString(newHeight));
                             }
                             // 用户将输入框更改为非法数字
                             catch (NumberFormatException e) {
 //                                nWidth.setText(Integer.toString(original_width));
 //                                nHeight.setText(Integer.toString(original_height));
                             }
-                            adjustment_clear = true;
+                            adjustmentClear = true;
                         } else {
-                            text_has_changed_when_unchecked = true;
+                            textHasChangedWhenUnchecked = true;
                         }
                     }
 
@@ -333,55 +323,53 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        last_edit = 1;
-                        if(keepratio.isChecked()==true && adjustment_clear==true) {
-                            adjustment_clear = false;
+                        lastEdit = 1;
+                        if(keepratio.isChecked()==true && adjustmentClear ==true) {
+                            adjustmentClear = false;
                             // do adjustment
                             // 用户将输入框更改为合法数字
                             try {
-                                int new_height = Integer.parseInt(nHeight.getText().toString());
-                                int new_width = (int)(new_height * original_ratio);
-                                nWidth.setText(Integer.toString(new_width));
+                                int newHeight = Integer.parseInt(nHeight.getText().toString());
+                                int newWidth = (int)(newHeight * originalRatio);
+                                nWidth.setText(Integer.toString(newWidth));
                             }
                             // 用户将输入框更改为非法数字
                             catch (NumberFormatException e) {
-//                                nWidth.setText(Integer.toString(original_width));
-//                                nHeight.setText(Integer.toString(original_height));
+                                //do nothing
                             }
-                            adjustment_clear = true;
+                            adjustmentClear = true;
                         } else {
-                            text_has_changed_when_unchecked = true;
+                            textHasChangedWhenUnchecked = true;
                         }
                     }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                        //nothing to do
+                    }
                 });
 
                 // [2]
                 keepratio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                        if(checked && text_has_changed_when_unchecked) {
+                        if(checked && textHasChangedWhenUnchecked) {
                             // 假设切换到keep ratio之前的长宽不合比例：视作未经调整的
 
-                            adjustment_clear = false;
-                            int new_width=0,new_height=0;
-                            try {
-                                new_width = Integer.parseInt(nWidth.getText().toString());
-                                new_height = Integer.parseInt(nHeight.getText().toString());
-                                if(last_edit==0) {
-                                    new_height = (int)(new_width / original_ratio);
-                                } else {
-                                    new_width = (int)(new_height * original_ratio);
-                                }
-                                nWidth.setText(Integer.toString(new_width));
-                                nHeight.setText(Integer.toString(new_height));
+                            adjustmentClear = false;
+                            int newWidth;
+                            int newHeight;
+                            newWidth = Integer.parseInt(nWidth.getText().toString());
+                            newHeight = Integer.parseInt(nHeight.getText().toString());
+                            if(lastEdit==0) {
+                                newHeight = (int)(newWidth / originalRatio);
+                            } else {
+                                newWidth = (int)(newHeight * originalRatio);
                             }
-                            catch (NumberFormatException ne){
-                            }
-                            adjustment_clear = true;
-                            text_has_changed_when_unchecked = false;
+                            nWidth.setText(Integer.toString(newWidth));
+                            nHeight.setText(Integer.toString(newHeight));
+                            adjustmentClear = true;
+                            textHasChangedWhenUnchecked = false;
                         }
                     }
                 });
@@ -417,7 +405,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                  * setImage()设置图片
                  * */
                 Pair<Integer, Integer> newShape = resize_dialog.getNewShape();
-                if(newShape.first >= SCREEN_WIDTH||newShape.second >= SCREEN_HEIGHT) {
+                if(newShape.first >= screenWidth ||newShape.second >= screenHeight) {
                     Toast.makeText(context, "invalid size", Toast.LENGTH_LONG);
                 } else {
                     Bitmap newImage = ImageUtils.resizeImage(image, newShape.first, newShape.second);
@@ -433,10 +421,6 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         });
         builder.show();
     }
-
-//    不需要的函数：已经删除
-//    public void imageResizeWithScaleDialog();
-//    public void chooseDialog(final String choice);
 
     private void removeMyself() {
         /**
@@ -458,6 +442,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //nothing to do
             }
         });
 

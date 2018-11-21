@@ -113,11 +113,11 @@ public class FlowLayout extends ViewGroup
     /**
      * 存储所有的View，按行记录
      */
-    private List<List<View>> mAllViews = new ArrayList<List<View>>();
+    private List<List<View>> mAllViews = new ArrayList<>();
     /**
      * 记录每一行的最大高度
      */
-    private List<Integer> mLineHeight = new ArrayList<Integer>();
+    private List<Integer> mLineHeight = new ArrayList<>();
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b)
     {
@@ -129,7 +129,7 @@ public class FlowLayout extends ViewGroup
         int lineWidth = 0;
         int lineHeight = 0;
         // 存储每一行所有的childView
-        List<View> lineViews = new ArrayList<View>();
+        List<View> lineViews = new ArrayList<>();
         int cCount = getChildCount();
         // 遍历所有的孩子
         for (int i = 0; i < cCount; i++)
@@ -148,7 +148,7 @@ public class FlowLayout extends ViewGroup
                 // 将当前行的childView保存，然后开启新的ArrayList保存下一行的childView
                 mAllViews.add(lineViews);
                 lineWidth = 0;// 重置行宽
-                lineViews = new ArrayList<View>();
+                lineViews = new ArrayList<>();
             }
             /**
              * 如果不需要换行，则累加

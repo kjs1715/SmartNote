@@ -54,8 +54,8 @@ public class LBAbstractViewGroup extends ScrollView {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN
                         && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
-                    LBTextView LBTextView = (LBTextView) v.getParent().getParent();
-                    onBackspacePress(LBTextView);
+                    LBTextView lbTextView = (LBTextView) v.getParent().getParent();
+                    onBackspacePress(lbTextView);
                 }
                 return false;
             }
@@ -83,34 +83,13 @@ public class LBAbstractViewGroup extends ScrollView {
             if(view instanceof LBTextView)
             {
                 ((LBTextView) view).getEditText().setFocusable(false);
-//                ((LBTextView) view).getEditText().setEnabled(false);
             }
             else if(view instanceof LBAudioView)
             {
                 ((LBAudioView)view).content.setFocusable(false);
-//                ((LBAudioView)view).content.setEnabled(false);
             }
         }
     }
-
-//    public void enableClick()
-//    {
-//        editable=true;
-//        for(int i=0;i<allLayout.getChildCount();i++)
-//        {
-//            LBAbstractView view=(LBAbstractView)allLayout.getChildAt(i);
-//            if(view instanceof LBTextView)
-//            {
-//                ((LBTextView) view).getEditText().setFocusable(true);
-//                ((LBTextView) view).getEditText().setEnabled(true);
-//            }
-//            else if(view instanceof LBAudioView)
-//            {
-//                ((LBAudioView)view).content.setFocusable(true);
-//                ((LBAudioView)view).content.setEnabled(true);
-//            }
-//        }
-//    }
 
     public void removeAll() {
         if (allLayout != null) {
@@ -198,11 +177,11 @@ public class LBAbstractViewGroup extends ScrollView {
      * 生成文本输入框
      */
     private LBTextView createEditText() {
-        LBTextView LBTextView = new LBTextView(mContext);
-        LBTextView.getEditText().setOnKeyListener(keyListener);
-        LBTextView.getEditText().setOnFocusChangeListener(focusListener);
-        setEditViewListener(LBTextView);
-        return LBTextView;
+            LBTextView lbTextView = new LBTextView(mContext);
+        lbTextView.getEditText().setOnKeyListener(keyListener);
+        lbTextView.getEditText().setOnFocusChangeListener(focusListener);
+        setEditViewListener(lbTextView);
+        return lbTextView;
     }
 
     private void setEditViewListener(final LBAbstractView editView) {
@@ -227,18 +206,15 @@ public class LBAbstractViewGroup extends ScrollView {
             public void onContentClick(View v, View widget) {
                 LBAbstractView.ViewType viewType=editView.getViewType();
                 Intent intent;
-                switch (viewType)
-                {
-                    case IMAGE:
-                        intent = new Intent(getContext(), LBImageActivity.class);
-                        intent.putExtra("filepath",editView.getFilePath());
-                        getContext().startActivity(intent);
-                        break;
-                    case VIDEO:
-                        intent = new Intent(getContext(), LBVideoActivity.class);
-                        intent.putExtra("filepath",editView.getFilePath());
-                        getContext().startActivity(intent);
-                        break;
+                if(viewType==LBAbstractView.ViewType.IMAGE) {
+                    intent = new Intent(getContext(), LBImageActivity.class);
+                    intent.putExtra("filepath", editView.getFilePath());
+                    getContext().startActivity(intent);
+                }
+                else{
+                    intent = new Intent(getContext(), LBVideoActivity.class);
+                    intent.putExtra("filepath",editView.getFilePath());
+                    getContext().startActivity(intent);
                 }
             }
 
@@ -257,6 +233,8 @@ public class LBAbstractViewGroup extends ScrollView {
                         break;
                     case AUDIO:
                         ((LBAudioView)editView).audioDialog();
+                        break;
+                    default:
                         break;
                 }
             }
@@ -297,46 +275,15 @@ public class LBAbstractViewGroup extends ScrollView {
      * 在特定位置添加一个编辑组件
      */
     private void addEditViewAtIndexAnimation(final int index, final LBAbstractView editView) {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                allLayout.addView(editView.getView(), index);
-            }
-        }, 200);
-
-
+        postDelayed(() ->allLayout.addView(editView.getView(), index)
+        , 200);
     }
 
     private void srollToBottom() {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (lastFocusView != null)
-                    lastFocusView.reqFocus();
-                fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        }, 1000);
-    }
-
-    /**
-     * 立即插入一个编辑组件，适用于编辑话题，有延时会导致顺序错乱
-     * 代价是没有动画
-     *
-     * @param index    显示位置
-     * @param editView 组件
-     */
-    private void addEditViewAtIndexImmediate(final int index, final LBAbstractView editView) {
-
-        allLayout.addView(editView.getView(), index);
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (lastFocusView != null)
-                    lastFocusView.reqFocus();
-                fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        }, 1000);
-
+        postDelayed(() -> {if (lastFocusView != null)
+            lastFocusView.reqFocus();
+        fullScroll(ScrollView.FOCUS_DOWN);}
+        , 1000);
     }
 
     /**
@@ -364,8 +311,6 @@ public class LBAbstractViewGroup extends ScrollView {
         for (int i = childCount - 1; i >= 0; i--) {
             View childAt = allLayout.getChildAt(i);
             if (childAt instanceof LBTextView) {
-//                String content = ((LBTextView) childAt).getContent();
-//                ((LBTextView) childAt).setFocusSelection(content.length());
                 ((LBTextView) childAt).reqFocus();
                 showKeyBoard(((LBTextView) childAt).getEditText());
                 return;
@@ -400,7 +345,6 @@ public class LBAbstractViewGroup extends ScrollView {
         view.setSelection(clength);
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);
-//        view.requestFocus();
         imm.showSoftInput(view, 0);
     }
 
@@ -410,7 +354,7 @@ public class LBAbstractViewGroup extends ScrollView {
      * 获取全部数据集合
      */
     public List<LBAbstractView> buildData() {
-        List<LBAbstractView> dataList = new ArrayList<LBAbstractView>();
+        List<LBAbstractView> dataList = new ArrayList<>();
         int num = allLayout.getChildCount();
         for (int index = 0; index < num; index++) {
             LBAbstractView itemView = (LBAbstractView) allLayout.getChildAt(index);
@@ -426,12 +370,12 @@ public class LBAbstractViewGroup extends ScrollView {
 
     public String toDataString()
     {
-        StringBuffer stringBuffer=new StringBuffer("");
+        StringBuilder stringBuilder=new StringBuilder("");
         for(int i=0;i<this.allLayout.getChildCount();i++)
         {
-            stringBuffer.append(((LBAbstractView)allLayout.getChildAt(i)).toDataString());
+            stringBuilder.append(((LBAbstractView)allLayout.getChildAt(i)).toDataString());
         }
-        return stringBuffer.toString();
+        return stringBuilder.toString();
     }
 
     int getSize()
@@ -447,44 +391,49 @@ public class LBAbstractViewGroup extends ScrollView {
 
         if (lastFocusView != null)
         {
-            String lastEditStr = lastFocusView.getContent();
-            lastFocusView.reqFocus();
-            int cursorIndex = lastFocusView.getSelectionStart();
-            int lastEditIndex = allLayout.indexOfChild(lastFocusView);
-            if (cursorIndex >= 0) {
-                String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
-
-                if (lastEditStr.length() == 0 || editStr1.length() == 0) {
-                    // 如果EditText为空，或者光标已经顶在了editText的最前面，则直接插入组件，并且EditText下移即可
-                    addEditViewAtIndexAnimation(lastEditIndex, editView);
-                } else {
-                    // 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
-                    lastFocusView.setText(editStr1);
-                    String editStr2 = lastEditStr.substring(cursorIndex).trim();
-                    if (allLayout.getChildCount() - 1 == lastEditIndex
-                            || editStr2.length() > 0) {
-                        addEditTextAtIndex(lastEditIndex + 1, editStr2);
-                    }
-
-                    addEditViewAtIndexAnimation(lastEditIndex + 1, editView);
-                    lastFocusView.reqFocus();
-                    lastFocusView.setSelection(lastFocusView.getContent().length(), lastFocusView.getContent().length());
-                }
-                if (allLayout.indexOfChild(lastFocusView) >= allLayout.getChildCount() - 1) {
-                    srollToBottom();
-                }
-            } else {
-                //出现失去焦点的情况，默认添加到最后面
-                addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
-                srollToBottom();
-            }
-            hideKeyBoard();
+            addViewToEditText(editView);
         }
         else
         {
             addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
             srollToBottom();
         }
+    }
+
+    void addViewToEditText(LBAbstractView editView)
+    {
+        String lastEditStr = lastFocusView.getContent();
+        lastFocusView.reqFocus();
+        int cursorIndex = lastFocusView.getSelectionStart();
+        int lastEditIndex = allLayout.indexOfChild(lastFocusView);
+        if (cursorIndex >= 0) {
+            String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
+
+            if (lastEditStr.length() == 0 || editStr1.length() == 0) {
+                // 如果EditText为空，或者光标已经顶在了editText的最前面，则直接插入组件，并且EditText下移即可
+                addEditViewAtIndexAnimation(lastEditIndex, editView);
+            } else {
+                // 如果EditText非空且光标不在最顶端，则需要添加新的imageView和EditText
+                lastFocusView.setText(editStr1);
+                String editStr2 = lastEditStr.substring(cursorIndex).trim();
+                if (allLayout.getChildCount() - 1 == lastEditIndex
+                        || editStr2.length() > 0) {
+                    addEditTextAtIndex(lastEditIndex + 1, editStr2);
+                }
+
+                addEditViewAtIndexAnimation(lastEditIndex + 1, editView);
+                lastFocusView.reqFocus();
+                lastFocusView.setSelection(lastFocusView.getContent().length(), lastFocusView.getContent().length());
+            }
+            if (allLayout.indexOfChild(lastFocusView) >= allLayout.getChildCount() - 1) {
+                srollToBottom();
+            }
+        } else {
+            //出现失去焦点的情况，默认添加到最后面
+            addEditViewAtIndexAnimation(allLayout.getChildCount() - 1, editView);
+            srollToBottom();
+        }
+        hideKeyBoard();
     }
 
     void deleteView(int position)
