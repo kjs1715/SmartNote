@@ -102,6 +102,10 @@ public class MainActivityTest {
     public void testSorting() throws Exception {
         Activity activity = controller.get();
 
+        database.saveNoteByTitle("", "test3", "test3",null);
+        database.saveNoteByTitle("", "test4", "test4",null);
+
+
         // test method for comparing
         Date testDate1 = new Date(2018,5,1);
         Date testDate2 = new Date(2018,5,2);
@@ -112,8 +116,8 @@ public class MainActivityTest {
         controller.get().sortNotesList(1);
         controller.get().sortNotesList(2);
 
-        ListData test1 = new ListData("test3", testDate1, testMDate1,"");
-        ListData test2 = new ListData("test4", testDate2, testMDate2,"");
+        ListData test1 = new ListData("test11", testDate1, testMDate1,"");
+        ListData test2 = new ListData("test22", testDate2, testMDate2,"");
 
         controller.get().Compare(0, test1, test2);
         controller.get().Compare(1, test1, test2);
