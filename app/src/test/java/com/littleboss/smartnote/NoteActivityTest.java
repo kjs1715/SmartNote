@@ -152,15 +152,18 @@ public class NoteActivityTest {
         LBTextView text1 = new LBTextView("666", activity);
         LBTextView text2 = new LBTextView("667", activity);
         LBTextView text3 = new LBTextView("668", activity);
+        LBTextView text4 = new LBTextView("669", activity);
         lbAbstractViewGroup.addViewtoCursor(text1);
         lbAbstractViewGroup.lastFocusView = text1;
         lbAbstractViewGroup.addViewToEditText(text2);
         lbAbstractViewGroup.addViewToEditText(text3);
         lbAbstractViewGroup.deleteView(0);
-        lbAbstractViewGroup.addViewToEditText(text2);
+        lbAbstractViewGroup.addViewToEditText(text4);
         lbAbstractViewGroup.moveViewUp(1);
         lbAbstractViewGroup.moveViewDown(0);
+        lbAbstractViewGroup.swapViewPosition(0, 1);
         lbAbstractViewGroup.setContent("<text>666</text><text>667</text>");
+
         List<LBAbstractView> dump = lbAbstractViewGroup.buildData();
         EditText dump2 = lbAbstractViewGroup.getCurFousEditText();
         lbAbstractViewGroup.disableClick();
