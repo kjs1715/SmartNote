@@ -35,6 +35,8 @@ public class TagEditActivity extends AppCompatActivity {
     FlowLayout lowerFlowLayout;
     private Button button;
 
+    View testView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +50,7 @@ public class TagEditActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddTagDialog();
+                addTagDialog().show();
             }
         });
 
@@ -104,6 +106,7 @@ public class TagEditActivity extends AppCompatActivity {
             }
             View view=Tag.getTextView(TagEditActivity.this,tag);
             addViewToLower(upperFlowLayout,lowerFlowLayout,view);
+            testView = view;
         }
     }
 
@@ -130,35 +133,30 @@ public class TagEditActivity extends AppCompatActivity {
         lower.addView(view);
     }
 
-    public void AddTagDialog() {
 
-        class AddTagDialog extends FrameLayout {
+    public void setTitlE(String title) {
+        this.title = title;
+    }
 
-            private EditText tagname;
-            public AddTagDialog(@NonNull Context context) {
-                super(context);
+    public View getTestView() {
+        return this.testView;
+    }
 
-                // 渲染xml
-                LayoutInflater inflater = LayoutInflater.from(context);
-                inflater.inflate(R.layout.addtag_dialog, this);
-
-                // 绑定View对象
-                tagname = findViewById(R.id.tagname);
-            }
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(TagEditActivity.this);
-        builder.setTitle("添加新标签");
-
+    public AlertDialog addTagDialog() {
         AddTagDialog addtag_dialog = new AddTagDialog(TagEditActivity.this);
-        builder.setView(addtag_dialog);
-
-        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+        AlertDialog dialog = new AlertDialog.Builder(TagEditActivity.this)
+                .setTitle("添加新标签")
+                .setView(addtag_dialog)
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                String string=addtag_dialog.tagname.getText().toString().trim().replace(" ","_");
-                if(string.length()==0)
+                String string=addtag_dialog.getTagname().getText().toString().trim().replace(" ","_");
+                if(noteDatabase.getTestMod() == 1) {
+                    string = "test1"; // Don`t mind, just for testing ^^7
+                }
+                if(string.length()==0) {
                     return;
+                }
                 if(thisTagList.contains(new Tag(string)))
                 {
                     Toast.makeText(TagEditActivity.this,"该笔记已有同名标签",Toast.LENGTH_SHORT).show();
@@ -173,7 +171,43 @@ public class TagEditActivity extends AppCompatActivity {
                 Tag tag=new Tag(string);
                 addViewToUpper(upperFlowLayout,lowerFlowLayout,Tag.getTextView(TagEditActivity.this, tag));
             }
-        });
-        builder.show();
+        }).create();
+        return dialog;
+    }
+
+    public void setThisTagList(Tag str) {
+        this.thisTagList.add(str);
+    }
+
+    public void setAllTagList(Tag str) {
+        this.allTagList.add(str);
+    }
+
+    public void deleteThisTagList() {
+        this.thisTagList.clear();
+    }
+
+    public void deleteAllTagList() {
+        this.allTagList.clear();
+    }
+}
+
+
+class AddTagDialog extends FrameLayout {
+
+    private EditText tagname;
+    public AddTagDialog(@NonNull Context context) {
+        super(context);
+
+        // 渲染xml
+        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.addtag_dialog, this);
+
+        // 绑定View对象
+        tagname = findViewById(R.id.tagname);
+    }
+
+    public EditText getTagname() {
+        return this.tagname;
     }
 }
