@@ -1,6 +1,5 @@
 package com.littleboss.smartnote;
 
-import android.content.Context;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.util.Log;
@@ -8,8 +7,6 @@ import android.util.Log;
 import com.littleboss.smartnote.Utils.AudioClipper;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -75,7 +72,6 @@ public class AudioFetcher {
      */
 
     static String stopRecording(long saveMillis){
-        System.out.println("record length:="+saveMillis);
 
         if (!isRecording)
             return null;
@@ -102,9 +98,6 @@ public class AudioFetcher {
                     clippedAudioFile.getAbsolutePath(),
                     saveMillis
             );
-            System.out.println(String.format("audioClipped(%s,%s,%d)",audioFile.getAbsolutePath(),
-                    clippedAudioFile.getAbsolutePath(),
-                    saveMillis));
             result = clippedAudioFile.getAbsolutePath();
         }
         // remove audioFile

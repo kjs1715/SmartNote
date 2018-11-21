@@ -1,16 +1,11 @@
 package com.littleboss.smartnote;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-
-import com.littleboss.smartnote.R;
-
-import java.util.zip.Inflater;
 
 public class LBTextView extends FrameLayout implements LBAbstractView {
     private Context context;
@@ -41,7 +36,6 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
         editText.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("editText.click");
                 if(clickListener != null)
                     clickListener.onContentClick(view, LBTextView.this);
             }
@@ -49,7 +43,6 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
         findViewById(R.id.blank_view).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("blank_view.click");
                 if(clickListener != null)
                     clickListener.onBlankViewClick(view, LBTextView.this);
             }
@@ -57,7 +50,6 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
         findViewById(R.id.blank_view).setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                System.out.println("blank_view.longclick");
                 if(clickListener != null)
                     clickListener.onContentLongClick(view, LBTextView.this);
                 return true;
@@ -66,7 +58,6 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
         this.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                System.out.println("FrameLayout.longclick");
                 if(clickListener != null)
                     clickListener.onContentLongClick(view, LBTextView.this);
                 return true;

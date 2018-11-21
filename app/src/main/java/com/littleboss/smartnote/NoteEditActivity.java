@@ -4,17 +4,14 @@ import android.Manifest;
 import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.inputmethodservice.KeyboardView;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -32,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -47,15 +43,12 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class NoteEditActivity extends AppCompatActivity {
-
-    private Bitmap bitmap;
 
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
@@ -383,7 +376,6 @@ public class NoteEditActivity extends AppCompatActivity {
     public void stopRecording()
     {
         recordEndTime=System.currentTimeMillis();
-        System.out.println("recordEndTime="+simpleDateFormat.format(new Date(recordEndTime)));
         String latestAudioLocation=AudioFetcher.stopRecording(recordEndTime-recordStartTime);
         Toast.makeText(NoteEditActivity.this, String.format("已保存录音，时长%d秒，开始转换为文字，请耐心等待",(recordEndTime-recordStartTime)/1000), Toast.LENGTH_SHORT).show();
         isRecording=false;
@@ -430,8 +422,6 @@ public class NoteEditActivity extends AppCompatActivity {
             default:
                 Toast.makeText(NoteEditActivity.this, String.format("已从%d秒前开始录音",recordStartSecondsAgo), Toast.LENGTH_SHORT).show();
         }
-//        System.out.println("recordStartTime="+simpleDateFormat.format(new Date(recordStartTime)));
-//        System.out.println("deamonRecordStartTime="+simpleDateFormat.format(new Date(deamonRecordStartTime)));
         if(!test) {
             AudioFetcher.startRecording();
         }
@@ -556,7 +546,6 @@ public class NoteEditActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println(data==null);
         if(resultCode==RESULT_OK)
         {
             if(requestCode == photoFromGalleryCode) {

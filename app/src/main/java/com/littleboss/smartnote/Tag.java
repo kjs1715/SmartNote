@@ -25,7 +25,6 @@ public class Tag implements Comparable<Tag> {
             return new LinkedList<>();
         }
         LinkedList<Tag> linkedList=new LinkedList<>();
-//        System.out.println(tagsListString);
         String[] tags=tagsListString.split(" ");
         for (String tag:tags)
         {
@@ -44,7 +43,6 @@ public class Tag implements Comparable<Tag> {
             res.append(tag.name);
             res.append(" ");
         }
-        System.out.println("getTagListString = "+res.toString());
         return res.toString();
     }
     public static View getTextView(Context context, Tag tag)

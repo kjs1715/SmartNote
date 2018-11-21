@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity{
         bt_cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("bt_cancel clicked");
                 hideLinearLayout();
                 isMultiSelect = false;
             }
@@ -190,7 +189,6 @@ public class MainActivity extends AppCompatActivity{
         bt_delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("bt_delete clicked");
                 try {
                     noteDatabase.deleteNotesTitleList(list_delete);
                 } catch (NoteNotExistException e) {

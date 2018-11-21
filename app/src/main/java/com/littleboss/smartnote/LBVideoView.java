@@ -1,7 +1,6 @@
 package com.littleboss.smartnote;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -56,9 +55,7 @@ public class LBVideoView extends LBImageView {
     @Override
     public void getImage() {
         try {
-            System.out.println(filePath);
             this.image = getVideoThumbnail(this.filePath);
-            System.out.println("Successfully decode");
         } catch (Exception e) {
             //e.printStackTrace();
             Log.i("err getImage() : ", e.toString());

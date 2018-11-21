@@ -1,7 +1,6 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;

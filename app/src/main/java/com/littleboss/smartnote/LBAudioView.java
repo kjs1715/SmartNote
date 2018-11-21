@@ -18,7 +18,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,9 +52,7 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     try {
-                        System.out.println("audioFilePath:"+audioFilePath);
                         mediaPlayer.setDataSource(audioFilePath);
-                        System.out.println("audioFilePath set successfully");
                     }
                     catch (Exception e) {
                         //e.printStackTrace();
@@ -64,11 +61,9 @@ public class LBAudioView extends FrameLayout implements LBAbstractView {
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mediaPlayer) {
-                            System.out.println("Prepared.");
                             mediaPlayer.start();
                         }
                     });
-                    System.out.println("Start preparing.");
                     mediaPlayer.prepareAsync();
                 }
                 else {

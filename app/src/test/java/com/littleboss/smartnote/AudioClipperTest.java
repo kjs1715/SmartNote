@@ -1,9 +1,6 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.util.Log;
 
 import com.littleboss.smartnote.Utils.AudioClipper;
 
@@ -44,23 +41,26 @@ public class AudioClipperTest {
         srcFile = new File("data/src.wav");
         dstFile = new File("data/dst.wav");
         srcFile.getParentFile().mkdirs();
-        //System.out.println("2333");
-        DataOutputStream destStream = new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
-        int size = -1, sizeCount = 0;
-        while (true) {
-            size = sourceStream.read(buffer,0, bytesPerRead);
-            //System.out.println("size = " + String.valueOf(size));
-            if (size < 0) {
-                sourceStream.close();
-                destStream.close();
-                break;
+        DataOutputStream destStream=null;
+        try {
+            destStream = new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
+            int size = -1, sizeCount = 0;
+            while (true) {
+                size = sourceStream.read(buffer, 0, bytesPerRead);
+                if (size < 0) {
+                    sourceStream.close();
+                    destStream.close();
+                    break;
+                }
+                destStream.write(buffer, 0, size);
+                sizeCount += size;
             }
-            destStream.write(buffer, 0, size);
-            sizeCount += size;
+            new AudioClipper().audioClip(srcFile.getAbsolutePath(), dstFile.getAbsolutePath(), 1);
         }
-        //System.out.println("total size = " + String.valueOf(sizeCount) + "bytes");
-        //System.out.println("start clipping tests...");
-        new AudioClipper().audioClip(srcFile.getAbsolutePath(), dstFile.getAbsolutePath(), 1);
+        finally {
+            if(destStream!=null)
+                destStream.close();
+        }
     }
 
     @After
