@@ -1,0 +1,123 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'jacoco'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.littleboss.smartnote"
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+<<<<<<< HEAD
+=======
+            returnDefaultValues = true
+>>>>>>> 9e9cc44a9d27439e567b6065a8b562be8b7f77fc
+        }
+    }
+    buildToolsVersion '27.0.3'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
+    implementation('com.github.ozodrukh:CircularReveal:1.1.1@aar') {
+        transitive = true;
+    }
+    //androidTestImplementation 'com.android.support.test:runner:1.0.2'
+
+    implementation('com.github.sendtion:XRichText:1.4') {
+        exclude group: 'com.android.support'
+        exclude group: 'com.github.bumptech.glide'
+    }
+    implementation 'com.android.support:design:27.1.0'
+    implementation 'com.github.Yalantis:Context-Menu.Android:1.0.8'
+    implementation 'com.github.sendtion:XRichText:1.5'
+    implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.2'
+    implementation 'com.microsoft.cognitiveservices.speech:client-sdk:1.0.1'
+    implementation 'com.kailashdabhi:om-recorder:1.1.5'
+
+//    implementation ('com.github.fymod:zshare:v1.0.0') {
+//        exclude group: 'com.android.support'
+//    }
+    // test dependencies
+<<<<<<< HEAD
+//    testImplementation 'junit:junit:4.12'
+//    testImplementation 'org.robolectric:robolectric:4.0'
+=======
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:4.0.1'
+>>>>>>> 9e9cc44a9d27439e567b6065a8b562be8b7f77fc
+}
+
+repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+    google()
+    jcenter()
+    mavenCentral()
+    maven { url 'https://dl.google.com/dl/android/maven2/' }
+    maven {
+        url "https://jitpack.io"
+    }
+    maven { url 'https://maven.google.com' }
+    maven { url 'https://csspeechstorage.blob.core.windows.net/maven/' }
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+}
+//
+//tasks.withType(Test) {
+//    jacoco.includeNoLocationClasses = true
+//}
+//
+//task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+//    group = "Reporting"
+//
+//    reports {
+//        xml.enabled = true
+//        html.enabled = false
+//    }
+//
+//
+//    def fileFilter = ['**/R.class',
+//                      '**/R$*.class',
+//                      '**/BuildConfig.*',
+//                      '**/*$ViewInjector*.*',
+//                      '**/*$ViewBinder*.*',
+//                      '**/*$MembersInjector*.*',
+//                      '**/Manifest*.*',
+//                      '**/*Test*.*',
+//                      'android/**/*.*']
+//
+//    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+//    def mainSrc = "${project.projectDir}/src/main/java"
+//
+//    sourceDirectories = files([mainSrc])
+//    classDirectories = files([debugTree])
+//    executionData = fileTree(dir: project.buildDir, includes: [
+//            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
+//    ])
+//
+//
+//}
