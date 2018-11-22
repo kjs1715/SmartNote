@@ -32,12 +32,17 @@ public class MainActivityTest {
     private NoteDatabase database = null;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-        database.saveNoteByTitle("", "test1", "test1",null);
-        database.saveNoteByTitle("", "test2", "test2",null);
-        database.setTestMod(1);
-        controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+            database.saveNoteByTitle("", "test1", "test1", null);
+            database.saveNoteByTitle("", "test2", "test2", null);
+            database.setTestMod(1);
+            controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
     }
 
     @After

@@ -71,16 +71,17 @@ public class NoteActivityTest {
 
     @Before
     public void setUp() {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-//        try {
-//            database.saveNoteByTitle("", "test", "test", "test");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        database.setTestMod(1);
-        //todo add visible
-        controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+
+            database.setTestMod(1);
+            //todo add visible
+            controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
 
     }
 

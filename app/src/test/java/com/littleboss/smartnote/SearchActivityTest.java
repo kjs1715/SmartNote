@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -22,13 +23,18 @@ public class SearchActivityTest {
     private NoteDatabase database = null;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-        database.saveNoteByTitle("", "test", "test","test");
-        database.setTestMod(1);
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+            database.saveNoteByTitle("", "test", "test", "test");
+            database.setTestMod(1);
 
-        // for testing, inserted a data for database, inorder to return notesList
-        database.saveNoteByTitle("", "test", "test","test");
+            // for testing, inserted a data for database, inorder to return notesList
+            database.saveNoteByTitle("", "test", "test", "test");
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
     }
 
     @Test
