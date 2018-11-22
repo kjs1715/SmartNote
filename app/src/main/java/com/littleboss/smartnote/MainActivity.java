@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity{
     Runnable listGenerate;
     NoteDatabase noteDatabase;
 
-
-    private Button bt_cancel, bt_delete;
+    private Button bt_cancel;
+    private Button bt_delete;
     private TextView tv_sum;
     private LinearLayout linearLayout;
-    private LinkedList<ListData> list_delete = new LinkedList();// 需要删除的数据
+    private LinkedList<ListData> list_delete = new LinkedList<>();// 需要删除的数据
     private boolean isMultiSelect = false;// 是否处于多选状态
     FloatingActionButton fab;
     MyAdapter adapter;

@@ -211,7 +211,7 @@ public class LBAbstractViewGroup extends ScrollView {
                     intent.putExtra("filepath", editView.getFilePath());
                     getContext().startActivity(intent);
                 }
-                else{
+                else if(viewType==LBAbstractView.ViewType.VIDEO){
                     intent = new Intent(getContext(), LBVideoActivity.class);
                     intent.putExtra("filepath",editView.getFilePath());
                     getContext().startActivity(intent);

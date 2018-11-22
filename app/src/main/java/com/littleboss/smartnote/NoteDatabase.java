@@ -225,7 +225,7 @@ public class NoteDatabase {
             return new LinkedList<>();
         }
         cursor.moveToFirst();
-        LinkedList<ListData> titleList = new LinkedList();
+        LinkedList<ListData> titleList = new LinkedList<>();
         while (true) {
             String tagListString = cursor.getString(cursor.getColumnIndexOrThrow("catagory_list"));
             int flag;
@@ -243,7 +243,10 @@ public class NoteDatabase {
             }
             else
             {
-                flag=0;
+                if(tags.size()==0)
+                    flag=1;
+                else
+                    flag=0;
                 for(Tag tag:tags)
                 {
                     if(tagListString.contains(tag.name))
