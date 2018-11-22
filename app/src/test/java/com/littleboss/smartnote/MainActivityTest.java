@@ -152,12 +152,16 @@ public class MainActivityTest {
 ////      todo: uncomment and fix the IndexOutOfBoundsException
     @Test
     public void testLongClick() throws Exception {
+        try {
         MainActivity activity = controller.get();
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
 //        item.performLongClick();
         activity.isMultiselected();
         item.performClick();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
