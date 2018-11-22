@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.littleboss.smartnote.Utils.AudioClipper;
 
@@ -24,12 +25,17 @@ public class AudioClipperTest {
     File srcFile, dstFile;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-        database.saveNoteByTitle("", "test", "test", "test");
-        database.saveNoteByTitle("test", "test1", "test1", "test1");
-        database.setTestMod(1);
-        controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+            database.saveNoteByTitle("", "test", "test", "test");
+            database.saveNoteByTitle("test", "test1", "test1", "test1");
+            database.setTestMod(1);
+            controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
     }
 
     @Test

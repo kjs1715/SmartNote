@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,19 +36,25 @@ import static org.junit.Assert.*;
 public class TagEditActivityTest {
     NoteDatabase database = null;
     private ActivityController<TagEditActivity> controller;
-
+    private TagEditActivity activity;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-        database.setTestMod(1);
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+            database.setTestMod(1);
 
-//        database.saveNoteByTitle("", "test", "test","test");
-        // for testing, inserted a data for database, inorder to return notesList
-        database.saveNoteByTitle("", "test", "test", null);
-        database.saveNoteByTitle("test", "", "", "test");
-        database.saveNoteByTitle("test", "", "", "test1");
-        controller = Robolectric.buildActivity(TagEditActivity.class).create().start().resume().visible();
+            //        database.saveNoteByTitle("", "test", "test","test");
+            // for testing, inserted a data for database, inorder to return notesList
+            database.saveNoteByTitle("", "test", "test", null);
+            database.saveNoteByTitle("test", "", "", "test");
+            database.saveNoteByTitle("test", "", "", "test1");
+            controller = Robolectric.buildActivity(TagEditActivity.class).create().start().resume().visible();
+            activity = controller.get();
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
     }
 
     @After
@@ -57,7 +64,7 @@ public class TagEditActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         Button button = activity.findViewById(R.id.sbutton);
         activity.setTitlE(" ");
         button.performClick();
@@ -65,7 +72,7 @@ public class TagEditActivityTest {
 
     @Test
     public void addTagDialog() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         activity.setTitlE(" ");
         FloatingActionButton button = activity.findViewById(R.id.addTagFab);
         button.performClick();
@@ -73,7 +80,7 @@ public class TagEditActivityTest {
 
     @Test
     public void testMethods() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         View view =  activity.getTestView();
         view.performClick();
         view.performClick();
@@ -81,7 +88,7 @@ public class TagEditActivityTest {
 
     @Test
     public void testAddTagDialog() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         AlertDialog alertDialog = activity.addTagDialog();
         Tag tag = new Tag("test1");
 

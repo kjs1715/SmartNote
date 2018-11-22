@@ -1,6 +1,7 @@
 package com.littleboss.smartnote;
 
 import android.app.Activity;
+import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,9 +18,14 @@ public class LBVideoViewActivityTest {
     private NoteDatabase database;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-        database.setTestMod(1);
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+            database.setTestMod(1);
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
     }
 
     @After
