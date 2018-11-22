@@ -62,6 +62,7 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 public class NoteActivityTest {
     ActivityController<NoteEditActivity> controller;
+    private NoteEditActivity activity;
     private NoteDatabase database = null;
     private static final int photoFromGalleryCode = 0x101;
     private static final int photoFromCameraCode = 0x102;
@@ -78,6 +79,7 @@ public class NoteActivityTest {
             database.setTestMod(1);
             //todo add visible
             controller = Robolectric.buildActivity(NoteEditActivity.class).create().start().resume();//.visible();
+            activity = controller.get();
         }
         catch (Exception e) {
             Log.i("setup err : ", e.toString());
@@ -92,7 +94,7 @@ public class NoteActivityTest {
 
     @Test
     public void LBAudioViewTest() throws Exception {
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         InputStream sourceStream = activity.getResources().openRawResource(R.raw.test);
         final int bytesPerRead = 1024;
         byte[] buffer = new byte[bytesPerRead];
@@ -142,13 +144,13 @@ public class NoteActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        Activity activity = controller.get();
+        //Activity activity = controller.get();
         assertNotNull(activity);
     }
 
     @Test
     public void testLBViewGroup() throws Exception {
-        Activity activity = controller.get();
+        //Activity activity = controller.get();
         LBAbstractViewGroup lbAbstractViewGroup = new LBAbstractViewGroup(activity);
         LBTextView text1 = new LBTextView("666", activity);
         LBTextView text2 = new LBTextView("667", activity);
@@ -173,7 +175,7 @@ public class NoteActivityTest {
 
     @Test
     public void testBottomNavigationbar() throws Exception {
-        BottomNavigationBar bottomNavigationBar = controller.get().getBottomNavigationbar();
+        BottomNavigationBar bottomNavigationBar = activity.getBottomNavigationbar();
         bottomNavigationBar.performClick();
         assertTrue(!bottomNavigationBar.isHidden());
     }
@@ -181,7 +183,7 @@ public class NoteActivityTest {
     @Test
     public void testChooseTab() throws Exception {
         // TODO: 06/11/2018 AudioPart could not pass
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         for (int i = 0; i < 5; i++) {
             activity.chooseTab(i);
         }
@@ -195,13 +197,13 @@ public class NoteActivityTest {
 
     @Test
     public void testMethods() throws Exception {
-        controller.get().onPhotoButtonClicked();
-        controller.get().onVideoButtonClicked();
+        activity.onPhotoButtonClicked();
+        activity.onVideoButtonClicked();
     }
 
     @Test
     public void backButtonPressedTest() throws Exception {
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         activity.setOldTitle("");
         activity.performbackbuttonclick();
         AlertDialog dialog = activity.backPressedDialog();
@@ -218,7 +220,7 @@ public class NoteActivityTest {
 
     @Test
     public void audioDialog() throws Exception {
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         activity.AudioDialog().show();
         activity.setTest(true);
         activity.AudioDialogChoosed();
@@ -240,7 +242,7 @@ public class NoteActivityTest {
     @Test
     public void onActivityResultTest() throws Exception {
         Intent intent = new Intent();
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         activity.onActivityResult(photoFromGalleryCode, RESULT_OK, intent);
         activity.onActivityResult(photoFromCameraCode, RESULT_OK, intent);
         activity.onActivityResult(videoFromGalleryCode, RESULT_OK, intent);
@@ -253,7 +255,7 @@ public class NoteActivityTest {
         int[] grant = {PackageManager.PERMISSION_GRANTED};
         int[] empty = {};
         String[] permissions = {Manifest.permission.CAMERA};
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         activity.onRequestPermissionsResult(1, permissions, grant);
         activity.onRequestPermissionsResult(1, permissions, empty);
         activity.onRequestPermissionsResult(0, permissions, empty);
@@ -261,27 +263,27 @@ public class NoteActivityTest {
 
     @Test
     public void saveNoteTest() throws Exception {
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         activity.setNewCreatedFlag(false);
         activity.saveNote();
     }
 
     @Test
     public void takeVideoTest() throws Exception {
-        NoteEditActivity activity = controller.get();
+        //NoteEditActivity activity = controller.get();
         activity.takeVideo();
     }
 
     @Test
     public void fabButtonTest() throws Exception {
-        Activity activity = controller.get();
+        //Activity activity = controller.get();
         FloatingActionButton fab = activity.findViewById(R.id.goToTop);
         fab.performClick();
     }
 
     @Test
     public void keyboarHideAndShowTest() throws Exception {
-        Activity activity = controller.get();
+        //Activity activity = controller.get();
 
         InputMethodManager imm1 = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         EditText editText = activity.findViewById(R.id.et_new_title);

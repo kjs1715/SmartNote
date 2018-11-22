@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 public class TagEditActivityTest {
     NoteDatabase database = null;
     private ActivityController<TagEditActivity> controller;
-
+    private TagEditActivity activity;
     @Before
     public void setUp() throws Exception {
         try {
@@ -50,6 +50,7 @@ public class TagEditActivityTest {
             database.saveNoteByTitle("test", "", "", "test");
             database.saveNoteByTitle("test", "", "", "test1");
             controller = Robolectric.buildActivity(TagEditActivity.class).create().start().resume().visible();
+            activity = controller.get();
         }
         catch (Exception e) {
             Log.i("setup err : ", e.toString());
@@ -63,7 +64,7 @@ public class TagEditActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         Button button = activity.findViewById(R.id.sbutton);
         activity.setTitlE(" ");
         button.performClick();
@@ -71,7 +72,7 @@ public class TagEditActivityTest {
 
     @Test
     public void addTagDialog() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         activity.setTitlE(" ");
         FloatingActionButton button = activity.findViewById(R.id.addTagFab);
         button.performClick();
@@ -79,7 +80,7 @@ public class TagEditActivityTest {
 
     @Test
     public void testMethods() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         View view =  activity.getTestView();
         view.performClick();
         view.performClick();
@@ -87,7 +88,7 @@ public class TagEditActivityTest {
 
     @Test
     public void testAddTagDialog() throws Exception {
-        TagEditActivity activity = controller.get();
+        //TagEditActivity activity = controller.get();
         AlertDialog alertDialog = activity.addTagDialog();
         Tag tag = new Tag("test1");
 

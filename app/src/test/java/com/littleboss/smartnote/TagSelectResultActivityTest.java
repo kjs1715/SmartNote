@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 public class TagSelectResultActivityTest {
     NoteDatabase database = null;
     private ActivityController<TagSelectResultActivity> controller;
-
+    TagSelectResultActivity activity;
     @Before
     public void setUp() throws Exception {
         try {
@@ -50,6 +50,7 @@ public class TagSelectResultActivityTest {
             database.saveNoteByTitle("test", "", "", "test");
             database.saveNoteByTitle("test", "", "", "test1");
             controller = Robolectric.buildActivity(TagSelectResultActivity.class).create().start().resume().visible();
+            activity = controller.get();
         }
         catch (Exception e) {
             Log.i("setup err : ", e.toString());
@@ -63,7 +64,7 @@ public class TagSelectResultActivityTest {
 
     @Test
     public void startTest() throws Exception {
-        TagSelectResultActivity activity = controller.get();
+        //TagSelectResultActivity activity = controller.get();
         activity.adapter.getItem(0);
     }
 }
