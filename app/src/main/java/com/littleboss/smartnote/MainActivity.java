@@ -375,7 +375,6 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception e) {
                 /* 跳过创建pdf失败的笔记 */
                 e.printStackTrace();
-                continue;
             }
         }
 
@@ -386,30 +385,32 @@ public class MainActivity extends AppCompatActivity {
         if(pdf_files.size() == 0) {
             return;
         }
-        else if (pdf_files.size() > 1) {
-            // zip them
-            // shared = zipped
-            String pdfs_dir = this.getExternalFilesDir(null).toString() + File.separator + dateTime;
-            String zip_file = this.getExternalFilesDir(null).toString() + File.separator + dateTime + ".zip";
-            ZIPUtil.compress(
-                    pdfs_dir,
-                    zip_file
-            );
-            File shared = new File(zip_file);
-            return;
-        }
+//        else if (pdf_files.size() > 1) {
+//            // zip them
+//            // shared = zipped
+//            String pdfs_dir = this.getExternalFilesDir(null).toString() + File.separator + dateTime;
+//            String zip_file = this.getExternalFilesDir(null).toString() + File.separator + dateTime + ".zip";
+//            ZIPUtil.compress(
+//                    pdfs_dir,
+//                    zip_file
+//            );
+//            File shared = new File(zip_file);
+//            return;
+//        }
         else {
-            File shared = pdf_files.get(0);
+            for(File shared:pdf_files)
+//            File shared = pdf_files.get(0);
+            {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
 
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
+                Uri uri = FileProvider.getUriForFile(this, "com.littleboss.smartnote.fileprovider", shared);
 
-            Uri uri = FileProvider.getUriForFile(this,  "com.littleboss.smartnote.fileprovider", shared);
-
-            sendIntent.putExtra(Intent.EXTRA_STREAM, uri); //sendIntent.putExtra(Intent.EXTRA_TEXT, "???");
-            sendIntent.setType("application/pdf");
-            sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(Intent.createChooser(sendIntent, getTitle()));
+                sendIntent.putExtra(Intent.EXTRA_STREAM, uri); //sendIntent.putExtra(Intent.EXTRA_TEXT, "???");
+                sendIntent.setType("application/pdf");
+                sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(Intent.createChooser(sendIntent, getTitle()));
+            }
             return;
         }
     }
