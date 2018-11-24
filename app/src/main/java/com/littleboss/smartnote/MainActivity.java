@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
 
         bt_cancel = (Button) findViewById(R.id.bt_cancel);
 //        bt_delete = (Button) findViewById(R.id.bt_delete);
-        longclick_menu = findViewById(R.id.longclick_menu);
+        longclick_menu = findViewById(R.id.bt_delete);
         tv_sum = (TextView) findViewById(R.id.tv_sum);
         linearLayout = (LinearLayout) findViewById(R.id.hidden_layout);
 
