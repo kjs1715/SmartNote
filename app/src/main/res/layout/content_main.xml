@@ -59,7 +59,7 @@
                 android:textColor="@android:color/background_dark" />
 
             <Button
-                android:id="@+id/longclick_menu"
+                android:id="@+id/bt_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/button_background"
