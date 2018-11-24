@@ -98,7 +98,11 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
                       '**/*$MembersInjector*.*',
                       '**/Manifest*.*',
                       '**/*Test*.*',
-                      'android/**/*.*']
+                      'android/**/*.*',
+                      'app/src/main/java/com/littleboss/smartnote/AudioFetcher.java',
+                      'app/src/main/java/com/littleboss/smartnote/UriParser.java',
+                      'app/src/main/java/com/littleboss/smartnote/MSSpeechRecognizer.java',
+                      'app/src/main/java/com/littleboss/smartnote/LBImageView.java']
 
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"

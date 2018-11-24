@@ -3,6 +3,7 @@ package com.littleboss.smartnote;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,15 +29,22 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricTestRunner.class)
 public class MainActivityTest {
     ActivityController<MainActivity> controller;
+    private MainActivity activity;
     private NoteDatabase database = null;
     @Before
     public void setUp() throws Exception {
-        NoteDatabase.dropDatabaseIfExist();
-        database = NoteDatabase.getInstance();
-        database.saveNoteByTitle("", "test1", "test1",null);
-        database.saveNoteByTitle("", "test2", "test2",null);
-        database.setTestMod(1);
-        controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+        try {
+            NoteDatabase.dropDatabaseIfExist();
+            database = NoteDatabase.getInstance();
+            database.saveNoteByTitle("", "test1", "test1", null);
+            database.saveNoteByTitle("", "test2", "test2", null);
+            database.setTestMod(1);
+            controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
+            activity = controller.get();
+        }
+        catch (Exception e) {
+            Log.i("setup err : ", e.toString());
+        }
     }
 
     @After
@@ -49,32 +57,32 @@ public class MainActivityTest {
     @Test
     public void buttonTest() throws Exception {
         try {
-            MainActivity activity = controller.get();
+            //MainActivity activity = controller.get();
             // buttons tests
             Button bt_delete = activity.findViewById(R.id.bt_delete);
             bt_delete.performClick();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i("buttonTest() err : ", e.toString());
         }
     }
 
     @Test
     public void startTest() throws Exception {
-        MainActivity activity = controller.get();
+        //MainActivity activity = controller.get();
         ShadowActivity shadowActivity = shadowOf(activity);
         assertNotNull(shadowActivity);
     }
 
     @Test
     public void uiTests() throws Exception {
-        MainActivity activity = controller.get();
+        //MainActivity activity = controller.get();
         FloatingActionButton fab = activity.findViewById(R.id.fab);
         fab.performClick();
     }
 
     @Test
     public void menuTest() throws Exception {
-        MainActivity activity = controller.get();
+        //MainActivity activity = controller.get();
         AlertDialog sortDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNull(sortDialog);
         MenuItem menuItem = new RoboMenuItem(R.id.sortitem);
@@ -85,7 +93,7 @@ public class MainActivityTest {
     @Test
     public void buttonTest1() throws Exception {
         try {
-            Activity activity = controller.get();
+            //Activity activity = controller.get();
             // buttons tests
             Button bt_cancel = activity.findViewById(R.id.bt_cancel);
             bt_cancel.performClick();
@@ -98,7 +106,7 @@ public class MainActivityTest {
     @Test
     public void mainListTest() throws Exception {
         try {
-            Activity activity = controller.get();
+            //Activity activity = controller.get();
             // mainlist test
             ListView listView = activity.findViewById(R.id.mainlist);
             View item = listView.getAdapter().getView(0, null, null);
@@ -112,7 +120,7 @@ public class MainActivityTest {
 //      todo: uncomment and fix the IllegalStateException
     @Test
     public void testSorting() throws Exception {
-        Activity activity = controller.get();
+        //Activity activity = controller.get();
 
         database.saveNoteByTitle("", "test3", "test3",null);
         database.saveNoteByTitle("", "test4", "test4",null);
@@ -124,27 +132,32 @@ public class MainActivityTest {
         Date testMDate1 = new Date(2018,6,1);
         Date testMDate2 = new Date(2018,6,2);
 
-        controller.get().sortNotesList(0);
-        controller.get().sortNotesList(1);
-        controller.get().sortNotesList(2);
+        activity.sortNotesList(0);
+        activity.sortNotesList(1);
+        activity.sortNotesList(2);
 
         ListData test1 = new ListData("test11", testDate1, testMDate1,"");
         ListData test2 = new ListData("test22", testDate2, testMDate2,"");
 
-        controller.get().Compare(0, test1, test2);
-        controller.get().Compare(1, test1, test2);
-        controller.get().Compare(2, test1, test2);
+        activity.Compare(0, test1, test2);
+        activity.Compare(1, test1, test2);
+        activity.Compare(2, test1, test2);
     }
 
 //    //  todo: uncomment and fix the IndexOutOfBoundsException
 //    @Test
     public void enterDialogTest() throws Exception {
-        MainActivity activity = controller.get();
-        ListView listView = activity.findViewById(R.id.mainlist);
-        View item = listView.getAdapter().getView(0, null, null);
-        item.performClick();
-        View item1 = MainActivity.enterNoteDialog(0,activity.notesList,activity).getListView().getAdapter().getView(0, null, null);
-        item1.performClick();
+        try {
+            //MainActivity activity = controller.get();
+            ListView listView = activity.findViewById(R.id.mainlist);
+            View item = listView.getAdapter().getView(0, null, null);
+            item.performClick();
+            View item1 = MainActivity.enterNoteDialog(0, activity.notesList, activity).getListView().getAdapter().getView(0, null, null);
+            item1.performClick();
+        }
+        catch (Exception e) {
+            Log.i("enterDialogTest() err : ", e.toString());
+        }
 //        AlertDialog enterDialog = ShadowAlertDialog.getLatestAlertDialog();
 //        assertNotNull(enterDialog);
     }
@@ -153,14 +166,15 @@ public class MainActivityTest {
     @Test
     public void testLongClick() throws Exception {
         try {
-        MainActivity activity = controller.get();
+        //MainActivity activity = controller.get();
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
 //        item.performLongClick();
         activity.isMultiselected();
         item.performClick();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i("testLongClick() err : ", e.toString());
+
         }
     }
 
