@@ -2,7 +2,6 @@ package com.littleboss.smartnote;
 
 
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
 import android.Manifest;
 import android.content.DialogInterface;
@@ -15,7 +14,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +36,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,7 +64,8 @@ import com.littleboss.smartnote.Utils.DateUtils;
 
 class ListData {
     String title;
-    Date createDate, modifyDate;
+    Date createDate;
+    Date modifyDate;
     List<Tag> tagList;
     ListData(String title, Date createDate, Date modifyDate, String tagListString) {
         this.title = title;
@@ -129,15 +126,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv_sum;
     private LinearLayout linearLayout;
 
-    private Button longclick_menu;
     private LinkedList<ListData> list_selected = new LinkedList();// 需要删除的数据
     private boolean isMultiSelect = false;// 是否处于多选状态
     FloatingActionButton fab;
     MyAdapter adapter;
 
-    private final int WRITE_EXTERNAL_STORAGE_ID = 0;
-    private final int RECORD_AUDIO_ID = 1;
-    private final int CAMERA_ID = 2;
+    private static final int WRITE_EXTERNAL_STORAGE_ID = 0;
+    private static final int RECORD_AUDIO_ID = 1;
+    private static final int CAMERA_ID = 2;
 
     /**
      * 删除笔记功能
@@ -155,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
 
     Pattern r = Pattern.compile("<([a-zA-Z]+)>([^<>]*)</[a-zA-Z]+>");
 
-    final private String temps_dir = "lb_temps_dir";
-    final private String get_temps_dir() {
+    private final String get_temps_dir() {
+        final String temps_dir = "lb_temps_dir";
         File temps_file = new File(this.getExternalFilesDir(null).toString() + File.separator + temps_dir);
         if(!temps_file.exists()) temps_file.mkdir();
         return this.getExternalFilesDir(null).toString() + File.separator + temps_dir;
@@ -278,20 +274,16 @@ public class MainActivity extends AppCompatActivity {
                     String tag = m.group(1);
                     String thing = m.group(2);
                     switch (tag) {
-                        case "text": {
+                        // text and audio are duplicated so I merged them together, by buzz
+                        case "text":
+                        case "audio":{
+                            if(tag.equals("audio")) {
+                                thing = parse_replace(thing);
+                            }
                             if(FontChinese!=null && bfChinese!=null) {
                                 document.add(new Paragraph(thing, FontChinese));
                             } else {
                                 document.add(new Paragraph(thing));
-                            }
-                            break;
-                        }
-                        case "audio": {
-                            String replace = parse_replace(thing);
-                            if(FontChinese!=null && bfChinese!=null) {
-                                document.add(new Paragraph(replace, FontChinese));
-                            } else {
-                                document.add(new Paragraph(replace));
                             }
                             break;
                         }
@@ -376,22 +368,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         File temps_dir = new File(get_temps_dir());
-        boolean exists = temps_dir.exists();
-        String[] files = temps_dir.list();
 
         if(pdf_files.size() == 0) {
             return;
         }
         else {
             for(File shared:pdf_files)
-//            File shared = pdf_files.get(0);
             {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
 
                 Uri uri = FileProvider.getUriForFile(this, "com.littleboss.smartnote.fileprovider", shared);
 
-                sendIntent.putExtra(Intent.EXTRA_STREAM, uri); //sendIntent.putExtra(Intent.EXTRA_TEXT, "???");
+                sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
                 sendIntent.setType("application/pdf");
                 sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(Intent.createChooser(sendIntent, getTitle()));
@@ -522,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
 
         bt_cancel = (Button) findViewById(R.id.bt_cancel);
 //        bt_delete = (Button) findViewById(R.id.bt_delete);
-        longclick_menu = findViewById(R.id.bt_delete);
+        Button longclick_menu = findViewById(R.id.bt_delete);
         tv_sum = (TextView) findViewById(R.id.tv_sum);
         linearLayout = (LinearLayout) findViewById(R.id.hidden_layout);
 

@@ -217,8 +217,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
         class ResizeDialog extends FrameLayout {
 
-            final private EditText nWidth;
-            final private EditText nHeight;
+            private final EditText nWidth;
+            private final EditText nHeight;
             private CheckBox keepratio;
             private TextView note;
             final private double originalRatio;
@@ -305,8 +305,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                             }
                             // 用户将输入框更改为非法数字
                             catch (NumberFormatException e) {
-//                                nWidth.setText(Integer.toString(original_width));
-//                                nHeight.setText(Integer.toString(original_height));
+                                e.printStackTrace();
                             }
                             adjustmentClear = true;
                         } else {
@@ -315,16 +314,17 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                     }
 
                     @Override
-                    public void afterTextChanged(Editable a) {}
-                });
+                    public void afterTextChanged(Editable a) {   throw new UnsupportedOperationException();
+                    } });
                 nHeight.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {   throw new UnsupportedOperationException();
+                    }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         lastEdit = 1;
-                        if(keepratio.isChecked()==true && adjustmentClear ==true) {
+                        if(keepratio.isChecked() && adjustmentClear) {
                             adjustmentClear = false;
                             // do adjustment
                             // 用户将输入框更改为合法数字
@@ -393,8 +393,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         builder.setTitle("调整大小");
 
-        ResizeDialog resize_dialog = new ResizeDialog(context, image.getWidth(), image.getHeight());
-        builder.setView(resize_dialog);
+        ResizeDialog resizeDialog = new ResizeDialog(context, image.getWidth(), image.getHeight());
+        builder.setView(resizeDialog);
 
         builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
@@ -404,9 +404,9 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                  * 将bitmap交给ImageUtils做resize，
                  * setImage()设置图片
                  * */
-                Pair<Integer, Integer> newShape = resize_dialog.getNewShape();
+                Pair<Integer, Integer> newShape = resizeDialog.getNewShape();
                 if(newShape.first >= screenWidth ||newShape.second >= screenHeight) {
-                    Toast.makeText(context, "invalid size", Toast.LENGTH_LONG);
+                    Toast.makeText(context, "invalid size", Toast.LENGTH_LONG).show();
                 } else {
                     Bitmap newImage = ImageUtils.resizeImage(image, newShape.first, newShape.second);
                     setImage(newImage);
