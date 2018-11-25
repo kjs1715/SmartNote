@@ -16,7 +16,7 @@ public class MSSpeechRecognizer {
 
     public void getRecognizedText(String wavFilePath, LBAudioView mLBAudioView) {
         SpeechConfig config = SpeechConfig.fromSubscription(
-                "755398ac38e84153a807e31084ec2c11",
+                "8b62e7f8404740b4987d4a60d79a1467",
                 "westus"
         );
         Log.i("getRecognizedText : ", "filepath = " + wavFilePath + " mLBAudioView = " + mLBAudioView.toDataString());
