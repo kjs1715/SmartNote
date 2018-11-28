@@ -33,7 +33,7 @@ public class SearchActivityTest {
             database.saveNoteByTitle("", "test", "test", "test");
         }
         catch (Exception e) {
-            Log.i("setup err : ", e.toString());
+            e.printStackTrace();
         }
     }
 

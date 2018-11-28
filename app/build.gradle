@@ -105,7 +105,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
                       'app/src/main/java/com/littleboss/smartnote/LBImageView.java']
 
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "/src/main/java"
+    def mainSrc = "${project.projectDir}/src/main/java"
 
     sourceDirectories = files([mainSrc])
     classDirectories = files([debugTree])
