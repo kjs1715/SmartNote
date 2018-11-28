@@ -12,7 +12,7 @@ public class MSSpeechRecognizer {
     private String recognizedText;
     public MSSpeechRecognizer() {
         // hey there
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
     }
 
     public void getRecognizedText(String wavFilePath, LBAudioView mLBAudioView) {

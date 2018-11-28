@@ -314,11 +314,11 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
                     }
 
                     @Override
-                    public void afterTextChanged(Editable a) {   throw new UnsupportedOperationException();
+                    public void afterTextChanged(Editable a) {  // i don t know why //throw new UnsupportedOperationException();
                     } });
                 nHeight.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {   throw new UnsupportedOperationException();
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {  //and this too //throw new UnsupportedOperationException();
                     }
 
                     @Override
