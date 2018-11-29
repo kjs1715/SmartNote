@@ -99,6 +99,7 @@ public class MainActivityTest {
             bt_cancel.performClick();
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -114,6 +115,7 @@ public class MainActivityTest {
             item.performLongClick();
         } catch(Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -155,6 +157,7 @@ public class MainActivityTest {
         }
         catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -167,6 +170,7 @@ public class MainActivityTest {
         item.performClick();
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 

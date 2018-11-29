@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
@@ -58,6 +59,7 @@ public class NoteActivityTest {
         }
         catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
 
     }

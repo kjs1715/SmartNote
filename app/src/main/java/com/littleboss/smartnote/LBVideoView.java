@@ -58,6 +58,7 @@ public class LBVideoView extends LBImageView {
             this.image = getVideoThumbnail(this.filePath);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -70,12 +71,13 @@ public class LBVideoView extends LBImageView {
         }
         catch(IllegalArgumentException e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         } finally {
             try {
                 retriever.release();
             }
             catch (RuntimeException e) {
-                //e.printStackTrace();
+                e.printStackTrace();
                 Log.i("err getVideoThumbnail:", e.toString());
             }
         }

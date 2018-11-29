@@ -54,6 +54,7 @@ public class LBVideoActivity extends AppCompatActivity {
         }
         catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 }
