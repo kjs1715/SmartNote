@@ -204,15 +204,11 @@ public class NoteEditActivity extends AppCompatActivity {
             return;
         }
         if(!noteModified()) {
-            if(!isRecording)
-                stopDeamonRecording();
-            else
-                Toast.makeText(this, "后台持续录音", Toast.LENGTH_SHORT).show();
+            if(!isRecording) stopDeamonRecording();
+            else Toast.makeText(this, "后台持续录音", Toast.LENGTH_SHORT).show();
             finish();
             return ;
-        }
-        AlertDialog dialog = backPressedDialog();
-        dialog.show();
+        }AlertDialog dialog = backPressedDialog();dialog.show();
     }
 
     public boolean noteModified() {
@@ -222,8 +218,7 @@ public class NoteEditActivity extends AppCompatActivity {
         String c = this.myViewGroup.toDataString();
         if(old_title.equals(t) && old_content.equals(c)) {
             return false;
-        }
-        return true;
+        }return true;
     }
 
 
@@ -288,8 +283,7 @@ public class NoteEditActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTabUnselected(int position) {
-
+            public void onTabUnselected(int position) { // nothing
             }
 
             @Override
@@ -297,12 +291,7 @@ public class NoteEditActivity extends AppCompatActivity {
                 chooseTab(position);
             }
         });
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text"))
-                .addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image"))
-                .addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice"))
-                .addItem(new BottomNavigationItem(R.drawable.video_icon,"Video"))
-                .addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
-
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.text_icon, "Text")).addItem(new BottomNavigationItem(R.drawable.camera_icon, "Image")).addItem(new BottomNavigationItem(R.drawable.mic_icon, "Voice")).addItem(new BottomNavigationItem(R.drawable.video_icon,"Video")).addItem(new BottomNavigationItem(R.drawable.save_icon, "Save")).initialise();
 //         Hide bottombar when keyboard is hiding
         KeyboardChangeListener softKeyboardStateHelper = new KeyboardChangeListener(this);
         softKeyboardStateHelper.setKeyBoardListener(new KeyboardChangeListener.KeyBoardListener() {
@@ -315,7 +304,6 @@ public class NoteEditActivity extends AppCompatActivity {
                     bottomNavigationBar.show();
                 }
             }
-
         });
     }
 
@@ -447,36 +435,8 @@ public class NoteEditActivity extends AppCompatActivity {
                  * i == 1: from system camera;
                  * */
                 switch(i) {
-                    case 0:
-                        Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                        albumIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                        albumIntent.setType("image/*");
-                        startActivityForResult(albumIntent, photoFromGalleryCode);
-                        break;
-                    case 1:
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        File imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");
-                        imageFile.getParentFile().mkdirs();
-                        latestCameraResultPath = imageFile.getAbsolutePath();
-                        if (imageFile != null) {
-                            takePictureIntent.putExtra(
-                                    MediaStore.EXTRA_OUTPUT,
-                                    FileProvider.getUriForFile(
-                                            thisActivity,
-                                            "com.littleboss.smartnote.fileprovider",
-                                            imageFile
-                                    )
-                            );
-                            startActivityForResult(takePictureIntent, photoFromCameraCode);
-                        }
-
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+                    case 0: Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);albumIntent.addCategory(Intent.CATEGORY_OPENABLE);albumIntent.setType("image/*");startActivityForResult(albumIntent, photoFromGalleryCode);break;
+                    case 1: Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());File imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");imageFile.getParentFile().mkdirs();latestCameraResultPath = imageFile.getAbsolutePath();if (imageFile != null) { takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(thisActivity, "com.littleboss.smartnote.fileprovider", imageFile));startActivityForResult(takePictureIntent, photoFromCameraCode); }break;default: break; } }});
         alb.show();
     }
 
@@ -490,12 +450,7 @@ public class NoteEditActivity extends AppCompatActivity {
                 switch(i) {
                     case 0:
                         // Open an image from system album
-                        Intent intent;
-                        intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        intent.setType("video/*");
-                        startActivityForResult(intent, videoFromGalleryCode);
-                        break;
+                        Intent intent;intent = new Intent(Intent.ACTION_GET_CONTENT);intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType("video/*");startActivityForResult(intent, videoFromGalleryCode);break;
                     case 1:
                         takeVideo();
                         break;
