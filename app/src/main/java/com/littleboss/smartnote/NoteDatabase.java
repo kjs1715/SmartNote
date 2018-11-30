@@ -53,11 +53,6 @@ public class NoteDatabase {
         }
     }
 
-    @Override
-    protected void finalize() {
-        db.close();
-    }
-
     /**
      * 使用单例模式，返回数据库接口的单例。
      *

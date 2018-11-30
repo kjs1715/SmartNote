@@ -3,56 +3,35 @@ package com.littleboss.smartnote;
 import android.Manifest;
 import android.app.Activity;
 import android.support.v7.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
-import com.yalantis.contextmenu.lib.MenuObject;
-import com.yalantis.contextmenu.lib.MenuParams;
-import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
-import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
-
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 public class NoteEditActivity extends AppCompatActivity {
 
-    private FragmentManager fragmentManager;
-    private ContextMenuDialogFragment mMenuDialogFragment;
-
+    private final String stringAudio = "后台持续录音";
     private String _title;
     private String _content;
     private String old_title;
@@ -85,16 +64,10 @@ public class NoteEditActivity extends AppCompatActivity {
     private int recordStartSecondsAgo;
     private boolean editable=true;
 
-    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm:ss");
-
-    public void show(Dialog dialog) {
-        dialog.show();
-    }
-
-    private static final int photoFromGalleryCode = 0x101;
-    private static final int photoFromCameraCode = 0x102;
-    private static final int videoFromGalleryCode = 0x201;
-    private static final int videoFromCameraCode = 0x202;
+    private static final int PHOTOFROMGALLERYCODE = 0x101;
+    private static final int PHOTOFROMCAMERACODE = 0x102;
+    private static final int VIDEOFROMGALLERYCODE = 0x201;
+    private static final int VIDEOFROMCAMERACODE = 0x202;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +82,6 @@ public class NoteEditActivity extends AppCompatActivity {
         _title = getIntent().getStringExtra("id");
         newCreatedFlag = getIntent().getBooleanExtra("newCreatedNote", true);
         editable = (getIntent().getIntExtra("justsee", 0)==0);
-
-        fragmentManager = getSupportFragmentManager();
 
         test = false;
 
@@ -153,12 +124,11 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     public void initScrollButton() {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.goToTop);
+        FloatingActionButton fab = findViewById(R.id.goToTop);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final LBAbstractViewGroup sc = findViewById(R.id.viewgroup);
-//                final ScrollView sc = findViewById(R.id.sc);
                 sc.fullScroll(ScrollView.FOCUS_UP);
             }
         });
@@ -166,7 +136,7 @@ public class NoteEditActivity extends AppCompatActivity {
 
     public void initEditText() {
         myViewGroup=findViewById(R.id.viewgroup);
-        et_title = (EditText) findViewById(R.id.et_new_title);
+        et_title = findViewById(R.id.et_new_title);
         if(!newCreatedFlag) {
             _content = noteDatabase.getNotesByTitle(_title);
             et_title.setText(_title);
@@ -205,7 +175,7 @@ public class NoteEditActivity extends AppCompatActivity {
         }
         if(!noteModified()) {
             if(!isRecording) stopDeamonRecording();
-            else Toast.makeText(this, "后台持续录音", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(this, stringAudio, Toast.LENGTH_SHORT).show();
             finish();
             return ;
         }AlertDialog dialog = backPressedDialog();dialog.show();
@@ -214,7 +184,6 @@ public class NoteEditActivity extends AppCompatActivity {
     public boolean noteModified() {
         EditText et_title = (EditText) findViewById(R.id.et_new_title);
         String t = et_title.getText().toString();
-//        String c = et_content.getText().toString();
         String c = this.myViewGroup.toDataString();
         if(old_title.equals(t) && old_content.equals(c)) {
             return false;
@@ -435,8 +404,8 @@ public class NoteEditActivity extends AppCompatActivity {
                  * i == 1: from system camera;
                  * */
                 switch(i) {
-                    case 0: Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);albumIntent.addCategory(Intent.CATEGORY_OPENABLE);albumIntent.setType("image/*");startActivityForResult(albumIntent, photoFromGalleryCode);break;
-                    case 1: Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());File imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");imageFile.getParentFile().mkdirs();latestCameraResultPath = imageFile.getAbsolutePath();if (imageFile != null) { takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(thisActivity, "com.littleboss.smartnote.fileprovider", imageFile));startActivityForResult(takePictureIntent, photoFromCameraCode); }break;default: break; } }});
+                    case 0: Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);albumIntent.addCategory(Intent.CATEGORY_OPENABLE);albumIntent.setType("image/*");startActivityForResult(albumIntent, PHOTOFROMGALLERYCODE);break;
+                    case 1: Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());File imageFile = new File("data/data/com.littleboss.smartnote/resources/images/" + timeStamp + ".jpg");imageFile.getParentFile().mkdirs();latestCameraResultPath = imageFile.getAbsolutePath();if (imageFile != null) { takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(thisActivity, "com.littleboss.smartnote.fileprovider", imageFile));startActivityForResult(takePictureIntent, PHOTOFROMCAMERACODE); }break;default: break; } }});
         alb.show();
     }
 
@@ -450,7 +419,7 @@ public class NoteEditActivity extends AppCompatActivity {
                 switch(i) {
                     case 0:
                         // Open an image from system album
-                        Intent intent;intent = new Intent(Intent.ACTION_GET_CONTENT);intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType("video/*");startActivityForResult(intent, videoFromGalleryCode);break;
+                        Intent intent;intent = new Intent(Intent.ACTION_GET_CONTENT);intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType("video/*");startActivityForResult(intent, VIDEOFROMGALLERYCODE);break;
                     case 1:
                         takeVideo();
                         break;
@@ -485,7 +454,7 @@ public class NoteEditActivity extends AppCompatActivity {
                             videoFile
                     )
             );
-            startActivityForResult(takeVideoIntent, videoFromCameraCode);
+            startActivityForResult(takeVideoIntent, VIDEOFROMCAMERACODE);
         }
     }
 
@@ -503,7 +472,7 @@ public class NoteEditActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode==RESULT_OK)
         {
-            if(requestCode == photoFromGalleryCode) {
+            if(requestCode == PHOTOFROMGALLERYCODE) {
                 Uri originalUri = data.getData();
                 // FIXME: 2018/11/13 Added if condition for testing, I m not sure it would or not effect on App
                 if(originalUri != null) {
@@ -515,14 +484,14 @@ public class NoteEditActivity extends AppCompatActivity {
                     this.myViewGroup.addViewtoCursor(added);
                 }
             }
-            else if(requestCode == photoFromCameraCode) {
+            else if(requestCode == PHOTOFROMCAMERACODE) {
                 this.myViewGroup.addViewtoCursor(new LBImageView(latestCameraResultPath ,NoteEditActivity.this));
             }
-            else if(requestCode == videoFromGalleryCode){
+            else if(requestCode == VIDEOFROMGALLERYCODE){
                 Uri originalUri = data.getData();
                 this.myViewGroup.addViewtoCursor(new LBVideoView(UriParser.getPath(NoteEditActivity.this,originalUri),NoteEditActivity.this));
             }
-            else if(requestCode == videoFromCameraCode) {
+            else if(requestCode == VIDEOFROMCAMERACODE) {
                 this.myViewGroup.addViewtoCursor(new LBVideoView(latestCameraResultPath,NoteEditActivity.this));
             }
         }
@@ -628,7 +597,7 @@ public class NoteEditActivity extends AppCompatActivity {
                                 if (!isRecording)
                                     stopDeamonRecording();
                                 else
-                                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(NoteEditActivity.this, stringAudio, Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         })
@@ -646,7 +615,7 @@ public class NoteEditActivity extends AppCompatActivity {
                                 if (!isRecording)
                                     stopDeamonRecording();
                                 else
-                                    Toast.makeText(NoteEditActivity.this, "后台持续录音", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(NoteEditActivity.this, stringAudio, Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         }).create();

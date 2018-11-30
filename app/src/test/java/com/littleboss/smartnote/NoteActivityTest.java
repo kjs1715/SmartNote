@@ -41,10 +41,10 @@ public class NoteActivityTest {
     private ActivityController<NoteEditActivity> controller;
     private NoteEditActivity activity;
     private NoteDatabase database = null;
-    private static final int photoFromGalleryCode = 0x101;
-    private static final int photoFromCameraCode = 0x102;
-    private static final int videoFromGalleryCode = 0x201;
-    private static final int videoFromCameraCode = 0x202;
+    private static final int PHOTOFROMGALLERYCODE = 0x101;
+    private static final int PHOTOFROMCAMERACODE = 0x102;
+    private static final int VIDEOFROMGALLERYCODE = 0x201;
+    private static final int VIDEOFROMCAMERACODE = 0x202;
 
     @Before
     public void setUp() {
@@ -217,10 +217,10 @@ public class NoteActivityTest {
     @Test
     public void onActivityResultTest() throws Exception {
         Intent intent = new Intent();
-        activity.onActivityResult(photoFromGalleryCode, RESULT_OK, intent);
-        activity.onActivityResult(photoFromCameraCode, RESULT_OK, intent);
-        activity.onActivityResult(videoFromGalleryCode, RESULT_OK, intent);
-        activity.onActivityResult(videoFromCameraCode, RESULT_OK, intent);
+        activity.onActivityResult(PHOTOFROMGALLERYCODE, RESULT_OK, intent);
+        activity.onActivityResult(PHOTOFROMCAMERACODE, RESULT_OK, intent);
+        activity.onActivityResult(VIDEOFROMGALLERYCODE, RESULT_OK, intent);
+        activity.onActivityResult(VIDEOFROMCAMERACODE, RESULT_OK, intent);
 
     }
 

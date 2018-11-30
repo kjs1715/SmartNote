@@ -890,11 +890,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         class ViewHolder {
-            public TextView tv_Name;
-            public CheckBox cb;
+            private TextView tv_Name;
+            private CheckBox cb;
             public TextView createDate;
             public TextView modifyDate;
-            public TextView tags;
+            private TextView tags;
         }
     }
     @Override

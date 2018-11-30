@@ -21,6 +21,7 @@ import java.io.InputStream;
 @RunWith(RobolectricTestRunner.class)
 public class AudioClipperTest {
     private ActivityController<MainActivity> controller;
+    private final String test1 = "test1";
     private NoteDatabase database = null;
     @Before
     public void setUp() throws Exception {
@@ -28,7 +29,7 @@ public class AudioClipperTest {
             NoteDatabase.dropDatabaseIfExist();
             database = NoteDatabase.getInstance();
             database.saveNoteByTitle("", "test", "test", "test");
-            database.saveNoteByTitle("test", "test1", "test1", "test1");
+            database.saveNoteByTitle("test", test1, test1, test1);
             database.setTestMod(1);
             controller = Robolectric.buildActivity(MainActivity.class).create().start().resume().visible();
         }

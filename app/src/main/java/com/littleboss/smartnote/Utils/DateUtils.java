@@ -7,15 +7,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtils {
-    public static final String format = "yyyyMMdd_HHmmss";
-    public static final String display_format = "yyyy-MM-dd HH:mm:ss";
+    public static final String FORMAT = "yyyyMMdd_HHmmss";
+    public static final String DISPLAYFORMAT = "yyyy-MM-dd HH:mm:ss";
 
     final private static SimpleDateFormat getFormatter() {
-        return new SimpleDateFormat(format);
+        return new SimpleDateFormat(FORMAT);
     }
 
     final private static SimpleDateFormat getDisplay_formatter() {
-        return new SimpleDateFormat(display_format);
+        return new SimpleDateFormat(DISPLAYFORMAT);
     }
 
     public static String display(Date date) {

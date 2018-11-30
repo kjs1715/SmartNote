@@ -187,10 +187,10 @@ class MyAdapter extends BaseAdapter {
     }
 
     class ViewHolder {
-        public TextView tv_Name;
-        public CheckBox cb;
-        public TextView createDate;
-        public TextView modifyDate;
-        public TextView tags;
+        private TextView tv_Name;
+        private CheckBox cb;
+        private TextView createDate;
+        private TextView modifyDate;
+        private TextView tags;
     }
 }
