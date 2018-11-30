@@ -44,18 +44,14 @@ public class LBVideoView extends LBImageView {
         getImage();
         if(this.image==null)
             return;
-        Bitmap mImage;
-        if(this.width!=-1)
-            mImage = ImageUtils.resizeImage(this.image, this.width, this.height);
-        else
-            mImage=this.image;
-        setImage(mImage);
+        setImage(this.image);
     }
 
     @Override
     public void getImage() {
         try {
             this.image = getVideoThumbnail(this.filePath);
+            this.image = ImageUtils.resizeImage(this.image,400,711);
         } catch (Exception e) {
             //e.printStackTrace();
             Log.i("err getImage() : ", e.toString());
