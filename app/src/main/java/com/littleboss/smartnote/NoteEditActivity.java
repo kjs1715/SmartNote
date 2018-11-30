@@ -364,6 +364,7 @@ public class NoteEditActivity extends AppCompatActivity {
                 stopRecording();
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.i("error initView() : ", e.toString());
             }
         }
     }

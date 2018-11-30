@@ -53,8 +53,8 @@ public class LBVideoView extends LBImageView {
             this.image = getVideoThumbnail(this.filePath);
             this.image = ImageUtils.resizeImage(this.image,400,711);
         } catch (Exception e) {
-            //e.printStackTrace();
-            Log.i("err getImage() : ", e.toString());
+            e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -66,20 +66,14 @@ public class LBVideoView extends LBImageView {
             bitmap = retriever.getFrameAtTime();
         }
         catch(IllegalArgumentException e) {
-            //e.printStackTrace();
-            Log.i("err getVideoThumbnail:", e.toString());
-        }
-        catch (RuntimeException e) {
-            //e.printStackTrace();
-            Log.i("err getVideoThumbnail:", e.toString());
-
-        }
-        finally {
+            e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
+        } finally {
             try {
                 retriever.release();
             }
             catch (RuntimeException e) {
-                //e.printStackTrace();
+                e.printStackTrace();
                 Log.i("err getVideoThumbnail:", e.toString());
             }
         }

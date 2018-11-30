@@ -20,9 +20,8 @@ import java.io.InputStream;
 
 @RunWith(RobolectricTestRunner.class)
 public class AudioClipperTest {
-    ActivityController<MainActivity> controller;
+    private ActivityController<MainActivity> controller;
     private NoteDatabase database = null;
-    File srcFile, dstFile;
     @Before
     public void setUp() throws Exception {
         try {
@@ -40,13 +39,13 @@ public class AudioClipperTest {
 
     @Test
     public void test() throws Exception {
+        File srcFile, dstFile;
         Activity mainActivity = controller.get();
         InputStream sourceStream = mainActivity.getResources().openRawResource(R.raw.test);
         final int bytesPerRead = 1024;
         byte[] buffer = new byte[bytesPerRead];
         srcFile = new File("data/src.wav");
         dstFile = new File("data/dst.wav");
-        srcFile.getParentFile().mkdirs();
         DataOutputStream destStream=null;
         try {
             destStream = new DataOutputStream(new FileOutputStream(srcFile.getAbsolutePath()));
@@ -72,7 +71,6 @@ public class AudioClipperTest {
     @After
     public void after() throws Exception {
         database.closeConnection();
-        srcFile.delete();
-        dstFile.delete();
+
     }
 }

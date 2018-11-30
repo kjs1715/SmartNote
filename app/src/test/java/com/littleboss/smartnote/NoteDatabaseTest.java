@@ -1,8 +1,5 @@
 package com.littleboss.smartnote;
 
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,10 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 @RunWith(RobolectricTestRunner.class)
 public class NoteDatabaseTest {

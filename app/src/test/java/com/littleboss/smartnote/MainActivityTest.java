@@ -99,6 +99,7 @@ public class MainActivityTest {
             bt_cancel.performClick();
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -114,6 +115,7 @@ public class MainActivityTest {
             item.performLongClick();
         } catch(Exception e) {
             e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 
@@ -144,11 +146,9 @@ public class MainActivityTest {
         activity.Compare(2, test1, test2);
     }
 
-//    //  todo: uncomment and fix the IndexOutOfBoundsException
-//    @Test
+    @Test
     public void enterDialogTest() throws Exception {
         try {
-            //MainActivity activity = controller.get();
             ListView listView = activity.findViewById(R.id.mainlist);
             View item = listView.getAdapter().getView(0, null, null);
             item.performClick();
@@ -156,25 +156,21 @@ public class MainActivityTest {
             item1.performClick();
         }
         catch (Exception e) {
-            Log.i("enterDialogTest() err : ", e.toString());
+            e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
-//        AlertDialog enterDialog = ShadowAlertDialog.getLatestAlertDialog();
-//        assertNotNull(enterDialog);
     }
 
-////      todo: uncomment and fix the IndexOutOfBoundsException
     @Test
     public void testLongClick() throws Exception {
         try {
-        //MainActivity activity = controller.get();
         ListView listView = activity.findViewById(R.id.mainlist);
         View item = listView.getAdapter().getView(0, null, null);
-//        item.performLongClick();
         activity.isMultiselected();
         item.performClick();
         } catch (Exception e) {
-            Log.i("testLongClick() err : ", e.toString());
-
+            e.printStackTrace();
+            Log.i("error initView() : ", e.toString());
         }
     }
 

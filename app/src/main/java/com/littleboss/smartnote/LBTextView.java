@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 public class LBTextView extends FrameLayout implements LBAbstractView {
-    private Context context;
     private EditText editText;
     private LayoutInflater inflater;
     private LBClickListener clickListener;
@@ -18,7 +17,6 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
     }
     public LBTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
         this.inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.item_edittext,this);
 
@@ -112,13 +110,11 @@ public class LBTextView extends FrameLayout implements LBAbstractView {
     }
 
     public String getContent() {
-        String s = editText.getText().toString();
-        return s;
+        return editText.getText().toString();
     }
 
     public String getText() {
-        String s = editText.getText().toString();
-        return s;
+        return editText.getText().toString();
     }
 
     @Override
