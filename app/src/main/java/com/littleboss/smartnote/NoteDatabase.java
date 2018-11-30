@@ -35,7 +35,10 @@ public class NoteDatabase {
 
     //
     public static void dropDatabaseIfExist() {
-        boolean success = (new File(noteDatabasePath)).delete();
+        File file = new File(noteDatabasePath);
+        if(file.exists()) {
+            file.delete();
+        }
     }
 
     private NoteDatabase() {
@@ -46,7 +49,6 @@ public class NoteDatabase {
             db.execSQL("create table notes (_id integer primary key autoincrement, title text, create_time text, modify_time text, content text, catagory_list text);");
         }
         catch (Exception e) {
-            //e.printStackTrace();
             Log.i("err NoteDatabase() : ", e.toString());
         }
     }

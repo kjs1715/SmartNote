@@ -14,6 +14,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             noteDatabase.deleteNotesTitleList(list_selected);
         } catch (NoteNotExistException e) {
-            e.printStackTrace();
+            Log.i("error  : ", e.toString());
         }
         hideLinearLayout();
         readListandFlush();
@@ -190,7 +191,8 @@ public class MainActivity extends AppCompatActivity {
             String replace = matcher.group(1);
             return replace;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i("error  : ", e.toString());
+
             return "";
         }
     }
@@ -205,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* 通报用户 */
-        Toast.makeText(getApplicationContext(), "converting notes to pdf succeed", Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "converting notes to pdf succeed", Toast.LENGTH_LONG).show();
 
         //[1] to pdf files
         ArrayList<File> pdf_files = new ArrayList();
@@ -363,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (Exception e) {
                 /* 跳过创建pdf失败的笔记 */
-                e.printStackTrace();
+                Log.i("error  : ", e.toString());
             }
         }
 
@@ -418,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             remove_temps();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.i("error  : ", e.toString());
         }
         super.onDestroy();
     }
@@ -534,9 +536,9 @@ public class MainActivity extends AppCompatActivity {
             bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
             FontChinese = new Font(bfChinese, 12, Font.NORMAL);
         } catch (DocumentException e) {
-            e.printStackTrace();
+            Log.i("error  : ", e.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.i("error  : ", e.toString());
         }
     }
 

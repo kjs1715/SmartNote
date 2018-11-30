@@ -214,7 +214,6 @@ public class AudioClipper {
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
             Log.i("error initView() : ", e.toString());
         }
         return false;

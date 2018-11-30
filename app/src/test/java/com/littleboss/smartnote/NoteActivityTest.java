@@ -58,7 +58,6 @@ public class NoteActivityTest {
             activity = controller.get();
         }
         catch (Exception e) {
-            e.printStackTrace();
             Log.i("error initView() : ", e.toString());
         }
 

@@ -30,8 +30,7 @@ public class TagSelectResultActivityTest {
             activity = controller.get();
         }
         catch (Exception e) {
-            e.printStackTrace();
-            Log.i("error initView() : ", e.toString());
+            Log.i("error : ", e.toString());
         }
     }
 

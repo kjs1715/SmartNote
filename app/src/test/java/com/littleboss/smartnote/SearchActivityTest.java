@@ -33,8 +33,7 @@ public class SearchActivityTest {
             database.saveNoteByTitle("", "test", "test", "test");
         }
         catch (Exception e) {
-            e.printStackTrace();
-            Log.i("error initView() : ", e.toString());
+            Log.i("error: ", e.toString());
         }
     }
 

@@ -70,14 +70,12 @@ public class LBVideoView extends LBImageView {
             bitmap = retriever.getFrameAtTime();
         }
         catch(IllegalArgumentException e) {
-            e.printStackTrace();
             Log.i("error initView() : ", e.toString());
         } finally {
             try {
                 retriever.release();
             }
             catch (RuntimeException e) {
-                e.printStackTrace();
                 Log.i("err getVideoThumbnail:", e.toString());
             }
         }
