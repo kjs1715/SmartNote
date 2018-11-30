@@ -140,7 +140,6 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
     public void setImage(Bitmap mImage) {
         if(mImage == null) {
-            Toast.makeText(this.context, "No image!", Toast.LENGTH_SHORT);
             return;
         }
 
@@ -156,8 +155,8 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
             // 确保超出比例更大的缩小到屏幕范围内（严格小于屏幕长宽）
             // 同时保证图片比例不失真
             // 所以同时除以宽度的超出比例
-            int newWidth = (int)(oldWidth / widthExceedRate) - 1;
-            int newHeight = (int)(oldHeight / widthExceedRate) - 1;
+            int newWidth = (int)(oldWidth*0.8 / widthExceedRate);
+            int newHeight = (int)(oldHeight *0.8/ widthExceedRate);
             mImage = ImageUtils.resizeImage(mImage, newWidth, newHeight);
         }
 
@@ -433,7 +432,7 @@ public class LBImageView extends FrameLayout implements LBAbstractView {
 
     public void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-        builder.setTitle("删除图片");
+        builder.setTitle("删除");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

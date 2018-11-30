@@ -390,7 +390,7 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     public AlertDialog AudioDialog() {
-        final String[] dialogItems = {"from", "15秒之前","30秒之前","60秒之前"};
+        final String[] dialogItems = {"现在", "15秒之前","30秒之前","60秒之前"};
         AlertDialog dialog = new AlertDialog.Builder(this)
         .setTitle("开始录音时间")
         .setItems(dialogItems, new DialogInterface.OnClickListener() {
