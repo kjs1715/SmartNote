@@ -177,4 +177,5 @@ private void setEditViewListener(final LBAbstractView editView) {
         }
     });
 }
+Team members: 贾明麟，吴一凡，金镇书，廖远达
 ```
